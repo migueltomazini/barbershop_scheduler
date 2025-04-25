@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="cart.css" />
+    <!-- Components style links -->
+    <link rel="stylesheet" href="..\..\components\nav_bar\nav_bar.css" />
+    <link rel="stylesheet" href="..\..\components\footer\footer.css" />
+  </head>
+  <body>
+    <!-- Navbar Section -->
+    <div id="navbar-placeholder"></div>
+
+    <div class="container">
+      <h1 class="title">Your Shopping Cart</h1>
+
+      <!-- Carrinho Vazio (Descomente se quiser mostrar essa seção) -->
+      <!--
+    <div class="empty-cart">
+      <div class="icon">🛍️</div>
+      <h2>Your cart is empty</h2>
+      <p>Looks like you haven't added any products to your cart yet.</p>
+      <a href="/shop" class="btn">Browse Products</a>
+    </div>
+    -->
+
+      <!-- Carrinho com Itens -->
+      <div class="cart-grid">
+        <div class="cart-items">
+          <div class="cart-item">
+            <div class="item-img">
+              <img src="product.jpg" alt="Product Name" />
+            </div>
+            <div class="item-details">
+              <h3>Product Name</h3>
+              <p class="price">$19.99</p>
+            </div>
+            <div class="item-qty">
+              <button>-</button>
+              <span>1</span>
+              <button>+</button>
+            </div>
+            <div class="item-total">
+              <p class="total">$19.99</p>
+              <button class="remove-btn">🗑️ Remove</button>
+            </div>
+          </div>
+          <!-- Repita para mais produtos -->
+        </div>
+
+        <!-- Resumo e Pagamento -->
+        <div class="order-summary">
+          <div class="summary-box">
+            <h2>Order Summary</h2>
+            <div class="summary-line">
+              <span>Subtotal</span>
+              <span>$19.99</span>
+            </div>
+            <div class="summary-line">
+              <span>Shipping</span>
+              <span>Free</span>
+            </div>
+            <div class="summary-total">
+              <strong>Total</strong>
+              <strong>$19.99</strong>
+            </div>
+          </div>
+
+          <div class="payment-box">
+            <form>
+              <h2>Payment Details</h2>
+              <label for="cardName">Cardholder Name</label>
+              <input type="text" id="cardName" placeholder="John Doe" />
+
+              <label for="cardNumber">Card Number</label>
+              <input
+                type="text"
+                id="cardNumber"
+                placeholder="1234 5678 9012 3456"
+              />
+
+              <div class="row">
+                <div>
+                  <label for="cardExpiry">Expiry Date</label>
+                  <input type="text" id="cardExpiry" placeholder="MM/YY" />
+                </div>
+                <div>
+                  <label for="cardCVC">CVC</label>
+                  <input type="text" id="cardCVC" placeholder="123" />
+                </div>
+              </div>
+
+              <button type="submit" class="btn full-width">
+                💳 Pay $19.99
+              </button>
+              <p class="note">
+                For demo purposes, any card details will be accepted.
+              </p>
+            </form>
+
+            <!-- Se usuário não estiver logado -->
+            <!--
+          <div class="login-required">
+            <h2>Login Required</h2>
+            <p>Please login to complete your purchase</p>
+            <a href="/login" class="btn">🔐 Login to Continue</a>
+          </div>
+          --></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Script to fetch the components -->
+    <script>
+      fetch("../../components/nav_bar/nav_bar.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("navbar-placeholder").innerHTML = data;
+        });
+      fetch("../../components/footer/footer.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("footer-placeholder").innerHTML = data;
+        });
+    </script>
+  </body>
+</html>

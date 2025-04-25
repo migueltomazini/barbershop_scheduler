@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Appointment</title>
+    <link rel="stylesheet" href="appointments.css" />
+    <!-- Components style links -->
+    <link rel="stylesheet" href="..\..\components\nav_bar\nav_bar.css" />
+    <link rel="stylesheet" href="..\..\components\footer\footer.css" />
+  </head>
+  <body>
+    <!-- Navbar Section -->
+    <div id="navbar-placeholder"></div>
+
+    <div class="container">
+      <header class="text-center">
+        <h1>Book Your Appointment</h1>
+        <p>
+          Select your preferred service, date and time, and we'll reserve your
+          spot.
+        </p>
+      </header>
+
+      <main class="booking-box">
+        <!-- Uncomment this if the user is not logged in -->
+        <!--
+      <div class="login-required">
+        <h2>Login Required</h2>
+        <p>Please login to book an appointment.</p>
+        <button class="btn brown">Login</button>
+      </div>
+      -->
+
+        <!-- Booking Form -->
+        <div class="grid">
+          <div>
+            <h2>1. Choose a Date</h2>
+            <input type="date" class="input" />
+
+            <h2>2. Select a Service</h2>
+            <select class="input">
+              <option>Select a service</option>
+              <option>Haircut - $25.00 • 30 min</option>
+              <option>Shave - $15.00 • 15 min</option>
+              <option>Beard Trim - $20.00 • 20 min</option>
+            </select>
+          </div>
+
+          <div>
+            <h2>3. Choose a Time</h2>
+            <div class="times-grid">
+              <button class="btn outline">9:00 AM</button>
+              <button class="btn outline">9:30 AM</button>
+              <button class="btn outline">10:00 AM</button>
+              <button class="btn outline">10:30 AM</button>
+              <!-- Add more as needed -->
+            </div>
+
+            <h2>4. Confirm Booking</h2>
+            <div class="summary">
+              <p><strong>Date:</strong> Monday, April 21, 2025</p>
+              <p><strong>Time:</strong> 10:00 AM</p>
+              <p><strong>Service:</strong> Haircut</p>
+              <p><strong>Client:</strong> John Doe</p>
+            </div>
+
+            <button class="btn gold full">Book Appointment</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer Section -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Script to fetch the components -->
+    <script>
+      fetch("../../components/nav_bar/nav_bar.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("navbar-placeholder").innerHTML = data;
+        });
+      fetch("../../components/footer/footer.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("footer-placeholder").innerHTML = data;
+        });
+    </script>
+  </body>
+</html>

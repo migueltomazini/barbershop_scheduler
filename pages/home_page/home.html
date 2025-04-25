@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SharpShears Barber</title>
+    <link rel="stylesheet" href="home.css" />
+    <!-- Components style links -->
+    <link rel="stylesheet" href="..\..\components\nav_bar\nav_bar.css" />
+    <link rel="stylesheet" href="..\..\components\Footer\footer.css" />
+    <link rel="stylesheet" href="..\..\components\Products\products.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/lucide@latest/dist/umd/lucide.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navbar Section -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1>Sharp Style, Perfect Cut</h1>
+        <p>
+          Experience premium grooming services at SharpShears. Our skilled
+          barbers deliver classic cuts and modern styles with precision and
+          expertise.
+        </p>
+        <div class="hero-buttons">
+          <a href="/pages/appointments_page/appointments.html" class="btn gold"
+            ><i class="lucide lucide-calendar"></i> Book Appointment</a
+          >
+          <a href="/pages/services_page/services.html" class="btn outline">Our Services</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Preview -->
+    <section class="services">
+      <div class="section-header">
+        <h2>Our Premium Services</h2>
+        <p>
+          From classic haircuts to luxury grooming treatments, our professional
+          barbers provide exceptional service for the modern gentleman.
+        </p>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="icon-circle">
+            <i class="lucide lucide-scissors"></i>
+          </div>
+          <h3>Haircuts</h3>
+          <p>
+            Precision cuts tailored to enhance your personal style and features.
+          </p>
+          <a href="/pages/services_page/services.html">Learn More →</a>
+        </div>
+
+        <div class="card">
+          <div class="icon-circle">
+            <i class="lucide lucide-flame"></i>
+          </div>
+          <h3>Hot Towel Shaves</h3>
+          <p>
+            Luxurious straight razor shave with hot towel for the smoothest
+            finish.
+          </p>
+          <a href="/pages/services_page/services.html">Learn More →</a>
+        </div>
+
+        <div class="card">
+          <div class="icon-circle">
+            <i class="lucide lucide-book"></i>
+          </div>
+          <h3>Beard Grooming</h3>
+          <p>Expert beard shaping, trimming and conditioning for any style.</p>
+          <a href="/pages/services_page/services.html">Learn More →</a>
+        </div>
+      </div>
+
+      <div class="center">
+        <a href="/pages/services_page/services.html" class="btn brown">View All Services</a>
+      </div>
+    </section>
+
+    
+    <!-- Product Preview -->
+    <section class="products">
+      <div id="products-placeholder"></div>
+  
+      <div class="center">
+        <a href="/pages/shop_page/shop.html" class="btn brown">Browse All Products</a>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+      <h2>Ready for a Fresh Look?</h2>
+      <p>
+        Book your appointment today and experience the SharpShears difference.
+        Our skilled barbers are ready to help you look and feel your best.
+      </p>
+      <a href="/pages/appointments_page/appointments.html" class="btn gold large"
+        >Book Your Appointment</a
+      >
+    </section>
+
+    <!-- Footer Section -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Script to fetch the components -->
+    <script>
+      fetch("../../components/nav_bar/nav_bar.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("navbar-placeholder").innerHTML = data;
+        });
+      fetch("../../components/footer/footer.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("footer-placeholder").innerHTML = data;
+        });
+      fetch("../../components/Products/products.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("products-placeholder").innerHTML = data;
+        });
+    </script>
+  </body>
+</html>

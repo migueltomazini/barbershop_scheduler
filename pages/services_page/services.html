@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SharpShears - Services</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="services.css" rel="stylesheet" />
+    <!-- Components style links -->
+    <link rel="stylesheet" href="..\..\components\nav_bar\nav_bar.css" />
+    <link rel="stylesheet" href="..\..\components\footer\footer.css" />
+  </head>
+  <body>
+    <!-- Navbar Section -->
+    <div id="navbar-placeholder"></div>
+
+    <div class="container">
+      <div class="services-header">
+        <h1>Our Professional Services</h1>
+        <p>
+          Experience the finest in barbering with our range of expert services,
+          from classic cuts to luxury treatments.
+        </p>
+      </div>
+
+      <div class="services-grid">
+        <!-- Service Card 1 -->
+        <div class="service-card">
+          <div class="service-image">
+            <img src="/placeholder.svg" alt="Classic Haircut" />
+          </div>
+          <div class="service-content">
+            <h3>Classic Haircut</h3>
+            <div class="service-meta">
+              <span class="service-price">$30.00</span>
+              <span class="separator">•</span>
+              <span class="service-duration">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                30 min
+              </span>
+            </div>
+            <p class="service-description">
+              Traditional haircut including consultation and styling.
+            </p>
+            <a href="/appointments" class="btn">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              Book Now
+            </a>
+          </div>
+        </div>
+
+        <!-- Service Card 2 -->
+        <div class="service-card">
+          <div class="service-image">
+            <img src="/placeholder.svg" alt="Beard Trim" />
+          </div>
+          <div class="service-content">
+            <h3>Beard Trim</h3>
+            <div class="service-meta">
+              <span class="service-price">$20.00</span>
+              <span class="separator">•</span>
+              <span class="service-duration">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                20 min
+              </span>
+            </div>
+            <p class="service-description">
+              Shape and trim beard for a clean, professional look.
+            </p>
+            <a href="/appointments" class="btn">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              Book Now
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-section">
+        <h3>Need a Special Service?</h3>
+        <p>
+          Have specific requirements or looking for a custom grooming
+          experience? Contact us to discuss your needs.
+        </p>
+        <div class="button-group">
+          <a href="#" class="btn btn-navy">Contact Us</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Script to fetch the components -->
+    <script>
+      fetch("../../components/nav_bar/nav_bar.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("navbar-placeholder").innerHTML = data;
+        });
+      fetch("../../components/footer/footer.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("footer-placeholder").innerHTML = data;
+        });
+    </script>
+  </body>
+</html>
