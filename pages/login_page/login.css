@@ -1,7 +1,8 @@
 :root {
-  --navy: #1e293b;
-  --brown: #6b4226;
+  --navy: #002d50;
+  --brown: #6b4f3b;
   --dark-brown: #54331f;
+  --vanilla: #faf8f5;
   --cream: #f5f1ea;
   --muted-foreground: #6b7280;
   --muted: #f3f4f6;
@@ -14,8 +15,7 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background-color: #fafafa;
+  background-color: var(--vanilla);
   margin-top: 10px;
   padding: 0;
   min-height: 100vh;

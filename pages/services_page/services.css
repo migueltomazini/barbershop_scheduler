@@ -1,7 +1,8 @@
 :root {
-  --brown: #8b4513;
-  --navy: #1e293b;
+  --brown: #6b4f3b;
+  --navy: #002d50;
   --gold: #d4af37;
+  --vanilla: #faf8f5;
   --cream: #f5f5dc;
   --light-brown: #a67c52;
   --dark-brown: #5d4037;
@@ -14,8 +15,7 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: #f8f8f8;
+  background-color: var(--vanilla);
   color: #333;
   padding: 0;
 }

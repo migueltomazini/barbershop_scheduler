@@ -1,16 +1,17 @@
 :root {
-  --navy: #1e293b;
+  --navy: #002d50;
   --gold: #d4af37;
-  --brown: #8b5e3c;
+  --brown: #6b4f3b;
+  --vanilla: #faf8f5;
   --cream: #fefae0;
   --muted: #64748b;
 }
 
 body {
   margin: 0;
-  font-family: sans-serif;
+  font-family: "Segoe UI", sans-serif;
   line-height: 1.6;
-  background-color: #fff;
+  background-color: var(--vanilla);
 }
 
 h1,
@@ -134,7 +135,7 @@ a {
 
 .card {
   padding: 2rem;
-  background: #fff;
+  background: white;
   text-align: center;
 }
 

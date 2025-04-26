@@ -1,7 +1,7 @@
 :root {
-  --navy: #1e293b;
-  --brown: #6b4226;
+  --brown: #6b4f3b;
   --dark-brown: #4a2e1a;
+  --vanilla: #faf8f5;
   --cream: #f5f0e6;
   --gold: #c7a74b;
   --muted: #888;
@@ -14,15 +14,13 @@
 }
 
 body {
-  font-family: sans-serif;
-  background-color: #f9f9f9;
-  color: #333;
+  background-color: var(--vanilla);
   padding: 0;
 }
 
 .container {
   flex: 1;
-  max-width: 1200px;
+  max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -36,7 +34,7 @@ body {
 
 .empty-cart {
   text-align: center;
-  background: #fff;
+  background: white;
   padding: 2rem;
   border: 1px solid var(--cream);
   border-radius: 8px;

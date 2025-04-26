@@ -1,9 +1,16 @@
+
+:root {
+  --navy: #002d50;
+  --gold: #d4af37;
+  --brown: #6b4f3b;
+  --grey: #e5e7eb;  
+}
+
 /* Reset e base */
 body {
   margin: 0;
   font-family: "Segoe UI", sans-serif;
-  background-color: #fff;
-  color: #2e3a59;
+  color: var(--navy);
 }
 
 a {
@@ -16,7 +23,6 @@ a {
   position: sticky;
   top: 0;
   background-color: white;
-  border-bottom: 1px solid #f0f0f0;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   z-index: 1000;
 }
@@ -46,7 +52,7 @@ a {
 .menu-icon {
   width: 28px;
   height: 28px;
-  stroke: #2e3a59;
+  stroke: var(--navy);
 }
 
 /* Logo */
@@ -65,7 +71,7 @@ a {
   font-size: 1.4rem;
   font-weight: bold;
   font-family: serif;
-  color: #6b4f3b;
+  color: var(--brown);
 }
 
 /* Navigation */
@@ -77,19 +83,17 @@ a {
   position: absolute;
   top: 100%;
   left: 0;
-  border-top: 1px solid #eee;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .nav a,
 .nav .user-info {
   padding: 1rem;
-  border-bottom: 1px solid #f0f0f0;
   font-size: 1rem;
 }
 
 .nav a:hover {
-  background-color: #f9f9f9;
+  background-color: var(--grey);
 }
 
 /* Mostrar nav se toggle ativo */

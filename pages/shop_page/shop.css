@@ -1,5 +1,6 @@
 :root {
-  --navy: #1e293b;
+  --navy: #002d50;
+  --vanilla: #faf8f5;
 }
 
 * {
@@ -9,9 +10,7 @@
 }
 
 body {
-  font-family: sans-serif;
-  background-color: #f9f9f9;
-  color: #333;
+  background-color: var(--vanilla);
   padding: 0;
 }
 
