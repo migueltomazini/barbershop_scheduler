@@ -2,7 +2,6 @@
   --navy: #002d50;
   --gold: #d4af37;
   --cream: #fefae0;
-  --grey: #e5e7eb;
 }
 
 .products {
@@ -25,7 +24,7 @@
 
 .product-img {
   height: 12rem;
-  background-color: var(--grey);
+  background-color: lightgray;
 }
 
 .product-info {
