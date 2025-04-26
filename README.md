@@ -25,6 +25,7 @@ Additional requirements added to this implementation:
 - Clean, intuitive, and responsive design using only HTML and CSS
 - A static, yet visually structured cart page
 - Placeholder login interface for future integration with back-end logic
+- Reuse of common interface elements (navbar and footer) across all pages to enhance maintainability
 
 ## Project Description
 
