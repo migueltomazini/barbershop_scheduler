@@ -6,7 +6,11 @@
 
 .products {
   background-color: var(--cream);
-  padding: 4rem 1rem;
+  padding: 2rem 1rem;
+}
+
+.products-title {
+  text-align: center;
 }
 
 .product-grid {
@@ -23,8 +27,17 @@
 }
 
 .product-img {
+  display: flex;
+  justify-content: center;
   height: 12rem;
   background-color: lightgray;
+  overflow: hidden;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .product-info {

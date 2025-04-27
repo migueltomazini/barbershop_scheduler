@@ -121,28 +121,31 @@ a {
   margin: auto;
 }
 
-.cards {
-  display: grid;
-  gap: 2rem;
-  margin-top: 2rem;
+.card {
+  text-align: center;
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+.icon-img {
+  max-width: 60%;
+  max-height: 60%;
+  object-fit: cover;
 }
 
 @media (min-width: 768px) {
   .cards {
+    display: grid;
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-.card {
-  padding: 2rem;
-  background: white;
-  text-align: center;
-}
-
 .icon-circle {
   background-color: var(--cream);
-  width: 64px;
-  height: 64px;
+  width: 45px;
+  height:45px;
+  padding: 1rem;
+  overflow: hidden;
   margin: auto;
   border-radius: 50%;
   display: flex;
