@@ -1,5 +1,10 @@
 # Barber Shop Website
 
+## Members
+
+- Bruno Basckeira Chinaglia - 14562233
+- Miguel Rodrigues Tomazini - 14599300
+
 ## Introduction
 
 This project is a web-based system for a modern barber shop, developed as part of a Web Development course. The system is designed to provide customers with easy access to essential information about the barber shop, its services, and products, as well as to facilitate the scheduling of appointments. The platform emphasizes a clean and user-friendly interface to enhance the customer experience.
@@ -9,6 +14,58 @@ This project is a web-based system for a modern barber shop, developed as part o
 The following diagram illustrates the structure and navigation flow between the main pages of the system:
 
 ![Navigation Diagram](./images/navigationDiagram.png)
+
+## Screenshots
+
+Below are screenshots of the main pages implemented so far:
+
+### Home Page
+
+![Home Page](./images/home.png)
+
+Landing page introducing the brand, with quick links to services and shop sections.
+
+---
+
+### Services Page
+
+![Services Page](./images/services.png)
+
+Displays the list of available services, descriptions, and pricing information.
+
+---
+
+### Shop Page
+
+![Shop Page](./images/shop.png)
+
+Product catalog showcasing items such as grooming kits, hair products, and accessories.
+
+---
+
+### Cart Page
+
+![Cart Page](./images/cart.png)
+
+Static cart layout displaying selected products, with options to modify or remove (not functional yet).
+
+---
+
+### Login Page
+
+![Login Page](./images/login.png)
+
+Simple login form acting as a placeholder for future authentication features.
+
+---
+
+### Appointments Page
+
+![Appointments Page](./images/appointments.png)
+
+Structured layout allowing users to select available time slots for services (visual only).
+
+---
 
 ## Requirements
 
