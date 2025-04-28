@@ -21,7 +21,7 @@ Below are screenshots of the main pages implemented so far:
 
 ### Home Page
 
-![Home Page](./images/home.png)
+![Home Page](./screenshots/home.png)
 
 Landing page introducing the brand, with quick links to services and shop sections.
 
@@ -29,7 +29,7 @@ Landing page introducing the brand, with quick links to services and shop sectio
 
 ### Services Page
 
-![Services Page](./images/services.png)
+![Services Page](./screenshots/services.png)
 
 Displays the list of available services, descriptions, and pricing information.
 
@@ -37,7 +37,7 @@ Displays the list of available services, descriptions, and pricing information.
 
 ### Shop Page
 
-![Shop Page](./images/shop.png)
+![Shop Page](./screenshots/shop.png)
 
 Product catalog showcasing items such as grooming kits, hair products, and accessories.
 
@@ -45,7 +45,7 @@ Product catalog showcasing items such as grooming kits, hair products, and acces
 
 ### Cart Page
 
-![Cart Page](./images/cart.png)
+![Cart Page](./screenshots/cart.png)
 
 Static cart layout displaying selected products, with options to modify or remove (not functional yet).
 
@@ -53,7 +53,7 @@ Static cart layout displaying selected products, with options to modify or remov
 
 ### Login Page
 
-![Login Page](./images/login.png)
+![Login Page](./screenshots/login.png)
 
 Simple login form acting as a placeholder for future authentication features.
 
@@ -61,7 +61,7 @@ Simple login form acting as a placeholder for future authentication features.
 
 ### Appointments Page
 
-![Appointments Page](./images/appointments.png)
+![Appointments Page](./screenshots/appointments.png)
 
 Structured layout allowing users to select available time slots for services (visual only).
 
