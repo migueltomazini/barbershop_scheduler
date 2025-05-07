@@ -67,6 +67,14 @@ Structured layout allowing users to select available time slots for services (vi
 
 ---
 
+### Admin Dashboard Page
+
+![Appointments Page](./screenshots/admin_dashboard.png)
+
+Admin view with a structured layout to visualize and select available time slots for services (visual only).
+
+---
+
 ## Requirements
 
 The core requirements are specified in the course assignment and include:
