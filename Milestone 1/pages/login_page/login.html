@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="login.css" />
+    <!-- Components style links -->
+    <link rel="stylesheet" href="..\..\components\nav_bar\nav_bar.css" />
+    <link rel="stylesheet" href="..\..\components\footer\footer.css" />
+  </head>
+  <body>
+    <!-- Navbar Section -->
+    <div id="navbar-placeholder"></div>
+
+    <div class="container">
+      <div class="header">
+        <h1>Welcome Back</h1>
+        <p>Sign in to your account to book appointments and shop products</p>
+      </div>
+
+      <div class="card">
+        <form class="form">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              id="email"
+              type="text"
+              placeholder="Email or username"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="password">Password</label>
+              <a href="#" class="link">Forgot password?</a>
+            </div>
+            <input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn">Sign In</button>
+        </form>
+
+        <div class="footer-text">
+          <p>
+            Don't have an account?
+            <a href="#" class="link bold">Create one now</a>
+          </p>
+        </div>
+
+        <div class="demo-info">
+          <p class="demo-text">For demonstration:</p>
+          <div class="demo-box">
+            Admin: username <strong>admin</strong> / password
+            <strong>admin</strong><br />
+            Client: username <strong>client@example.com</strong> / password
+            <strong>password</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Script to fetch the components -->
+    <script>
+      fetch("../../components/nav_bar/nav_bar.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("navbar-placeholder").innerHTML = data;
+        });
+      fetch("../../components/footer/footer.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("footer-placeholder").innerHTML = data;
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="admin_dashboard.css" />
+    <!-- Components style links -->
+    <link rel="stylesheet" href="..\..\components\nav_bar\nav_bar.css" />
+    <link rel="stylesheet" href="..\..\components\Footer\footer.css" />
+  </head>
+  <body>
+    <!-- Navbar Section -->
+    <div id="navbar-placeholder"></div>
+
+    <div class="container">
+      <h1>Admin Dashboard</h1>
+
+      <div class="tabs">
+        <button class="tab-button active" onclick="switchTab('products')">
+          Products
+        </button>
+        <button class="tab-button" onclick="switchTab('services')">
+          Services
+        </button>
+        <button class="tab-button" onclick="switchTab('clients')">
+          Clients
+        </button>
+        <button class="tab-button" onclick="switchTab('appointments')">
+          Appointments
+        </button>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" placeholder="Search..." />
+      </div>
+
+      <button class="btn">Add Item</button>
+
+      <div id="products" class="tab-content active">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Sold</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Shampoo</td>
+              <td>$12.00</td>
+              <td>20</td>
+              <td>50</td>
+              <td class="action-buttons">
+                <button class="edit-btn">✏️</button>
+                <button class="delete-btn">🗑️</button>
+              </td>
+            </tr>
+            <!-- more rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <div id="services" class="tab-content">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Duration</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Haircut</td>
+              <td>$15.00</td>
+              <td>30 min</td>
+              <td class="action-buttons">
+                <button class="edit-btn">✏️</button>
+                <button class="delete-btn">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="clients" class="tab-content">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Address</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Jane Doe</td>
+              <td>jane@example.com</td>
+              <td>123-456</td>
+              <td>Street 123</td>
+              <td class="action-buttons">
+                <button class="edit-btn">✏️</button>
+                <button class="delete-btn">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Script to fetch the components -->
+    <script>
+      fetch("../../components/nav_bar/nav_bar.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("navbar-placeholder").innerHTML = data;
+        });
+      fetch("../../components/footer/footer.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("footer-placeholder").innerHTML = data;
+        });
+    </script>
+  </body>
+</html>

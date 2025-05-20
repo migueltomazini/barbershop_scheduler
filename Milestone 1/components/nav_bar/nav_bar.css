@@ -1,0 +1,176 @@
+
+:root {
+  --navy: #002d50;
+  --gold: #d4af37;
+  --brown: #6b4f3b;
+  --grey: #e5e7eb;  
+}
+
+/* Reset e base */
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  color: var(--navy);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Navbar */
+.navbar {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: auto;
+  gap: 1rem;
+}
+
+/* Toggle */
+.menu-toggle {
+  display: none;
+}
+
+.menu-icon-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.menu-icon {
+  width: 28px;
+  height: 28px;
+  stroke: var(--navy);
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.logo-text {
+  font-size: 1.4rem;
+  font-weight: bold;
+  font-family: serif;
+  color: var(--brown);
+}
+
+/* Navigation */
+.nav {
+  display: none;
+  flex-direction: column;
+  background-color: white;
+  width: 100%;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.nav a,
+.nav .user-info {
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.nav a:hover {
+  background-color: var(--grey);
+}
+
+/* Mostrar nav se toggle ativo */
+#menu-toggle:checked ~ .navbar-container .nav {
+  display: flex;
+}
+
+/* Cart */
+.cart-btn {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: gold;
+  color: black;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}
+
+.icon.small {
+  width: 20px;
+  height: 20px;
+}
+
+#menu-toggle:checked ~ nav.nav {
+  display: flex;
+}
+
+/* Desktop Layout */
+@media (min-width: 768px) {
+  .menu-icon-label {
+    display: none;
+  }
+
+  .navbar-container {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .nav {
+    display: flex !important;
+    position: static;
+    flex-direction: row;
+    gap: 1.5rem;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    width: auto;
+  }
+
+  .nav a,
+  .nav .user-info {
+    border: none;
+    padding: 0;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+}
+

@@ -1,0 +1,148 @@
+/* Cores personalizadas */
+:root {
+  --barber-brown: #8B5E3C;
+  --barber-dark-brown: #5C3B27;
+  --barber-navy: #2C3E50;
+  --barber-cream: #F5F1EB;
+  --barber-muted: #6C757D;
+}
+
+/* Layout geral */
+body {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Título */
+h1 {
+  color: var(--barber-brown);
+}
+
+/* Abas */
+.tabs-list {
+  display: flex;
+  background-color: var(--barber-cream);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.tabs-trigger {
+  flex: 1;
+  text-align: center;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: var(--barber-navy);
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: background 0.3s ease;
+}
+
+.tabs-trigger:hover,
+.tabs-trigger[data-state="active"] {
+  background-color: var(--barber-brown);
+  color: white;
+}
+
+/* Busca */
+input[type="text"] {
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  border: 1px solid var(--barber-cream);
+  border-radius: 0.5rem;
+  background-color: white;
+  color: #333;
+  transition: border 0.3s ease;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--barber-brown);
+}
+
+/* Tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+thead {
+  background-color: var(--barber-cream);
+  font-weight: 600;
+}
+
+th, td {
+  padding: 1rem;
+  text-align: left;
+  vertical-align: middle;
+}
+
+tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+img {
+  border-radius: 0.25rem;
+}
+
+/* Botões */
+button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+button.bg-barber-brown {
+  background-color: var(--barber-brown);
+  color: white;
+}
+
+button.bg-barber-brown:hover {
+  background-color: var(--barber-dark-brown);
+}
+
+button.outline-barber {
+  border: 1px solid var(--barber-navy);
+  color: var(--barber-navy);
+}
+
+button.outline-barber:hover {
+  background-color: var(--barber-navy);
+  color: white;
+}
+
+button.outline-red {
+  border: 1px solid #e3342f;
+  color: #e3342f;
+}
+
+button.outline-red:hover {
+  background-color: #e3342f;
+  color: white;
+}
+
+/* Seção de agendamentos */
+.appointments-section {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.text-muted-foreground {
+  color: var(--barber-muted);
+}
