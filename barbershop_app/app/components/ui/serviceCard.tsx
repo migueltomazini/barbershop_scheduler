@@ -1,7 +1,9 @@
 import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+
 import { Calendar, Clock } from "lucide-react";
 import { Button } from "./button";
-import Link from "next/link";
 import { ServiceType } from "../../types";
 
 type ServiceCardProps = {
@@ -30,7 +32,7 @@ export const ServiceCard = ({
       {/* Image section for detailed view */}
       {isDetailed && (
         <div className="md:w-1/3 h-48 md:h-auto bg-gray-100">
-          <img
+          <Image
             src={service.image}
             alt={service.name}
             className="w-full h-full object-cover"

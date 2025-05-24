@@ -3,3 +3,14 @@
 :root {
   --background: #ffffff;
 }
+
+@theme {
+  --color-barber-navy: #002d50;
+  --color-barber-gold: #d4af37;
+  --color-barber-brown: #6b4f3b;
+  --color-barber-dark-brown: #4a2e1a;
+  --color-barber-vanilla: #faf8f5;
+  --color-barber-cream: #fefae0;
+  --color-barber-muted: #64748b;
+  --color-barber-sand: #f5e4d0;
+}

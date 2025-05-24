@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { AuthProvider } from "./contexts/authContext";
 import { CartProvider } from "./contexts/CartContext";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -12,7 +13,10 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <CartProvider>{children}</CartProvider>
+          <CartProvider>
+            {children}
+            <Toaster position="bottom-right" />
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

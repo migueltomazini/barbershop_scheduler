@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useAuth } from "../contexts/authContext";
-import { useCart } from "../contexts/CartContext";
-import { Button } from "./ui/button";
+import { useAuth } from "../../contexts/authContext";
+import { useCart } from "../../contexts/CartContext";
+import { Button } from "../ui/button";
 import {
   ShoppingCart,
   Menu,
