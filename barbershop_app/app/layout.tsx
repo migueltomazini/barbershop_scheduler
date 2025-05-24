@@ -1,6 +1,6 @@
 import "./globals.css";
 
-import { AuthProvider } from "./contexts/authContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { Toaster } from "sonner";
 
