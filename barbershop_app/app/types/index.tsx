@@ -7,7 +7,7 @@ export type ServiceType = {
   price: number;
   duration: number;
   image: string;
-  icon?: ReactNode;
+  icon?: string;
 };
 
 export type ProductType = {

@@ -1,17 +1,63 @@
-import React from "react";
+"use client"
+
+import React, { useState, useEffect } from "react"; // Adicione useEffect
 import Link from "next/link";
 
 import { Button } from "../ui/button";
 import { ServiceCard } from "../ui/serviceCard";
-import { mockServices } from "@/app/data/mockServices";
+
+import { ServiceType } from "@/app/types"; // Supondo que você tenha ServiceType
 
 type ServicesSectionProps = {
   variant?: "home" | "full";
 };
 
-export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => {
+export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => { // Corrigindo a tipagem aqui também
   const isHome = variant === "home";
-  const servicesToShow = isHome ? mockServices.slice(0, 3) : mockServices;
+
+  const [services, setServices] = useState<ServiceType[]>([]); // Estado para os serviços
+  const [loading, setLoading] = useState(true); // Estado de carregamento
+  const [error, setError] = useState<string | null>(null); // Estado de erro
+
+  // Novo useEffect para buscar os serviços
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("http://localhost:3001/services"); // URL do JSON-Server
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data: ServiceType[] = await response.json();
+        setServices(data);
+      } catch (e: any) {
+        setError(e.message || "Failed to fetch services");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []); // Array de dependências vazio para rodar apenas uma vez
+
+  const servicesToShow = isHome ? services.slice(0, 3) : services; // Agora usa o estado 'services'
+
+  // Adicione estados de loading/error na UI
+  if (loading) {
+    return (
+      <section className="container mx-auto px-4 py-16 text-center">
+        <p className="text-barber-brown text-lg">Loading services...</p>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="container mx-auto px-4 py-16 text-center">
+        <p className="text-red-500 text-lg">Error: {error}</p>
+        <p className="text-muted-foreground">Please ensure your JSON-Server is running on http://localhost:3001.</p>
+      </section>
+    );
+  }
 
   return (
     <section className="container mx-auto px-4 py-16">
