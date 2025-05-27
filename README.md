@@ -13,7 +13,7 @@ This project is a web-based system for a modern barber shop, developed as part o
 
 The following diagram illustrates the structure and navigation flow between the main pages of the system:
 
-![Navigation Diagram](./images/navigationDiagram.png)
+![Navigation Diagram](./Milestone%201/images/navigationDiagram.png)
 
 ## Screenshots
 
