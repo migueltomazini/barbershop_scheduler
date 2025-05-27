@@ -5,74 +5,72 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 // Context imports
-import { useCart } from '@/app/contexts/CartContext';
-import { useAuth } from '@/app/contexts/AuthContext';
+import { useCart } from "@/app/contexts/CartContext";
+import { useAuth } from "@/app/contexts/AuthContext";
 // Component imports
 import { Button } from "@/app/components/ui/button";
 import { Navbar } from "@/app/components/layout/navbar";
-import { Footer } from "@/app/components/layout/footer";  
+import { Footer } from "@/app/components/layout/footer";
 
 import { CheckCircle, Calendar, ShoppingBag } from "lucide-react";
 
 export default function CheckoutSuccessPage() {
-  const { clearCart, items } = useCart(); // Get items to check if cart was already cleared
+  const { clearCart, items } = useCart();
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // If not authenticated, redirect to login.
-    // This is a good practice, though the cart page should prevent unauth checkout.
+    // Redirect to login if user is not authenticated.
+    // This is a safeguard; normally unauthorized users shouldn't reach checkout success page.
     if (!isAuthenticated) {
-      toast.error("Acesso não autorizado. Por favor, faça login.");
+      toast.error("Unauthorized access. Please log in.");
       router.push("/login");
       return;
     }
 
-    // Clear the cart only if it hasn't been cleared yet by this session on this page
-    // This prevents multiple clearCart calls if the component re-renders for other reasons
-    // or if the user navigates back and forth quickly.
+    // Clear cart only if it still contains items
     if (items.length > 0) {
       clearCart();
-      // You might want to notify the user, but the success message is usually enough.
-      // toast.info("Seu carrinho foi esvaziado após a compra.");
     }
-  }, [isAuthenticated, router, clearCart, items]); // Add items to dependency array
+  }, [isAuthenticated, router, clearCart, items]);
 
-  // If user is not authenticated and somehow reaches here,
-  // the effect above will redirect. Can add a loading/placeholder.
+  // Show redirecting message while redirecting unauthorized users
   if (!isAuthenticated) {
     return (
-        <div className="min-h-screen flex flex-col bg-gray-50">
-            <Navbar />
-            <main className="flex-grow container mx-auto px-4 py-16 flex items-center justify-center">
-                <p>Redirecionando...</p>
-            </main>
-            <Footer />
-        </div>
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <main className="flex-grow container mx-auto px-4 py-16 flex items-center justify-center">
+          <p>Redirecting...</p>
+        </main>
+        <Footer />
+      </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Navbar /> {/* Included for consistent layout */}
+      <Navbar />
       <main className="flex-grow container mx-auto px-4 py-16 flex items-center justify-center">
         <div className="max-w-lg w-full text-center">
           <div className="bg-white rounded-lg shadow-xl border border-barber-cream p-8 sm:p-10">
+            {/* Success icon */}
             <CheckCircle className="text-green-500 w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6" />
 
+            {/* Message */}
             <h1 className="text-2xl sm:text-3xl font-bold mb-4 font-serif text-barber-brown">
-              Pagamento Realizado com Sucesso!
+              Payment Successful!
             </h1>
-
             <p className="text-muted-foreground mb-8 text-base sm:text-lg">
-              Obrigado pela sua compra. Seu pedido foi processado e um e-mail de confirmação foi enviado (simulação).
+              Thank you for your purchase. Your order has been processed and a
+              confirmation email has been sent (simulated).
             </p>
 
+            {/* Action buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/shop" className="w-full sm:w-auto">
                 <Button className="w-full bg-barber-navy hover:bg-barber-navy/90 text-white px-6 py-3 text-base">
                   <ShoppingBag className="mr-2 h-5 w-5" />
-                  Continuar Comprando
+                  Continue Shopping
                 </Button>
               </Link>
 
@@ -82,14 +80,14 @@ export default function CheckoutSuccessPage() {
                   className="w-full border-barber-brown text-barber-brown hover:bg-barber-brown hover:text-white px-6 py-3 text-base"
                 >
                   <Calendar className="mr-2 h-5 w-5" />
-                  Agendar um Horário
+                  Schedule an Appointment
                 </Button>
               </Link>
             </div>
           </div>
         </div>
       </main>
-      <Footer /> 
+      <Footer />
     </div>
   );
 }

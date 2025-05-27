@@ -1,30 +1,30 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from "react"; // Adicione useEffect
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
 import { Button } from "../ui/button";
 import { ServiceCard } from "../ui/serviceCard";
 
-import { ServiceType } from "@/app/types"; // Supondo que você tenha ServiceType
+import { ServiceType } from "@/app/types";
 
 type ServicesSectionProps = {
   variant?: "home" | "full";
 };
 
-export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => { // Corrigindo a tipagem aqui também
+export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => {
   const isHome = variant === "home";
 
-  const [services, setServices] = useState<ServiceType[]>([]); // Estado para os serviços
-  const [loading, setLoading] = useState(true); // Estado de carregamento
-  const [error, setError] = useState<string | null>(null); // Estado de erro
+  const [services, setServices] = useState<ServiceType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Novo useEffect para buscar os serviços
   useEffect(() => {
+    // Fetch services from local JSON server
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:3001/services"); // URL do JSON-Server
+        const response = await fetch("http://localhost:3001/services");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -37,12 +37,12 @@ export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => {
       }
     };
     fetchServices();
-  }, []); // Array de dependências vazio para rodar apenas uma vez
+  }, []);
 
-  const servicesToShow = isHome ? services.slice(0, 3) : services; // Agora usa o estado 'services'
+  const servicesToShow = isHome ? services.slice(0, 3) : services; // Limit services if on home page
 
-  // Adicione estados de loading/error na UI
   if (loading) {
+    // Show loading message while fetching
     return (
       <section className="container mx-auto px-4 py-16 text-center">
         <p className="text-barber-brown text-lg">Loading services...</p>
@@ -51,16 +51,20 @@ export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => {
   }
 
   if (error) {
+    // Show error message if fetch fails
     return (
       <section className="container mx-auto px-4 py-16 text-center">
         <p className="text-red-500 text-lg">Error: {error}</p>
-        <p className="text-muted-foreground">Please ensure your JSON-Server is running on http://localhost:3001.</p>
+        <p className="text-muted-foreground">
+          Please ensure your JSON-Server is running on http://localhost:3001.
+        </p>
       </section>
     );
   }
 
   return (
     <section className="container mx-auto px-4 py-16">
+      {/* Section Header */}
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold mb-4 font-serif text-barber-brown">
           Our Premium Services
@@ -72,6 +76,7 @@ export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => {
         </p>
       </div>
 
+      {/* Featured Services Section */}
       <section className="container mx-auto px-4 py-12">
         <h2 className="text-2xl font-bold text-center text-barber-brown mb-8">
           Featured Services
@@ -84,6 +89,7 @@ export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => {
               : "grid-cols-1 md:grid-cols-2"
           }`}
         >
+          {/* Render service cards */}
           {servicesToShow.map((service) => (
             <ServiceCard
               key={service.id}
@@ -96,6 +102,7 @@ export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => {
         </div>
       </section>
 
+      {/* Conditional footer content depending on page */}
       {isHome ? (
         <div className="text-center mt-10">
           <Link href="/services">

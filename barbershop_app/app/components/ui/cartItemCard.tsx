@@ -1,8 +1,9 @@
-// components/ui/CartItemCard.tsx
 import React from 'react';
 import Image from 'next/image';
+
+import { CartItem, ServiceCartItemDetails, ProductCartItemDetails } from '@/app/contexts/CartContext'; 
+
 import { Minus, Plus, Trash2, Clock } from 'lucide-react';
-import { CartItem, ServiceCartItemDetails, ProductCartItemDetails } from '@/app/contexts/CartContext'; // Adjusted path
 
 interface CartItemCardProps {
   item: CartItem;

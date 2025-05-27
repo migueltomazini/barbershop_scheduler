@@ -29,7 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for saved user in localStorage on mount
+    // Check for saved user in localStorage
     const savedUser = localStorage.getItem("barber-user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   }, []);
 
-  // Mock users for demonstration
+  // Mock users for demonstration (client and admin)
   const mockUsers = [
     {
       id: "1",
@@ -65,7 +65,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     if (foundUser) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...userWithoutPassword } = foundUser;
       setUser(userWithoutPassword);
       localStorage.setItem("barber-user", JSON.stringify(userWithoutPassword));

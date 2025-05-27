@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -8,26 +8,30 @@ import { Button } from "../ui/button";
 import { ProductCard } from "../ui/productCard";
 import { Input } from "../ui/input";
 
-import { useCart } from "@/app/contexts/CartContext"; // Ensure this path is correct
+import { useCart } from "@/app/contexts/CartContext";
 
-import { ProductType } from "@/app/types"; // Assuming ProductType is defined elsewhere
+import { ProductType } from "@/app/types";
 import { Search, ShoppingCart, X } from "lucide-react";
 
-type ProductsSectionProps = { // Renamed from ServicesSectionProps for clarity
+type ProductsSectionProps = {
   variant?: "home" | "full";
 };
 
+// Main component for displaying product section (home or full page)
 export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
   const isHome = variant === "home";
 
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
-  const { addItem } = useCart(); // Get addItem from context
+  const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
+    null
+  );
 
+  const { addItem } = useCart();
+
+  // Fetch product data from local server on mount
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -47,28 +51,30 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
     fetchProducts();
   }, []);
 
-  const productsToDisplay = isHome ? products.slice(0, 4) : products; // Use productsToDisplay
+  // Slice only first 4 products for homepage
+  const productsToDisplay = isHome ? products.slice(0, 4) : products;
 
+  // Filter products based on search term
   const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Handle adding a product to cart
   const handleAddToCart = (product: ProductType) => {
     if (product.quantity <= 0) {
       toast.error("This product is out of stock");
       return;
     }
 
-    // Add item to cart using context, now specifying type and description
     addItem({
       id: product.id,
       name: product.name,
       price: product.price,
       image: product.image,
-      type: 'product', // Specify item type as product
-      description: product.description // Pass description
+      type: "product",
+      description: product.description,
     });
 
     toast.success(`${product.name} added to your cart!`);
@@ -76,6 +82,7 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
 
   const handleCloseModal = () => setSelectedProduct(null);
 
+  // Loading state UI
   if (loading) {
     return (
       <section className="bg-barber-cream py-16 text-center">
@@ -86,17 +93,21 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
     );
   }
 
+  // Error state UI
   if (error) {
     return (
       <section className="bg-barber-cream py-16 text-center">
         <div className="container mx-auto px-4">
           <p className="text-red-500 text-lg">Error: {error}</p>
-          <p className="text-muted-foreground">Please ensure your JSON-Server is running on http://localhost:3001.</p>
+          <p className="text-muted-foreground">
+            Please ensure your JSON-Server is running on http://localhost:3001.
+          </p>
         </div>
       </section>
     );
   }
 
+  // Homepage layout: intro text + product grid + CTA button
   if (isHome) {
     return (
       <section className="bg-barber-cream py-16">
@@ -106,12 +117,13 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
               Shop Premium Products
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Maintain your style with our selection of professional grooming products used by our barbers.
+              Maintain your style with our selection of professional grooming
+              products used by our barbers.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {productsToDisplay.map((product) => ( // Use productsToDisplay
+            {productsToDisplay.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -128,6 +140,7 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
     );
   }
 
+  // Full product catalog layout with search and filter
   return (
     <div className="container mx-auto px-4 py-12 relative">
       <div className="text-center mb-12">
@@ -135,13 +148,18 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
           Premium Barber Products
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Shop our collection of professional barber products, from styling tools to grooming essentials.
+          Shop our collection of professional barber products, from styling
+          tools to grooming essentials.
         </p>
       </div>
 
+      {/* Search bar input */}
       <div className="flex justify-center mb-8">
         <div className="relative w-full max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+            size={18}
+          />
           <Input
             type="text"
             placeholder="Search products..."
@@ -152,6 +170,7 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
         </div>
       </div>
 
+      {/* Filtered product grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredProducts.map((product) => (
           <div
@@ -160,22 +179,33 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
             onClick={() => setSelectedProduct(product)}
           >
             <div className="h-48 bg-gray-100 flex items-center justify-center">
-              <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+              <img
+                src={product.image}
+                alt={product.name}
+                className="h-full w-full object-cover"
+              />
             </div>
             <div className="p-4">
-              <h3 className="font-bold text-lg mb-1 text-barber-navy">{product.name}</h3>
-              <p className="text-barber-gold font-medium mb-2">${product.price.toFixed(2)}</p>
+              <h3 className="font-bold text-lg mb-1 text-barber-navy">
+                {product.name}
+              </h3>
+              <p className="text-barber-gold font-medium mb-2">
+                ${product.price.toFixed(2)}
+              </p>
               <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                 {product.description}
               </p>
               <span className="text-xs text-muted-foreground">
-                {product.quantity > 0 ? `${product.quantity} in stock` : "Out of stock"}
+                {product.quantity > 0
+                  ? `${product.quantity} in stock`
+                  : "Out of stock"}
               </span>
             </div>
           </div>
         ))}
       </div>
 
+      {/* No results message */}
       {filteredProducts.length === 0 && (
         <div className="text-center py-12">
           <h3 className="text-xl font-medium mb-2">No products found</h3>
@@ -185,6 +215,7 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
         </div>
       )}
 
+      {/* Product details modal */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
@@ -195,11 +226,19 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
               <X size={20} />
             </button>
             <div className="mb-4">
-              <img src={selectedProduct.image} alt={selectedProduct.name} className="w-full h-48 object-cover rounded" />
+              <img
+                src={selectedProduct.image}
+                alt={selectedProduct.name}
+                className="w-full h-48 object-cover rounded"
+              />
             </div>
             <h2 className="text-xl font-bold mb-2">{selectedProduct.name}</h2>
-            <p className="text-barber-gold font-semibold mb-2">${selectedProduct.price.toFixed(2)}</p>
-            <p className="text-muted-foreground mb-4">{selectedProduct.description}</p>
+            <p className="text-barber-gold font-semibold mb-2">
+              ${selectedProduct.price.toFixed(2)}
+            </p>
+            <p className="text-muted-foreground mb-4">
+              {selectedProduct.description}
+            </p>
             <div className="flex justify-end">
               <Button
                 onClick={(e) => {

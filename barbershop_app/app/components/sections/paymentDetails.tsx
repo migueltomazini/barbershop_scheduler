@@ -1,18 +1,20 @@
-// app/components/cart/PaymentForm.tsx
 "use client";
 
 import React from "react";
 import Link from "next/link";
-import { Button } from "@/app/components/ui/button";
-import { Input } from "@/app/components/ui/input";
+
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+
 import { CreditCard, LogIn } from "lucide-react";
 
+// Props interface for the PaymentForm component
 interface PaymentFormProps {
   isAuthenticated: boolean;
   cardName: string;
   setCardName: (value: string) => void;
-  cardNumber: string;
+  cardNumber: string; 
   setCardNumber: (value: string) => void;
   cardExpiry: string;
   setCardExpiry: (value: string) => void;
@@ -20,10 +22,11 @@ interface PaymentFormProps {
   setCardCVC: (value: string) => void;
   isProcessing: boolean;
   handleCheckout: (e: React.FormEvent) => void;
-  totalPrice: number; // Needed for the "Pay $" button
+  totalPrice: number;
   cartIsEmpty: boolean;
 }
 
+// Main payment form component
 export const PaymentForm: React.FC<PaymentFormProps> = ({
   isAuthenticated,
   cardName,
@@ -41,29 +44,40 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
 }) => {
   return (
     <div className="bg-white rounded-lg shadow-md border border-barber-cream p-6">
+      {/* If user is not authenticated, show login prompt */}
       {!isAuthenticated ? (
         <div className="text-center py-4">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Login Necessário</h2>
+          <h2 className="text-xl font-bold mb-4 text-gray-800">
+            Login Required
+          </h2>
           <p className="text-muted-foreground mb-4">
-            Por favor, faça login para completar sua compra.
+            Please log in to complete your purchase.
           </p>
+          {/* Redirects to login page with a redirect back to cart after login */}
           <Link href="/login?redirect=/cart">
             <Button className="w-full bg-barber-brown hover:bg-barber-dark-brown text-white">
               <LogIn className="h-4 w-4 mr-2" />
-              Fazer Login para Continuar
+              Login to Continue
             </Button>
           </Link>
         </div>
       ) : (
+        // Show the payment form
         <form onSubmit={handleCheckout}>
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Detalhes do Pagamento</h2>
+          <h2 className="text-xl font-bold mb-4 text-gray-800">
+            Payment Details
+          </h2>
           <div className="space-y-4">
+            {/* Cardholder Name Input */}
             <div>
-              <Label htmlFor="payment-cardName" className="text-sm font-medium text-gray-700">
-                Nome no Cartão
+              <Label
+                htmlFor="payment-cardName"
+                className="text-sm font-medium text-gray-700"
+              >
+                Name on Card
               </Label>
               <Input
-                id="payment-cardName" // Unique ID if Label is also outside a shared parent
+                id="payment-cardName"
                 type="text"
                 placeholder="John Doe"
                 value={cardName}
@@ -73,9 +87,14 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                 autoComplete="cc-name"
               />
             </div>
+
+            {/* Card Number Input */}
             <div>
-              <Label htmlFor="payment-cardNumber" className="text-sm font-medium text-gray-700">
-                Número do Cartão
+              <Label
+                htmlFor="payment-cardNumber"
+                className="text-sm font-medium text-gray-700"
+              >
+                Card Number
               </Label>
               <Input
                 id="payment-cardNumber"
@@ -89,15 +108,20 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                 inputMode="numeric"
               />
             </div>
+
+            {/* Expiration Date and CVC Inputs (side-by-side) */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="payment-cardExpiry" className="text-sm font-medium text-gray-700">
-                  Validade
+                <Label
+                  htmlFor="payment-cardExpiry"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Expiration Date
                 </Label>
                 <Input
                   id="payment-cardExpiry"
                   type="text"
-                  placeholder="MM/AA"
+                  placeholder="MM/YY"
                   value={cardExpiry}
                   onChange={(e) => setCardExpiry(e.target.value)}
                   className="mt-1 border-barber-cream focus:ring-barber-gold focus:border-barber-gold"
@@ -106,7 +130,10 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                 />
               </div>
               <div>
-                <Label htmlFor="payment-cardCVC" className="text-sm font-medium text-gray-700">
+                <Label
+                  htmlFor="payment-cardCVC"
+                  className="text-sm font-medium text-gray-700"
+                >
                   CVC
                 </Label>
                 <Input
@@ -122,22 +149,27 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                 />
               </div>
             </div>
+
+            {/* Submit Payment Button */}
             <Button
               type="submit"
               className="w-full bg-barber-gold hover:bg-barber-dark-gold text-white py-3 text-lg font-semibold mt-4"
               disabled={isProcessing || cartIsEmpty}
             >
               {isProcessing ? (
-                "Processando..."
+                "Processing..."
               ) : (
                 <>
                   <CreditCard className="h-5 w-5 mr-2" />
-                  Pagar ${totalPrice.toFixed(2)}
+                  Pay ${totalPrice.toFixed(2)}
                 </>
               )}
             </Button>
+
+            {/* Disclaimer note */}
             <p className="text-xs text-muted-foreground text-center mt-2">
-              Apenas para fins de demonstração. Nenhum pagamento real será processado.
+              For demonstration purposes only. No actual payment will be
+              processed.
             </p>
           </div>
         </form>

@@ -4,14 +4,14 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 // Define more specific item types
 export type ProductCartItemDetails = {
-  type: 'product';
-  description?: string; // Products might have descriptions
+  type: "product";
+  description?: string;
 };
 
 export type ServiceCartItemDetails = {
-  type: 'service';
-  duration?: string; // Services have duration
-  icon?: string;     // Services might have an icon
+  type: "service";
+  duration?: string;
+  icon?: string;
 };
 
 // Base item structure
@@ -24,17 +24,22 @@ type BaseCartItem = {
 };
 
 // Union type for CartItem
-export type CartItem = BaseCartItem & (ProductCartItemDetails | ServiceCartItemDetails);
+export type CartItem = BaseCartItem &
+  (ProductCartItemDetails | ServiceCartItemDetails);
 
 // Type for item being added (quantity is handled by addItem)
-export type ItemToAdd = Omit<BaseCartItem, "quantity"> & (ProductCartItemDetails | ServiceCartItemDetails);
-
+export type ItemToAdd = Omit<BaseCartItem, "quantity"> &
+  (ProductCartItemDetails | ServiceCartItemDetails);
 
 type CartContextType = {
   items: CartItem[];
-  addItem: (item: ItemToAdd) => void; // Updated to accept the new ItemToAdd type
-  removeItem: (id: number, type: 'product' | 'service') => void; // Need type to uniquely identify if IDs can overlap
-  updateQuantity: (id: number, type: 'product' | 'service', quantity: number) => void; // Need type
+  addItem: (item: ItemToAdd) => void;
+  removeItem: (id: number, type: "product" | "service") => void;
+  updateQuantity: (
+    id: number,
+    type: "product" | "service",
+    quantity: number
+  ) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -46,7 +51,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
-    // Load cart from localStorage on mount
+    // Load cart from localStorage
     const savedCart = localStorage.getItem("barber-cart");
     if (savedCart) {
       setItems(JSON.parse(savedCart));
@@ -60,7 +65,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = (itemToAdd: ItemToAdd) => {
     setItems((prevItems) => {
-      // Check if item already exists in cart (matching by id and type)
+      // Check if item already exists in cart
       const existingItemIndex = prevItems.findIndex(
         (i) => i.id === itemToAdd.id && i.type === itemToAdd.type
       );
@@ -71,19 +76,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         updatedItems[existingItemIndex].quantity += 1;
         return updatedItems;
       } else {
-        // Add new item with quantity 1
+        // Add new item
         return [...prevItems, { ...itemToAdd, quantity: 1 }];
       }
     });
   };
 
-  const removeItem = (id: number, type: 'product' | 'service') => {
+  const removeItem = (id: number, type: "product" | "service") => {
     setItems((prevItems) =>
       prevItems.filter((item) => !(item.id === id && item.type === type))
     );
   };
 
-  const updateQuantity = (id: number, type: 'product' | 'service', quantity: number) => {
+  const updateQuantity = (
+    id: number,
+    type: "product" | "service",
+    quantity: number
+  ) => {
     if (quantity <= 0) {
       removeItem(id, type);
       return;

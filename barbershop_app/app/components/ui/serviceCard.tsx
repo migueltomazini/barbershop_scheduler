@@ -2,12 +2,12 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import { Calendar, Clock } from "lucide-react";
 import { Button } from "./button";
 import { ServiceType } from "../../types";
 
-import { Scissors, Brush, ShowerHead, Sparkles, Baby } from "lucide-react";
+import { Calendar, Clock, Scissors, Brush, ShowerHead, Sparkles, Baby } from "lucide-react";
 
+// Handles services icons
 const IconMap: { [key: string]: React.ElementType } = {
   Scissors: Scissors,
   Brush: Brush,
@@ -55,7 +55,7 @@ export const ServiceCard = ({
           <LucideIcon className="h-16 w-16 mx-auto" />{" "}
         </div>
       ) : (
-        // Fallback se não houver imagem nem ícone válido
+        // Fallback for missing image or icon
         <div className="relative w-full h-48 bg-gray-100 flex items-center justify-center text-muted-foreground">
           No Visual Available
         </div>
@@ -90,7 +90,7 @@ export const ServiceCard = ({
           {service.description}
         </p>
 
-        {/* Show booking button if required */}
+        {/* Booking button */}
         {showButton && (
           <Link href="/appointments">
             <Button className="bg-barber-brown hover:bg-barber-dark-brown">

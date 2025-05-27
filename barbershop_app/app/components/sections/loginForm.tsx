@@ -1,35 +1,43 @@
-// app/components/auth/LoginForm.tsx
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link"; // Use Next.js Link
+import Link from "next/link";
+
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
-import { Eye, EyeOff } from "lucide-react"; // For password visibility
 
+import { Eye, EyeOff } from "lucide-react";
+
+// Props for the login form
 interface LoginFormProps {
-  onSubmit: (email: string, password: string) => Promise<void>; // The submission handler from the parent
+  onSubmit: (email: string, password: string) => Promise<void>;
   isLoading: boolean;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading }) => {
+// Login form component
+export const LoginForm: React.FC<LoginFormProps> = ({
+  onSubmit,
+  isLoading,
+}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  // Handles the form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(email, password); // Call the passed onSubmit function
+    onSubmit(email, password);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Email input section */}
       <div className="space-y-2">
-        <Label htmlFor="login-email">Email</Label> {/* Unique ID */}
+        <Label htmlFor="login-email">Email</Label>
         <Input
           id="login-email"
-          type="text" // Changed from email to text to allow "admin" as username as per mock
+          type="text"
           placeholder="Email ou nome de usuário"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -39,10 +47,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading }) => 
         />
       </div>
 
+      {/* Password input section with show/hide toggle and link to password recovery */}
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <Label htmlFor="login-password">Senha</Label> {/* Unique ID */}
-          <Link href="/forgot-password"> {/* Placeholder link */}
+          <Label htmlFor="login-password">Senha</Label>
+          <Link href="/forgot-password">
             <span className="text-sm text-barber-brown hover:underline cursor-pointer">
               Esqueceu a senha?
             </span>
@@ -56,7 +65,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading }) => 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="border-barber-cream focus:border-barber-brown focus:ring-barber-brown pr-10" // Add padding for icon
+            className="border-barber-cream focus:border-barber-brown focus:ring-barber-brown pr-10"
             autoComplete="current-password"
           />
           <button
@@ -70,6 +79,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading }) => 
         </div>
       </div>
 
+      {/* Submit button with loading state */}
       <Button
         type="submit"
         className="w-full bg-barber-brown hover:bg-barber-dark-brown text-white py-3 text-lg"
