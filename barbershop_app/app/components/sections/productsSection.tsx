@@ -1,40 +1,38 @@
 "use client"
 
-import React, { useState, useEffect } from "react"; // Adicione useEffect
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 
 import { Button } from "../ui/button";
 import { ProductCard } from "../ui/productCard";
 import { Input } from "../ui/input";
-// import { mockProducts } from "@/app/data/mockProducts"; // Remova esta linha
 
-import { useCart } from "@/app/contexts/CartContext";
+import { useCart } from "@/app/contexts/CartContext"; // Ensure this path is correct
 
-import { ProductType } from "@/app/types";
+import { ProductType } from "@/app/types"; // Assuming ProductType is defined elsewhere
 import { Search, ShoppingCart, X } from "lucide-react";
 
-type ServicesSectionProps = {
+type ProductsSectionProps = { // Renamed from ServicesSectionProps for clarity
   variant?: "home" | "full";
 };
 
-export const ProductsSection = ({ variant = "home" }: ServicesSectionProps) => {
+export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
   const isHome = variant === "home";
 
-  const [products, setProducts] = useState<ProductType[]>([]); // Estado para os produtos
-  const [loading, setLoading] = useState(true); // Estado de carregamento
-  const [error, setError] = useState<string | null>(null); // Estado de erro
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
-  const { addItem } = useCart();
+  const { addItem } = useCart(); // Get addItem from context
 
-  // Novo useEffect para buscar os produtos
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:3001/products"); // URL do JSON-Server
+        const response = await fetch("http://localhost:3001/products");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -47,28 +45,30 @@ export const ProductsSection = ({ variant = "home" }: ServicesSectionProps) => {
       }
     };
     fetchProducts();
-  }, []); // Array de dependências vazio para rodar apenas uma vez
+  }, []);
 
-  const servicesToShow = isHome ? products.slice(0, 4) : products; // Agora usa o estado 'products'
+  const productsToDisplay = isHome ? products.slice(0, 4) : products; // Use productsToDisplay
 
-  const filteredProducts = products.filter( // Agora filtra o estado 'products'
+  const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleAddToCart = (product: ProductType) => {
-    // ... (sua lógica existente)
     if (product.quantity <= 0) {
       toast.error("This product is out of stock");
       return;
     }
 
+    // Add item to cart using context, now specifying type and description
     addItem({
       id: product.id,
       name: product.name,
       price: product.price,
       image: product.image,
+      type: 'product', // Specify item type as product
+      description: product.description // Pass description
     });
 
     toast.success(`${product.name} added to your cart!`);
@@ -76,7 +76,6 @@ export const ProductsSection = ({ variant = "home" }: ServicesSectionProps) => {
 
   const handleCloseModal = () => setSelectedProduct(null);
 
-  // Adicione estados de loading/error na UI
   if (loading) {
     return (
       <section className="bg-barber-cream py-16 text-center">
@@ -112,8 +111,8 @@ export const ProductsSection = ({ variant = "home" }: ServicesSectionProps) => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {servicesToShow.map((product) => (
-              <ProductCard key={product.id} product={product} /> // Certifique-se de que ProductCard não tente adicionar ao carrinho aqui
+            {productsToDisplay.map((product) => ( // Use productsToDisplay
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
 
@@ -186,7 +185,6 @@ export const ProductsSection = ({ variant = "home" }: ServicesSectionProps) => {
         </div>
       )}
 
-      {/* Modal */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6 relative">

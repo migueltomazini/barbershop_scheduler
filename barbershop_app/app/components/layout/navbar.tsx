@@ -11,7 +11,6 @@ import {
   X,
   User,
   LogOut,
-  Calendar,
   Scissors
 } from 'lucide-react'
 
@@ -48,7 +47,6 @@ export function Navbar() {
                 href="/appointments"
                 className="text-barber-navy hover:text-barber-brown transition-colors flex items-center gap-1"
               >
-                <Calendar className="h-4 w-4" />
                 <span>Appointments</span>
               </Link>
             )}
@@ -70,7 +68,6 @@ export function Navbar() {
               </Link>
             ) : (
               <div className="flex items-center space-x-3">
-                <span className="text-sm text-muted-foreground">Hello, {user?.name}</span>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -133,7 +130,6 @@ export function Navbar() {
                 className="px-6 py-3 text-barber-navy hover:bg-barber-cream flex items-center gap-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <Calendar className="h-4 w-4" />
                 <span>Appointments</span>
               </Link>
             )}
@@ -153,7 +149,6 @@ export function Navbar() {
               </Link>
             ) : (
               <div className="px-6 py-3 flex flex-col space-y-2">
-                <span className="text-sm text-muted-foreground">Hello, {user?.name}</span>
                 <button
                   onClick={() => {
                     logout()
