@@ -8,8 +8,3 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-
-// Tailwind configuration for dynamic additions
-export const config = {
-  theme: {}
-}
