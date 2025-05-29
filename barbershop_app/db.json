@@ -51,7 +51,7 @@
       "id": "1",
       "name": "Classic Haircut",
       "description": "A traditional cut tailored to your desired style. Includes a refreshing rinse and styling.",
-      "price": 30,
+      "price": 25,
       "duration": "45 min",
       "icon": "Scissors",
       "image": "/images/services/classic_haircut.jpg"
@@ -91,6 +91,18 @@
       "duration": "30 min",
       "icon": "Baby",
       "image": "/images/services/kids_haircut.jpg"
+    }
+  ],
+  "appointments": [
+    {
+      "id": "5608",
+      "clientId": "1",
+      "clientName": "Admin User",
+      "serviceId": 2,
+      "serviceName": "Beard Trim",
+      "date": "2222-02-22",
+      "time": "12:00 PM",
+      "status": "Scheduled"
     }
   ]
 }
