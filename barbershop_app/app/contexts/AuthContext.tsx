@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { toast } from "sonner";
 
 // Allowed user roles
 type UserRole = "client" | "admin";
@@ -14,10 +15,21 @@ type User = {
   address?: string;
 };
 
+type MockUserWithPassword = User & { password?: string }; 
+
+// Type for data passed to signup function
+export type SignupData = {
+    name: string;
+    email: string;
+    phone: string;
+    password?: string; // Password for creating the account
+};
+
 type AuthContextType = {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
+  signup: (signupData: SignupData) => Promise<{ success: boolean; message?: string }>; 
   isAuthenticated: boolean;
   isAdmin: boolean;
 };
@@ -37,12 +49,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   }, []);
 
-  // Mock users for demonstration (client and admin)
-  const mockUsers = [
+  // Store mock users in state so we can add to it
+  const [mockUsers, setMockUsers] = useState<MockUserWithPassword[]>([
     {
       id: "1",
       name: "Admin User",
-      email: "admin",
+      email: "admin", // Using 'admin' as email/username for simplicity
       password: "admin",
       phone: "555-1234",
       role: "admin" as UserRole,
@@ -56,7 +68,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       role: "client" as UserRole,
       address: "123 Main St",
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    // Check for saved user in localStorage on mount
+    const savedUser = localStorage.getItem("barber-user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+    // For now, mockUsers resets on each full page load
+    setLoading(false);
+  }, []);
 
   // Handles login logic by checking credentials against mock data
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -65,12 +87,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     if (foundUser) {
-      const { password, ...userWithoutPassword } = foundUser;
-      setUser(userWithoutPassword);
-      localStorage.setItem("barber-user", JSON.stringify(userWithoutPassword));
+      const { password: _, ...userToStore } = foundUser; 
+      setUser(userToStore);
+      localStorage.setItem("barber-user", JSON.stringify(userToStore));
       return true;
     }
-
     return false;
   };
 
@@ -78,6 +99,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("barber-user");
+    toast.success("Você foi desconectado.");
+  };
+
+  // Signup function (simulated)
+  const signup = async (
+    signupData: SignupData
+  ): Promise<{ success: boolean; message?: string }> => {
+    const { name, email, phone, password } = signupData;
+
+    if (mockUsers.some((u) => u.email === email)) {
+      return { success: false, message: "Este email já está em uso." };
+    }
+
+    // Create a new user object
+    const newUser: MockUserWithPassword = {
+      id: String(mockUsers.length + 1 + Date.now()),
+      name,
+      email,
+      phone,
+      password,
+      role: "client" as UserRole,
+      address: "", 
+    };
+
+    setMockUsers((prevUsers) => [...prevUsers, newUser]);
+
+    const { password: _, ...userToStore } = newUser;
+    setUser(userToStore);
+    localStorage.setItem("barber-user", JSON.stringify(userToStore));
+
+    return { success: true };
   };
 
   const isAuthenticated = !!user;
@@ -85,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, isAuthenticated, isAdmin }}
+      value={{ user, login, logout, signup, isAuthenticated, isAdmin }}
     >
       {!loading && children}
     </AuthContext.Provider>

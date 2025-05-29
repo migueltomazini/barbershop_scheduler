@@ -135,7 +135,7 @@ _(To be added)_
 To set up and run this project locally (Milestone 2 - Client Functionality with Mock Backend):
 
 1.  **Prerequisites:**
-    *   Node.js (v18.x or later recommended)
+    *   Node.js (v18.x or later [text](barbershop_app/app/components/sections)recommended)
     *   npm or yarn
 
 2.  **Clone the Repository:**
