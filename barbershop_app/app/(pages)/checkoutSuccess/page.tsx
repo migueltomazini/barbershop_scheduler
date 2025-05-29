@@ -51,7 +51,7 @@ export default function CheckoutSuccessPage() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <main className="flex-grow container mx-auto px-4 py-16 flex items-center justify-center">
-        <div className="max-w-lg w-full text-center">
+        <div className="max-w-2xl w-1000 text-center">
           <div className="bg-white rounded-lg shadow-xl border border-barber-cream p-8 sm:p-10">
             {/* Success icon */}
             <CheckCircle className="text-green-500 w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6" />

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { toast } from "sonner";
 
 import { Button } from "../ui/button";
 import { ProductCard } from "../ui/productCard";
@@ -63,11 +62,6 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
 
   // Handle adding a product to cart
   const handleAddToCart = (product: ProductType) => {
-    if (product.quantity <= 0) {
-      toast.error("This product is out of stock");
-      return;
-    }
-
     addItem({
       id: product.id,
       name: product.name,
@@ -76,8 +70,6 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
       type: "product",
       description: product.description,
     });
-
-    toast.success(`${product.name} added to your cart!`);
   };
 
   const handleCloseModal = () => setSelectedProduct(null);

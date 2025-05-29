@@ -93,8 +93,8 @@ export const ServiceCard = ({
         {/* Booking button */}
         {showButton && (
           <Link href="/appointments">
-            <Button className="bg-barber-brown hover:bg-barber-dark-brown">
-              <Calendar className="h-4 w-4 mr-2" />
+            <Button className="bg-barber-brown text-white hover:bg-barber-dark-brown">
+              <Calendar className="h-4 w-4 mr-" />
               Book Now
             </Button>
           </Link>

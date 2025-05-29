@@ -22,9 +22,10 @@ export default function CartPage() {
     updateQuantity,
     removeItem,
     clearCart,
+    processCheckout,
     totalPrice,
-    totalItems,
-  } = useCart(); // Get cart data and manipulation functions from context
+    totalItems
+  } = useCart();
 
   const { isAuthenticated } = useAuth();
   const router = useRouter();
@@ -62,12 +63,17 @@ export default function CartPage() {
     setIsProcessing(true);
     toast.loading("Processing your order...", { id: "processing-toast" });
 
-    // Simulate payment processing delay
-    setTimeout(() => {
-      toast.dismiss("processing-toast");
-      toast.success("Payment successful! Redirecting...");
+    const checkoutSuccessful = await processCheckout();
+
+    toast.dismiss("processing-toast"); 
+
+    if (checkoutSuccessful) {
+      toast.success("Payment successful and stock updated! Redirecting...");
       router.push("/checkoutSuccess");
-    }, 2000);
+    } else {
+      toast.error("Checkout failed. Please try again or contact support.");
+    }
+    setIsProcessing(false);
   };
 
   return (

@@ -1,98 +1,93 @@
 {
   "products": [
     {
-      "id": 1,
-      "name": "Premium Hair Pomade",
-      "price": 25.00,
-      "description": "Achieve a perfect, lasting style with our premium, water-based hair pomade. Provides a strong hold with a natural finish, perfect for all hair types.",
-      "image": "/images/products/hair_pomade.jpg",
-      "quantity": 10
-    },
-    {
-      "id": 2,
+      "id": "2",
       "name": "Beard Oil",
-      "price": 19.00,
+      "price": 19,
       "description": "Nourish and soften your beard with our signature beard oil. Infused with natural oils to promote healthy growth and a subtle, masculine scent.",
       "image": "/images/products/beard_oil.jpg",
-      "quantity": 8
+      "quantity": 7998,
+      "soldQuantity": 2
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Shaving Cream",
-      "price": 15.00,
+      "price": 15,
       "description": "Experience a smooth, irritation-free shave with our rich and luxurious shaving cream. Creates a thick lather for ultimate razor glide.",
       "image": "/images/products/shaving_cream.jpg",
-      "quantity": 12
+      "quantity": 12,
+      "soldQuantity": 0
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Aftershave Balm",
-      "price": 22.00,
+      "price": 22,
       "description": "Soothe and protect your skin post-shave with our hydrating aftershave balm. Reduces redness and provides a refreshing sensation.",
       "image": "/images/products/aftershave_balm.jpg",
-      "quantity": 7
+      "quantity": 7,
+      "soldQuantity": 0
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Classic Straight Razor",
-      "price": 50.00,
+      "price": 50,
       "description": "Achieve the closest shave with our perfectly balanced classic straight razor. Designed for precision and comfort, a true barber's tool.",
       "image": "/images/products/straight_razor.jpg",
-      "quantity": 3
+      "quantity": 3,
+      "soldQuantity": 0
     },
     {
-      "id": 6,
+      "id": "6",
       "name": "Hair & Beard Brush",
-      "price": 12.00,
+      "price": 12,
       "description": "Keep your hair and beard looking neat and tidy with our high-quality brush. Designed for detangling and styling.",
       "image": "/images/products/brush.jpg",
-      "quantity": 11
+      "quantity": 11,
+      "soldQuantity": 0
     }
   ],
-
-
   "services": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Classic Haircut",
       "description": "A traditional cut tailored to your desired style. Includes a refreshing rinse and styling.",
-      "price": 30.00,
+      "price": 30,
       "duration": "45 min",
       "icon": "Scissors",
       "image": "/images/services/classic_haircut.jpg"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Beard Trim",
       "description": "Expert shaping and grooming for your beard, complete with a hot towel and balm application.",
-      "price": 20.00,
+      "price": 20,
       "duration": "30 min",
       "icon": "Brush",
       "image": "/images/services/beard_trim.jpg"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Hot Towel Shave",
       "description": "Indulge in the ultimate shaving experience with multiple hot towels, pre-shave oil, and a precise straight razor shave.",
-      "price": 45.00,
+      "price": 45,
       "duration": "60 min",
       "icon": "ShowerHead",
       "image": "/images/services/hot_towel_shave.jpg"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Facial Grooming",
       "description": "Rejuvenate your skin with a cleansing facial, exfoliation, and a relaxing massage.",
-      "price": 35.00,
+      "price": 35,
       "duration": "45 min",
       "icon": "Sparkles",
       "image": "/images/services/facial_grooming.jpg"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Kids Haircut",
       "description": "A stylish and comfortable haircut for our younger gentlemen.",
-      "price": 25.00,
+      "price": 25,
       "duration": "30 min",
       "icon": "Baby",
       "image": "/images/services/kids_haircut.jpg"
