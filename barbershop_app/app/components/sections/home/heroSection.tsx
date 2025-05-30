@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { Calendar } from "lucide-react";
 
 // Hero section with background image and CTA buttons

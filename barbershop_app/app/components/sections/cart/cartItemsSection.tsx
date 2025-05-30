@@ -1,9 +1,9 @@
 import React from "react";
 import Link from "next/link";
 
-import { CartItemCard } from "../ui/cartItemCard";
+import { CartItemCard } from "../../ui/cartItemCard";
 import { CartItem } from "@/app/contexts/CartContext";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 interface CartItemsSectionProps {
   items: CartItem[];

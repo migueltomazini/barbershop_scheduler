@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 // Call-to-action section encouraging users to book an appointment
 export const CtaSection = () => {
