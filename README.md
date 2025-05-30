@@ -124,11 +124,18 @@ The project uses React for building components, Next.js for routing and structur
 
 ## Test Plan
 
-_(To be added)_
+- Tested admin login with "admin/admin": successfully redirected to a page with access to the "Appointments" and "Dashboard" sections via the navigation bar.
+- Tested client login with "client@example.com/password": successfully redirected to a page with access to the "Appointments" section via the navigation bar.
+- Tested adding and removing products in the cart: the cart updated dynamically and changes were correctly reflected in localStorage. Users can add products by clicking the "+" button, decrease quantity with the "-" button, or remove the item completely using the "Remove" button — all located in the same box as the product.
+- Tested adding products from both the Home and Shop pages: clicking "Add to Cart" increases the quantity in the cart by 1 (if the product is still in stock).
+- Tested appointment scheduling: clients can schedule an appointment either from the "Appointments" page or by scrolling to the bottom of the Home page and clicking the "Book your appointment" button. Anyone can schedule an appointment, but since there is no database connection yet, appointments are not saved or displayed on the admin dashboard.
+- Tested checkout process without providing credit card information: the system correctly displays a message prompting the user to enter valid payment data.
+- Tested responsive design using Chrome Developer Tools: all UI components adapted properly to different screen sizes.
+
 
 ## Test Results
 
-_(To be added)_
+All manual tests were successfully completed. Implemented features (mock login, cart functionality, product listing, and checkout simulation) worked as expected. No critical bugs were found. Minor layout adjustments were made to improve responsiveness on small screens.
 
 ## Build Procedures
 
@@ -174,8 +181,8 @@ The application should now be running, with client-side functionalities interact
 
 ## Problems
 
-_(To be added)_
+No problems encountered during the implementation of Milestones 1 and 2.
 
 ## Comments
 
-_(To be added)_
+Only the first step of the extra functionality was implemented. From the user's perspective, it is possible to schedule an appointment. However, on the admin dashboard, the "Services", "Clients", and "Appointments" tabs are not yet functional. These features are planned to be completed in the next milestone, as they depend on database integration.
