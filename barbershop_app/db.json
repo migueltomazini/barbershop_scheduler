@@ -6,7 +6,7 @@
       "price": 19,
       "description": "Nourish and soften your beard with our signature beard oil. Infused with natural oils to promote healthy growth and a subtle, masculine scent.",
       "image": "/images/products/beard_oil.jpg",
-      "quantity": 7998,
+      "quantity": 7996,
       "soldQuantity": 2
     },
     {
@@ -34,7 +34,7 @@
       "description": "Achieve the closest shave with our perfectly balanced classic straight razor. Designed for precision and comfort, a true barber's tool.",
       "image": "/images/products/straight_razor.jpg",
       "quantity": 3,
-      "soldQuantity": 0
+      "soldQuantity": 3
     },
     {
       "id": "6",

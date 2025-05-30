@@ -91,13 +91,14 @@ export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => {
         >
           {/* Render service cards */}
           {servicesToShow.map((service) => (
-            <ServiceCard
-              key={service.id}
-              service={service}
-              variant={isHome ? "carousel" : "detailed"}
-              icon={isHome ? service.icon : undefined}
-              showButton={!isHome}
-            />
+            <Link key={service.id} href="/services" className="block">
+              <ServiceCard
+                service={service}
+                variant={isHome ? "carousel" : "detailed"}
+                icon={isHome ? service.icon : undefined}
+                showButton={!isHome}
+              />
+            </Link>
           ))}
         </div>
       </section>
