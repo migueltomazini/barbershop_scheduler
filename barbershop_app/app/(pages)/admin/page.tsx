@@ -1,206 +1,250 @@
-// app/(pages)/admin/page.tsx
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { format, parseISO } from "date-fns"; // For date formatting
 
 import { useAuth, MockUserWithPassword } from "@/app/contexts/AuthContext";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/app/components/ui/tabs";
-import { Button } from "@/app/components/ui/button";
-import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from "@/app/components/ui/dialog";
 
+import { Tabs, TabsContent } from "@/app/components/ui/tabs";
 import { Navbar } from "@/app/components/layout/navbar";
 import { Footer } from "@/app/components/layout/footer";
+import { AdminDashboardHeader } from "@/app/components/sections/admin/adminDashboardHeader";
+import { AppointmentManagementTab } from "@/app/components/sections/admin/appointmentManagementTab";
+import { ClientManagementTab } from "@/app/components/sections/admin/clientManagementTab";
+import { EditAppointmentModal } from "@/app/components/sections/admin/editAppointmentModal";
+import { EditClientModal } from "@/app/components/sections/admin/editClientModal";
+import { EditProductModal } from "@/app/components/sections/admin/editProductModal";
+import { EditServiceModal } from "@/app/components/sections/admin/editServiceModal";
+import { ProductManagementTab } from "@/app/components/sections/admin/productManagementTab";
+import { ServiceManagementTab } from "@/app/components/sections/admin/serviceManagementTab";
 
-import {
-  Users,
-  Package,
-  Scissors,
-  Calendar as CalendarIconLucide,
-  Edit,
-  Trash,
-  Plus,
-  Search,
-} from "lucide-react";
-
-// --- TYPE DEFINITIONS ---
-interface ProductType {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-  soldQuantity?: number;
-  image?: string;
-  description?: string;
-}
-
-interface ServiceType {
-  id: number;
-  name: string;
-  price: number;
-  duration: string;
-  description?: string;
-  icon?: string;
-  image?: string;
-}
-
-interface ClientType {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: "client" | "admin";
-  address?: string;
-}
-
-interface AppointmentType {
-  id: number | string;
-  clientId: string;
-  clientName?: string;
-  serviceId: number;
-  serviceName?: string;
-  date: string;
-  time: string;
-  status: "Scheduled" | "Completed" | "Cancelled" | "Pending";
-  notes?: string;
-}
+import { ProductType, ServiceType, Client, Appointment } from "@/app/types";
 
 const API_BASE_URL = "http://localhost:3001";
 
-export default function Admin() {
-  // Correct component name
+// Helper function to capitalize the first letter of a status string
+const capitalizeStatus = (
+  status: Appointment["status"]
+): Appointment["status"] => {
+  if (!status) return "pending";
+  const capitalized = status.charAt(0).toUpperCase() + status.slice(1);
+  if (
+    ["Scheduled", "Completed", "Cancelled", "Pending"].includes(capitalized)
+  ) {
+    return capitalized as Appointment["status"];
+  }
+  return "pending";
+};
+
+// Helper function to convert a status string to lowercase
+const decapitalizeStatus = (
+  status: Appointment["status"]
+): Appointment["status"] => {
+  if (!status) return "pending";
+  const lower = status.toLowerCase();
+  if (["scheduled", "completed", "cancelled", "pending"].includes(lower)) {
+    return lower as Appointment["status"];
+  }
+  return "pending";
+};
+
+export default function AdminPage() {
   const { isAdmin, user, mockUsers: allAuthUsers } = useAuth();
   const router = useRouter();
 
+  // State variables for managing different types of data
   const [products, setProducts] = useState<ProductType[]>([]);
   const [services, setServices] = useState<ServiceType[]>([]);
-  const [clients, setClients] = useState<ClientType[]>([]);
-  const [appointments, setAppointments] = useState<AppointmentType[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
+  // State variables for UI control and data fetching status
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("products");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // State variables for product editing modal
   const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductType | null>(
     null
   );
-  const [newStock, setNewStock] = useState<number>(0);
 
+  // State variables for service editing modal
   const [isEditServiceModalOpen, setIsEditServiceModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<ServiceType | null>(
     null
   );
-  const [serviceForm, setServiceForm] = useState<Partial<ServiceType>>({
-    name: "",
-    price: 0,
-    duration: "",
-  });
 
+  // State variables for client editing modal
   const [isEditClientModalOpen, setIsEditClientModalOpen] = useState(false);
-  const [editingClient, setEditingClient] = useState<ClientType | null>(null);
-  const [clientForm, setClientForm] = useState<Partial<ClientType>>({});
+  const [editingClient, setEditingClient] = useState<Client | null>(null);
 
+  // State variables for appointment editing modal
   const [isEditAppointmentModalOpen, setIsEditAppointmentModalOpen] =
     useState(false);
   const [editingAppointment, setEditingAppointment] =
-    useState<AppointmentType | null>(null);
-  const [appointmentForm, setAppointmentForm] = useState<
-    Partial<AppointmentType>
-  >({});
+    useState<Appointment | null>(null);
 
+  // Effect to redirect non-admin users
   useEffect(() => {
-    if (user !== undefined) {
-      if (!isAdmin) {
-        toast.error("Access Denied. Redirecting to home page.");
-        router.push("/");
-      }
+    if (user !== undefined && !isAdmin) {
+      toast.error("Access Denied. Redirecting to home page.");
+      router.push("/");
     }
   }, [isAdmin, user, router]);
 
+  // Callback to fetch all administrative data (products, services, appointments, clients)
   const fetchData = useCallback(async () => {
-    if (!isAdmin) {
+    if (!isAdmin && user !== undefined) {
       setLoadingData(false);
       return;
     }
     setLoadingData(true);
     setError(null);
     try {
-      const [productsRes, servicesRes, appointmentsRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/products`),
-        fetch(`${API_BASE_URL}/services`),
-        fetch(`${API_BASE_URL}/appointments`),
-      ]);
+      const [productsRes, servicesRes, appointmentsResFromAPI] =
+        await Promise.all([
+          fetch(`${API_BASE_URL}/products`),
+          fetch(`${API_BASE_URL}/services`),
+          fetch(`${API_BASE_URL}/appointments`),
+        ]);
 
       if (!productsRes.ok) throw new Error("Failed to fetch products");
-      setProducts(await productsRes.json());
+      const productsData = await productsRes.json();
+      setProducts(
+        productsData.map((p: any) => ({
+          ...p,
+          type: "product",
+        })) as ProductType[]
+      );
+
       if (!servicesRes.ok) throw new Error("Failed to fetch services");
-      setServices(await servicesRes.json());
-      if (!appointmentsRes.ok) throw new Error("Failed to fetch appointments"); // Check appointments response
-      setAppointments(await appointmentsRes.json());
+      const servicesData = await servicesRes.json();
+      setServices(
+        servicesData.map((s: any) => ({
+          ...s,
+          duration: parseInt(s.duration, 10) || 0,
+          type: "service",
+        })) as ServiceType[]
+      );
+
+      if (!appointmentsResFromAPI.ok)
+        throw new Error("Failed to fetch appointments");
+      const appointmentsData = await appointmentsResFromAPI.json();
+      setAppointments(
+        appointmentsData.map(
+          (a: any): Appointment => ({
+            id: Number(a.id),
+            clientId: Number(a.clientId),
+            clientName: a.clientName || `Client ID: ${a.clientId}`,
+            serviceId: Number(a.serviceId),
+            serviceName: a.serviceName || `Service ID: ${a.serviceId}`,
+            date: a.date,
+            time: a.time || "",
+            status:
+              (a.status?.toLowerCase() as Appointment["status"]) || "scheduled",
+          })
+        )
+      );
 
       if (allAuthUsers) {
-        const clientUsers = allAuthUsers
-          .filter((u: MockUserWithPassword) => u.role === "client")
-          .map((u: MockUserWithPassword) => {
+        const manageableUsers = allAuthUsers.map(
+          (u: MockUserWithPassword): Client => {
             const { password, ...clientData } = u;
-            return clientData as ClientType;
-          });
-        setClients(clientUsers);
+            return {
+              ...clientData,
+              id: String(clientData.id),
+              name: clientData.name || `User ${clientData.id}`,
+              email: clientData.email,
+              phone: clientData.phone || "",
+              role:
+                clientData.role === "admin" || clientData.role === "client"
+                  ? clientData.role
+                  : "client",
+              address: clientData.address || "",
+            } as Client;
+          }
+        );
+        setClients(manageableUsers);
       } else {
         console.warn(
           "Client data (allAuthUsers) not available from AuthContext."
         );
+        setClients([]);
       }
     } catch (err: any) {
       const errorMessage =
-        err.message || "Failed to load data. Ensure json-server is running.";
+        err.message || "Failed to load data. Check if json-server is running.";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
       setLoadingData(false);
     }
-  }, [isAdmin, allAuthUsers]);
+  }, [isAdmin, allAuthUsers, user]);
 
+  // Effect to trigger data fetching when admin status changes or on component mount
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (isAdmin) {
+      fetchData();
+    } else if (user !== undefined && !isAdmin) {
+      setLoadingData(false);
+    }
+  }, [fetchData, isAdmin, user]);
 
-  const filterByName = (item: { name: string }, term: string) =>
-    item.name.toLowerCase().includes(term.toLowerCase());
-  const filteredProducts = products.filter((p) => filterByName(p, searchTerm));
-  const filteredServices = services.filter((s) => filterByName(s, searchTerm));
-  const filteredClients = clients.filter(
-    (c) =>
-      filterByName(c, searchTerm) ||
-      (c.email && c.email.toLowerCase().includes(searchTerm.toLowerCase()))
+  // Helper function for filtering items by name, email, or role
+  const filterByNameOrEmail = (
+    item: { name: string; email?: string; role?: string },
+    term: string
+  ) =>
+    item.name.toLowerCase().includes(term.toLowerCase()) ||
+    (item.email && item.email.toLowerCase().includes(term.toLowerCase())) ||
+    (item.role && item.role.toLowerCase().includes(term.toLowerCase()));
+
+  // Filtered lists for each tab based on search term
+  const filteredProducts = products.filter((p) =>
+    p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const filteredAppointments = appointments.filter(
-    (a) =>
-      (a.clientName &&
-        a.clientName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+  const filteredServices = services.filter((s) =>
+    s.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const filteredClients = clients.filter((c) =>
+    filterByNameOrEmail(c, searchTerm)
+  );
+
+  // Filters appointments based on various fields
+  const filteredAppointments = appointments.filter((a: Appointment) => {
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    return (
+      String(a.id).includes(lowerSearchTerm) ||
+      String(a.clientId).includes(lowerSearchTerm) ||
+      (a.clientName && a.clientName.toLowerCase().includes(lowerSearchTerm)) ||
+      String(a.serviceId).includes(lowerSearchTerm) ||
       (a.serviceName &&
-        a.serviceName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      a.date.includes(searchTerm)
+        a.serviceName.toLowerCase().includes(lowerSearchTerm)) ||
+      a.date.includes(searchTerm) ||
+      a.status.includes(lowerSearchTerm)
+    );
+  });
+
+  // Transforms appointment data for the AppointmentManagementTab component
+  const appointmentsForTab: Appointment[] = filteredAppointments.map(
+    (appt: Appointment): Appointment => {
+      return {
+        id: appt.id,
+        clientId: appt.clientId,
+        clientName: appt.clientName || `Client ID: ${appt.clientId}`,
+        serviceId: appt.serviceId,
+        serviceName: appt.serviceName || `Service ID: ${appt.serviceId}`,
+        date: appt.date,
+        time: appt.time || "N/A",
+        status: capitalizeStatus(appt.status),
+      };
+    }
   );
 
+  // Generic function to make API requests
   const makeApiRequest = async (
     endpoint: string,
     method: string,
@@ -229,6 +273,42 @@ export default function Admin() {
     }
   };
 
+  // --- Product Handlers ---
+  const handleOpenEditProductModal = (product: ProductType) => {
+    setEditingProduct(product);
+    setIsEditProductModalOpen(true);
+  };
+  const handleSaveProductStock = async (
+    productId: number,
+    newStock: number,
+    newPrice: number,
+    currentSoldQuantity?: number
+  ) => {
+    const payloadForApi = {
+      price: newPrice,
+      quantity: newStock,
+      soldQuantity: currentSoldQuantity || 0,
+    };
+    try {
+      const updatedProductFromApi = await makeApiRequest(
+        `/products/${productId}`,
+        "PATCH",
+        payloadForApi,
+        "Product updated successfully!"
+      );
+      if (updatedProductFromApi) {
+        setProducts((prevProducts) =>
+          prevProducts.map((p) =>
+            p.id === productId ? { ...p, ...updatedProductFromApi } : p
+          )
+        );
+        setEditingProduct(null);
+        setIsEditProductModalOpen(false);
+      }
+    } catch (error) {
+      console.error("Failed to save product stock/price:", error);
+    }
+  };
   const handleDeleteProduct = async (productId: number) => {
     if (!confirm(`Are you sure you want to delete this product?`)) return;
     await makeApiRequest(
@@ -239,28 +319,47 @@ export default function Admin() {
     );
     setProducts((prev) => prev.filter((p) => p.id !== productId));
   };
-  const handleOpenEditProductModal = (product: ProductType) => {
-    setEditingProduct(product);
-    setNewStock(product.quantity);
-    setIsEditProductModalOpen(true);
+
+  // --- Service Handlers ---
+  const handleOpenEditServiceModal = (service: ServiceType) => {
+    setEditingService(service);
+    setIsEditServiceModalOpen(true);
   };
-  const handleSaveProductStock = async () => {
-    if (!editingProduct) return;
-    const updatedProduct = await makeApiRequest(
-      `/products/${editingProduct.id}`,
+  const handleSaveService = async (
+    serviceId: number,
+    serviceData: Partial<ServiceType>
+  ) => {
+    const serviceToUpdate = services.find((s) => s.id === serviceId);
+    if (!serviceToUpdate) return;
+    const dataToSave = {
+      ...serviceToUpdate,
+      ...serviceData,
+      duration:
+        Number(serviceData.duration) || Number(serviceToUpdate.duration),
+      type: "service" as "service",
+    };
+    const updatedService = await makeApiRequest(
+      `/services/${serviceId}`,
       "PATCH",
-      { quantity: newStock, soldQuantity: editingProduct.soldQuantity || 0 },
-      "Product stock updated successfully!"
+      dataToSave,
+      "Service updated successfully!"
     );
-    if (updatedProduct) {
-      setProducts((prev) =>
-        prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+    if (updatedService) {
+      setServices((prev) =>
+        prev.map((s) =>
+          s.id === updatedService.id
+            ? {
+                ...updatedService,
+                type: "service",
+                duration: Number(updatedService.duration),
+              }
+            : s
+        )
       );
-      setIsEditProductModalOpen(false);
-      setEditingProduct(null);
+      setEditingService(null);
+      setIsEditServiceModalOpen(false);
     }
   };
-
   const handleDeleteService = async (serviceId: number) => {
     if (!confirm(`Are you sure you want to delete this service?`)) return;
     await makeApiRequest(
@@ -271,147 +370,139 @@ export default function Admin() {
     );
     setServices((prev) => prev.filter((s) => s.id !== serviceId));
   };
-  const handleOpenEditServiceModal = (service: ServiceType) => {
-    setEditingService(service);
-    setServiceForm({
-      id: service.id,
-      name: service.name,
-      price: service.price,
-      duration: service.duration,
-      description: service.description,
-    });
-    setIsEditServiceModalOpen(true);
-  };
-  const handleServiceFormChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setServiceForm((prev) => ({
-      ...prev,
-      [name]: name === "price" ? parseFloat(value) || 0 : value,
-    }));
-  };
-  const handleSaveService = async () => {
-    if (
-      !editingService ||
-      !serviceForm.name ||
-      serviceForm.price == null ||
-      !serviceForm.duration
-    ) {
-      toast.error("Please fill all required service fields.");
-      return;
-    }
-    const serviceDataToSave: Partial<ServiceType> = {
-      name: serviceForm.name,
-      price: Number(serviceForm.price),
-      duration: serviceForm.duration,
-      description: serviceForm.description || "",
-    };
-    const updatedService = await makeApiRequest(
-      `/services/${editingService.id}`,
-      "PATCH",
-      serviceDataToSave,
-      "Service updated successfully!"
-    );
-    if (updatedService) {
-      setServices((prev) =>
-        prev.map((s) => (s.id === updatedService.id ? updatedService : s))
-      );
-      setIsEditServiceModalOpen(false);
-      setEditingService(null);
-      setServiceForm({ name: "", price: 0, duration: "", description: "" });
-    }
-  };
 
-  const handleOpenEditClientModal = (client: ClientType) => {
+  // --- Client Handlers ---
+  const handleOpenEditClientModal = (client: Client) => {
     setEditingClient(client);
-    setClientForm({
-      name: client.name,
-      email: client.email,
-      phone: client.phone,
-      address: client.address,
-    });
     setIsEditClientModalOpen(true);
   };
-  const handleClientFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setClientForm((prev) => ({ ...prev, [name]: value }));
-  };
-  const handleSaveClient = async () => {
-    if (!editingClient || !clientForm.name || !clientForm.email) {
-      toast.error("Client name and email are required.");
-      return;
-    }
-    const updatedClients = clients.map((c) =>
-      c.id === editingClient.id ? { ...c, ...clientForm } : c
+  const handleSaveClient = async (
+    clientId: string,
+    clientData: Partial<Client>
+  ) => {
+    setClients((prevClients) =>
+      prevClients.map((c) => {
+        if (c.id === clientId) {
+          const newRole = clientData.role || c.role;
+          return {
+            ...c,
+            ...clientData,
+            role: newRole,
+          } as Client;
+        }
+        return c;
+      })
     );
-    setClients(updatedClients);
+    const updatedClientName =
+      clientData.name || clients.find((cl) => cl.id === clientId)?.name;
     toast.success(
-      `Client "${clientForm.name}" details updated locally (simulated).`
+      `Client "${updatedClientName}" details (including type/role) updated locally (simulated).`
     );
-    setIsEditClientModalOpen(false);
     setEditingClient(null);
+    setIsEditClientModalOpen(false);
   };
+
   const handleDeleteClient = async (clientId: string) => {
     if (!confirm(`Are you sure you want to delete client ${clientId}?`)) return;
     toast.info(`Client ${clientId} removed from local view (simulated).`);
     setClients((prev) => prev.filter((c) => c.id !== clientId));
   };
 
-  const handleOpenEditAppointmentModal = (appointment: AppointmentType) => {
+  // --- Appointment Handlers ---
+  const handleOpenEditAppointmentModal = (appointment: Appointment) => {
     setEditingAppointment(appointment);
-    const formDate = appointment.date
-      ? format(parseISO(appointment.date), "yyyy-MM-dd")
-      : "";
-    setAppointmentForm({ ...appointment, date: formDate });
     setIsEditAppointmentModalOpen(true);
   };
-  const handleAppointmentFormChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+
+  const handleSaveAppointment = async (
+    appointmentIdFromModal: number | string,
+    dataFromModal: Partial<Appointment>
   ) => {
-    const { name, value } = e.target;
-    setAppointmentForm((prev) => ({ ...prev, [name]: value }));
-  };
-  const handleSaveAppointment = async () => {
     if (
-      !editingAppointment ||
-      !appointmentForm.date ||
-      !appointmentForm.time ||
-      !appointmentForm.status
+      !dataFromModal.date ||
+      !dataFromModal.time ||
+      dataFromModal.time === "N/A" ||
+      !dataFromModal.status ||
+      dataFromModal.clientId === undefined ||
+      dataFromModal.serviceId === undefined
     ) {
-      toast.error("Date, time, and status are required for appointments.");
+      toast.error(
+        "Valid date, time, status, client ID, and service ID are required."
+      );
       return;
     }
-    const appointmentDataToSave: Partial<AppointmentType> = {
-      date: appointmentForm.date,
-      time: appointmentForm.time,
-      status: appointmentForm.status as AppointmentType["status"],
-      notes: appointmentForm.notes || "",
-      // Preserve IDs and names not directly editable in this form
-      clientId: editingAppointment.clientId,
-      clientName: editingAppointment.clientName,
-      serviceId: editingAppointment.serviceId,
-      serviceName: editingAppointment.serviceName,
+
+    const dataToSaveForApi = {
+      clientId: Number(dataFromModal.clientId),
+      clientName: dataFromModal.clientName,
+      serviceId: Number(dataFromModal.serviceId),
+      serviceName: dataFromModal.serviceName,
+      date: dataFromModal.date,
+      time: dataFromModal.time,
+      status: decapitalizeStatus(dataFromModal.status),
     };
-    const updatedAppointment = await makeApiRequest(
-      `/appointments/${editingAppointment.id}`,
-      "PATCH",
-      appointmentDataToSave,
-      "Appointment updated successfully!"
+
+    let method: "POST" | "PATCH";
+    let endpoint: string;
+
+    const existingAppointment = appointments.find(
+      (a) => String(a.id) === String(appointmentIdFromModal)
     );
-    if (updatedAppointment) {
-      setAppointments((prev) =>
-        prev.map((a) =>
-          a.id === updatedAppointment.id ? updatedAppointment : a
-        )
+
+    if (
+      existingAppointment &&
+      !String(appointmentIdFromModal).startsWith("new-")
+    ) {
+      method = "PATCH";
+      endpoint = `/appointments/${appointmentIdFromModal}`;
+    } else {
+      method = "POST";
+      endpoint = "/appointments";
+    }
+
+    try {
+      const savedAppointmentApi = await makeApiRequest(
+        endpoint,
+        method,
+        dataToSaveForApi,
+        `Appointment ${method === "POST" ? "created" : "updated"} successfully!`
       );
-      setIsEditAppointmentModalOpen(false);
-      setEditingAppointment(null);
-      setAppointmentForm({});
+
+      if (savedAppointmentApi) {
+        const finalSavedAppointment: Appointment = {
+          id: Number(savedAppointmentApi.id),
+          clientId: Number(savedAppointmentApi.clientId),
+          clientName:
+            savedAppointmentApi.clientName ||
+            `Client ID: ${savedAppointmentApi.clientId}`,
+          serviceId: Number(savedAppointmentApi.serviceId),
+          serviceName:
+            savedAppointmentApi.serviceName ||
+            `Service ID: ${savedAppointmentApi.serviceId}`,
+          date: savedAppointmentApi.date,
+          time: savedAppointmentApi.time || "",
+          status:
+            (savedAppointmentApi.status?.toLowerCase() as Appointment["status"]) ||
+            "scheduled",
+        };
+
+        if (method === "POST") {
+          setAppointments((prev) => [...prev, finalSavedAppointment]);
+        } else {
+          setAppointments((prev) =>
+            prev.map((a) =>
+              a.id === finalSavedAppointment.id ? finalSavedAppointment : a
+            )
+          );
+        }
+        setIsEditAppointmentModalOpen(false);
+        setEditingAppointment(null);
+      }
+    } catch (error) {
+      console.error("Failed to save appointment:", error);
     }
   };
+
   const handleDeleteAppointment = async (appointmentId: number | string) => {
     if (
       !confirm(`Are you sure you want to delete appointment ${appointmentId}?`)
@@ -423,35 +514,48 @@ export default function Admin() {
       undefined,
       "Appointment deleted successfully!"
     );
-    setAppointments((prev) => prev.filter((a) => a.id !== appointmentId));
+    setAppointments((prev) =>
+      prev.filter((a) => String(a.id) !== String(appointmentId))
+    );
   };
 
+  // Handles adding new items based on the active tab
   const handleGlobalAddItem = () => {
-    const singularTabName = activeTab.endsWith("s")
-      ? activeTab.slice(0, -1)
-      : activeTab;
-    toast.info(
-      `Placeholder: Add new ${singularTabName}. Implement form/modal.`
-    );
+    const singularTabName =
+      activeTab.endsWith("s") && activeTab !== "status"
+        ? activeTab.slice(0, -1)
+        : activeTab;
+
+    if (singularTabName === "appointment") {
+      const defaultClient = clients.length > 0 ? clients[0] : null;
+      const defaultService = services.length > 0 ? services[0] : null;
+
+      const newAppointmentShell: Appointment = {
+        id: Number(`new-${Date.now()}`),
+        clientId: Number(defaultClient ? String(defaultClient.id) : ""),
+        clientName: defaultClient ? defaultClient.name : "Select Client",
+        serviceId: defaultService ? defaultService.id : 0,
+        serviceName: defaultService ? defaultService.name : "Select Service",
+        date: new Date().toISOString().split("T")[0],
+        time: "12:00",
+        status: "scheduled",
+      };
+      setEditingAppointment(newAppointmentShell);
+      setIsEditAppointmentModalOpen(true);
+    } else {
+      toast.info(
+        `Placeholder: Add new ${singularTabName}. Implement form/modal.`
+      );
+    }
   };
 
-  if (loadingData && !user) {
+  // --- Loading and Error States ---
+  if (loadingData && user === undefined) {
     return (
       <div className="flex flex-col min-h-screen">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
-          <p>Loading dashboard...</p>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-  if (!isAdmin && !loadingData && user !== undefined) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow flex items-center justify-center">
-          <p>Access Denied. Redirecting...</p>
+          <p>Initializing dashboard...</p>
         </main>
         <Footer />
       </div>
@@ -462,7 +566,18 @@ export default function Admin() {
       <div className="flex flex-col min-h-screen">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
-          <p>Loading admin data...</p>
+          <p>Loading administrative data...</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+  if (user !== undefined && !isAdmin && !loadingData) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center">
+          <p>Access Denied.</p>
         </main>
         <Footer />
       </div>
@@ -479,14 +594,22 @@ export default function Admin() {
       </div>
     );
   }
+  if (!isAdmin && user !== undefined) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center">
+          <p>Access Denied.</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="container mx-auto px-4 py-12 flex-grow">
-        <h1 className="text-3xl font-bold mb-8 font-serif text-barber-brown">
-          Admin Dashboard
-        </h1>
         <Tabs
           value={activeTab}
           onValueChange={(value) => {
@@ -495,683 +618,69 @@ export default function Admin() {
           }}
           className="w-full"
         >
-          <TabsList className="w-full mb-8 bg-barber-cream grid grid-cols-2 md:grid-cols-4">
-            <TabsTrigger
-              value="products"
-              className="flex-1 data-[state=active]:bg-barber-brown data-[state=active]:text-white"
-            >
-              <Package className="h-4 w-4 mr-2" /> Products
-            </TabsTrigger>
-            <TabsTrigger
-              value="services"
-              className="flex-1 data-[state=active]:bg-barber-brown data-[state=active]:text-white"
-            >
-              <Scissors className="h-4 w-4 mr-2" /> Services
-            </TabsTrigger>
-            <TabsTrigger
-              value="clients"
-              className="flex-1 data-[state=active]:bg-barber-brown data-[state=active]:text-white"
-            >
-              <Users className="h-4 w-4 mr-2" /> Clients
-            </TabsTrigger>
-            <TabsTrigger
-              value="appointments"
-              className="flex-1 data-[state=active]:bg-barber-brown data-[state=active]:text-white"
-            >
-              <CalendarIconLucide className="h-4 w-4 mr-2" /> Appointments
-            </TabsTrigger>
-          </TabsList>
-          <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-            <div className="relative w-full sm:max-w-sm">
-              <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-                size={18}
-              />
-              <Input
-                type="text"
-                placeholder={`Search in ${activeTab}...`}
-                className="pl-10 border-barber-cream w-full"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <Button
-              onClick={handleGlobalAddItem}
-              className="bg-barber-brown hover:bg-barber-dark-brown w-full sm:w-auto"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add {activeTab.endsWith("s") ? activeTab.slice(0, -1) : activeTab}
-            </Button>
-          </div>
-
+          <AdminDashboardHeader
+            activeTab={activeTab}
+            searchTerm={searchTerm}
+            onSearchTermChange={setSearchTerm}
+            onAddItem={handleGlobalAddItem}
+          />
           <TabsContent value="products" className="mt-0">
-            <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
-              <table className="w-full min-w-[600px]">
-                <thead className="bg-barber-cream text-left text-sm text-gray-700">
-                  <tr>
-                    <th className="p-3 sm:p-4 font-semibold">Name</th>
-                    <th className="p-3 sm:p-4 font-semibold">Price</th>
-                    <th className="p-3 sm:p-4 font-semibold">Stock</th>
-                    <th className="p-3 sm:p-4 font-semibold">Sold</th>
-                    <th className="p-3 sm:p-4 font-semibold text-center">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-barber-cream text-sm">
-                  {filteredProducts.length > 0 ? (
-                    filteredProducts.map((product) => (
-                      <tr key={product.id}>
-                        <td className="p-3 sm:p-4 whitespace-nowrap">
-                          {product.name}
-                        </td>
-                        <td className="p-3 sm:p-4">
-                          ${product.price.toFixed(2)}
-                        </td>
-                        <td className="p-3 sm:p-4">{product.quantity}</td>
-                        <td className="p-3 sm:p-4">
-                          {product.soldQuantity || 0}
-                        </td>
-                        <td className="p-3 sm:p-4">
-                          <div className="flex justify-center space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                handleOpenEditProductModal(product)
-                              }
-                              className="text-barber-navy border-barber-navy hover:bg-barber-navy hover:text-white"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDeleteProduct(product.id)}
-                              className="text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
-                            >
-                              <Trash className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={5}
-                        className="text-center p-8 text-muted-foreground"
-                      >
-                        No products found.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <ProductManagementTab
+              products={filteredProducts}
+              onEdit={handleOpenEditProductModal}
+              onDelete={handleDeleteProduct}
+            />
           </TabsContent>
           <TabsContent value="services" className="mt-0">
-            <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
-              <table className="w-full min-w-[500px]">
-                <thead className="bg-barber-cream text-left text-sm text-gray-700">
-                  <tr>
-                    <th className="p-3 sm:p-4 font-semibold">Name</th>
-                    <th className="p-3 sm:p-4 font-semibold">Price</th>
-                    <th className="p-3 sm:p-4 font-semibold">Duration</th>
-                    <th className="p-3 sm:p-4 font-semibold text-center">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-barber-cream text-sm">
-                  {filteredServices.length > 0 ? (
-                    filteredServices.map((service) => (
-                      <tr key={service.id}>
-                        <td className="p-3 sm:p-4 whitespace-nowrap">
-                          {service.name}
-                        </td>
-                        <td className="p-3 sm:p-4">
-                          ${service.price.toFixed(2)}
-                        </td>
-                        <td className="p-3 sm:p-4">{service.duration}</td>
-                        <td className="p-3 sm:p-4">
-                          <div className="flex justify-center space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                handleOpenEditServiceModal(service)
-                              }
-                              className="text-barber-navy border-barber-navy hover:bg-barber-navy hover:text-white"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDeleteService(service.id)}
-                              className="text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
-                            >
-                              <Trash className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={4}
-                        className="text-center p-8 text-muted-foreground"
-                      >
-                        No services found.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <ServiceManagementTab
+              services={filteredServices}
+              onEdit={handleOpenEditServiceModal}
+              onDelete={handleDeleteService}
+            />
           </TabsContent>
           <TabsContent value="clients" className="mt-0">
-            <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
-              <table className="w-full min-w-[700px]">
-                <thead className="bg-barber-cream text-left text-sm text-gray-700">
-                  <tr>
-                    <th className="p-3 sm:p-4 font-semibold">Name</th>
-                    <th className="p-3 sm:p-4 font-semibold">Email</th>
-                    <th className="p-3 sm:p-4 font-semibold">Phone</th>
-                    <th className="p-3 sm:p-4 font-semibold">Address</th>
-                    <th className="p-3 sm:p-4 font-semibold text-center">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-barber-cream text-sm">
-                  {filteredClients.length > 0 ? (
-                    filteredClients.map((client) => (
-                      <tr key={client.id}>
-                        <td className="p-3 sm:p-4 whitespace-nowrap">
-                          {client.name}
-                        </td>
-                        <td className="p-3 sm:p-4 whitespace-nowrap">
-                          {client.email}
-                        </td>
-                        <td className="p-3 sm:p-4">{client.phone}</td>
-                        <td className="p-3 sm:p-4">
-                          {client.address || "N/A"}
-                        </td>
-                        <td className="p-3 sm:p-4">
-                          <div className="flex justify-center space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleOpenEditClientModal(client)}
-                              className="text-barber-navy border-barber-navy hover:bg-barber-navy hover:text-white"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDeleteClient(client.id)}
-                              className="text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
-                            >
-                              <Trash className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={5}
-                        className="text-center p-8 text-muted-foreground"
-                      >
-                        No clients found.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <ClientManagementTab
+              clients={filteredClients}
+              onEdit={handleOpenEditClientModal}
+              onDelete={handleDeleteClient}
+            />
           </TabsContent>
           <TabsContent value="appointments" className="mt-0">
-            <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
-              <table className="w-full min-w-[600px]">
-                <thead className="bg-barber-cream text-left text-sm text-gray-700">
-                  <tr>
-                    <th className="p-3 sm:p-4 font-semibold">Client</th>
-                    <th className="p-3 sm:p-4 font-semibold">Service</th>
-                    <th className="p-3 sm:p-4 font-semibold">Date</th>
-                    <th className="p-3 sm:p-4 font-semibold">Time</th>
-                    <th className="p-3 sm:p-4 font-semibold">Status</th>
-                    <th className="p-3 sm:p-4 font-semibold text-center">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-barber-cream text-sm">
-                  {filteredAppointments.length > 0 ? (
-                    filteredAppointments.map((appt) => (
-                      <tr key={appt.id}>
-                        <td className="p-3 sm:p-4 whitespace-nowrap">
-                          {appt.clientName}
-                        </td>
-                        <td className="p-3 sm:p-4 whitespace-nowrap">
-                          {appt.serviceName}
-                        </td>
-                        <td className="p-3 sm:p-4">
-                          {appt.date
-                            ? format(parseISO(appt.date), "MM/dd/yyyy")
-                            : "N/A"}
-                        </td>
-                        <td className="p-3 sm:p-4">{appt.time}</td>
-                        <td className="p-3 sm:p-4">
-                          <span
-                            className={`px-2 py-1 text-xs font-medium rounded-full ${
-                              appt.status === "Scheduled"
-                                ? "bg-blue-100 text-blue-700"
-                                : appt.status === "Completed"
-                                ? "bg-green-100 text-green-700"
-                                : appt.status === "Cancelled"
-                                ? "bg-red-100 text-red-700"
-                                : "bg-yellow-100 text-yellow-700"
-                            }`}
-                          >
-                            {appt.status}
-                          </span>
-                        </td>
-                        <td className="p-3 sm:p-4">
-                          <div className="flex justify-center space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                handleOpenEditAppointmentModal(appt)
-                              }
-                              className="text-barber-navy border-barber-navy hover:bg-barber-navy hover:text-white"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDeleteAppointment(appt.id)}
-                              className="text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
-                            >
-                              <Trash className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={6}
-                        className="text-center p-8 text-muted-foreground"
-                      >
-                        No appointments found.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <AppointmentManagementTab
+              appointments={appointmentsForTab}
+              onEdit={handleOpenEditAppointmentModal}
+              onDelete={handleDeleteAppointment}
+            />
           </TabsContent>
         </Tabs>
       </main>
       <Footer />
 
-      {editingProduct && (
-        <Dialog
-          open={isEditProductModalOpen}
-          onOpenChange={setIsEditProductModalOpen}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Stock for {editingProduct.name}</DialogTitle>
-            </DialogHeader>
-            <div className="py-4 space-y-2">
-              <div>
-                <Label htmlFor="productStockModalInput" className="block mb-1">
-                  New Stock Quantity:
-                </Label>
-                <Input
-                  id="productStockModalInput"
-                  type="number"
-                  value={newStock}
-                  onChange={(e) =>
-                    setNewStock(Math.max(0, parseInt(e.target.value, 10) || 0))
-                  }
-                  className="border-barber-cream"
-                  min="0"
-                />
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Current stock: {editingProduct.quantity}
-              </p>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsEditProductModalOpen(false)}
-                >
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button
-                onClick={handleSaveProductStock}
-                className="bg-barber-brown hover:bg-barber-dark-brown"
-              >
-                Save Stock
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
-      {editingService && (
-        <Dialog
-          open={isEditServiceModalOpen}
-          onOpenChange={setIsEditServiceModalOpen}
-        >
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Edit Service: {editingService.name}</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label
-                  htmlFor="serviceFormNameModal"
-                  className="text-right col-span-1"
-                >
-                  Name
-                </Label>
-                <Input
-                  id="serviceFormNameModal"
-                  name="name"
-                  value={serviceForm.name || ""}
-                  onChange={handleServiceFormChange}
-                  className="col-span-3 border-barber-cream"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label
-                  htmlFor="serviceFormPriceModal"
-                  className="text-right col-span-1"
-                >
-                  Price
-                </Label>
-                <Input
-                  id="serviceFormPriceModal"
-                  name="price"
-                  type="number"
-                  value={serviceForm.price || ""}
-                  onChange={handleServiceFormChange}
-                  className="col-span-3 border-barber-cream"
-                  step="0.01"
-                  min="0"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label
-                  htmlFor="serviceFormDurationModal"
-                  className="text-right col-span-1"
-                >
-                  Duration
-                </Label>
-                <Input
-                  id="serviceFormDurationModal"
-                  name="duration"
-                  value={serviceForm.duration || ""}
-                  onChange={handleServiceFormChange}
-                  className="col-span-3 border-barber-cream"
-                  placeholder="e.g., 45 min"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-start gap-4">
-                <Label
-                  htmlFor="serviceFormDescriptionModal"
-                  className="text-right col-span-1 mt-1"
-                >
-                  Description
-                </Label>
-                <textarea
-                  id="serviceFormDescriptionModal"
-                  name="description"
-                  value={serviceForm.description || ""}
-                  onChange={handleServiceFormChange}
-                  className="col-span-3 border-barber-cream rounded-md p-2 h-24 resize-none"
-                  placeholder="Service description (optional)"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsEditServiceModalOpen(false)}
-                >
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button
-                onClick={handleSaveService}
-                className="bg-barber-brown hover:bg-barber-dark-brown"
-              >
-                Save Service
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
-      {editingClient && (
-        <Dialog
-          open={isEditClientModalOpen}
-          onOpenChange={setIsEditClientModalOpen}
-        >
-          <DialogContent className="sm:max-w-[480px]">
-            <DialogHeader>
-              <DialogTitle>Edit Client: {editingClient.name}</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label
-                  htmlFor="clientFormNameModal"
-                  className="text-right col-span-1"
-                >
-                  Name
-                </Label>
-                <Input
-                  id="clientFormNameModal"
-                  name="name"
-                  value={clientForm.name || ""}
-                  onChange={handleClientFormChange}
-                  className="col-span-3 border-barber-cream"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label
-                  htmlFor="clientFormEmailModal"
-                  className="text-right col-span-1"
-                >
-                  Email
-                </Label>
-                <Input
-                  id="clientFormEmailModal"
-                  name="email"
-                  type="email"
-                  value={clientForm.email || ""}
-                  onChange={handleClientFormChange}
-                  className="col-span-3 border-barber-cream"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label
-                  htmlFor="clientFormPhoneModal"
-                  className="text-right col-span-1"
-                >
-                  Phone
-                </Label>
-                <Input
-                  id="clientFormPhoneModal"
-                  name="phone"
-                  value={clientForm.phone || ""}
-                  onChange={handleClientFormChange}
-                  className="col-span-3 border-barber-cream"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label
-                  htmlFor="clientFormAddressModal"
-                  className="text-right col-span-1"
-                >
-                  Address
-                </Label>
-                <Input
-                  id="clientFormAddressModal"
-                  name="address"
-                  value={clientForm.address || ""}
-                  onChange={handleClientFormChange}
-                  className="col-span-3 border-barber-cream"
-                  placeholder="Client's address (optional)"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsEditClientModalOpen(false)}
-                >
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button
-                onClick={handleSaveClient}
-                className="bg-barber-brown hover:bg-barber-dark-brown"
-              >
-                Save Client
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
-      {editingAppointment && (
-        <Dialog
-          open={isEditAppointmentModalOpen}
-          onOpenChange={setIsEditAppointmentModalOpen}
-        >
-          <DialogContent className="sm:max-w-[480px]">
-            <DialogHeader>
-              <DialogTitle>
-                Edit Appointment for {editingAppointment.clientName}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right col-span-1">Client</Label>
-                <p className="col-span-3 font-medium">
-                  {appointmentForm.clientName || editingAppointment.clientName}
-                </p>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right col-span-1">Service</Label>
-                <p className="col-span-3 font-medium">
-                  {appointmentForm.serviceName ||
-                    editingAppointment.serviceName}
-                </p>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label
-                  htmlFor="apptFormDateModal"
-                  className="text-right col-span-1"
-                >
-                  Date
-                </Label>
-                <Input
-                  id="apptFormDateModal"
-                  name="date"
-                  type="date"
-                  value={appointmentForm.date || ""}
-                  onChange={handleAppointmentFormChange}
-                  className="col-span-3 border-barber-cream"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label
-                  htmlFor="apptFormTimeModal"
-                  className="text-right col-span-1"
-                >
-                  Time
-                </Label>
-                <Input
-                  id="apptFormTimeModal"
-                  name="time"
-                  type="time"
-                  value={appointmentForm.time || ""}
-                  onChange={handleAppointmentFormChange}
-                  className="col-span-3 border-barber-cream"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label
-                  htmlFor="apptFormStatusModal"
-                  className="text-right col-span-1"
-                >
-                  Status
-                </Label>
-                <select
-                  id="apptFormStatusModal"
-                  name="status"
-                  value={appointmentForm.status || ""}
-                  onChange={handleAppointmentFormChange}
-                  className="col-span-3 border-barber-cream rounded-md p-2 h-10 focus:ring-barber-gold focus:border-barber-gold"
-                >
-                  <option value="Scheduled">Scheduled</option>
-                  <option value="Completed">Completed</option>
-                  <option value="Cancelled">Cancelled</option>
-                  <option value="Pending">Pending</option>
-                </select>
-              </div>
-              <div className="grid grid-cols-4 items-start gap-4">
-                <Label
-                  htmlFor="apptFormNotesModal"
-                  className="text-right col-span-1 mt-1"
-                >
-                  Notes
-                </Label>
-                <textarea
-                  id="apptFormNotesModal"
-                  name="notes"
-                  value={appointmentForm.notes || ""}
-                  onChange={handleAppointmentFormChange}
-                  className="col-span-3 border-barber-cream rounded-md p-2 h-20 resize-none"
-                  placeholder="Appointment notes (optional)"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsEditAppointmentModalOpen(false)}
-                >
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button
-                onClick={handleSaveAppointment}
-                className="bg-barber-brown hover:bg-barber-dark-brown"
-              >
-                Save Appointment
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+      {/* Modals for editing different data types */}
+      <EditProductModal
+        isOpen={isEditProductModalOpen}
+        onOpenChange={setIsEditProductModalOpen}
+        product={editingProduct}
+        onSave={handleSaveProductStock}
+      />
+      <EditServiceModal
+        isOpen={isEditServiceModalOpen}
+        onOpenChange={setIsEditServiceModalOpen}
+        service={editingService}
+        onSave={handleSaveService}
+      />
+      <EditClientModal
+        isOpen={isEditClientModalOpen}
+        onOpenChange={setIsEditClientModalOpen}
+        client={editingClient}
+        onSave={handleSaveClient}
+      />
+      <EditAppointmentModal
+        isOpen={isEditAppointmentModalOpen}
+        onOpenChange={setIsEditAppointmentModalOpen}
+        appointment={editingAppointment}
+        onSave={handleSaveAppointment}
+      />
     </div>
   );
 }

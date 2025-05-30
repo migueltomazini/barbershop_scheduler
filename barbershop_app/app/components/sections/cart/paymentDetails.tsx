@@ -3,9 +3,9 @@
 import React from "react";
 import Link from "next/link";
 
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
 
 import { CreditCard, LogIn } from "lucide-react";
 

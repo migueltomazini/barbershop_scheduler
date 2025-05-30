@@ -3,11 +3,12 @@
     {
       "id": "2",
       "name": "Beard Oil",
-      "price": 19,
+      "price": 22,
       "description": "Nourish and soften your beard with our signature beard oil. Infused with natural oils to promote healthy growth and a subtle, masculine scent.",
       "image": "/images/products/beard_oil.jpg",
-      "quantity": 7998,
-      "soldQuantity": 2
+      "quantity": 12,
+      "soldQuantity": 2,
+      "type": "product"
     },
     {
       "id": "3",
@@ -21,7 +22,7 @@
     {
       "id": "4",
       "name": "Aftershave Balm",
-      "price": 22,
+      "price": 20,
       "description": "Soothe and protect your skin post-shave with our hydrating aftershave balm. Reduces redness and provides a refreshing sensation.",
       "image": "/images/products/aftershave_balm.jpg",
       "quantity": 7,
@@ -95,14 +96,24 @@
   ],
   "appointments": [
     {
-      "id": "5608",
-      "clientId": "1",
+      "id": "2ff1",
+      "clientId": 1,
       "clientName": "Admin User",
-      "serviceId": 2,
-      "serviceName": "Beard Trim",
-      "date": "2222-02-22",
-      "time": "12:00 PM",
-      "status": "Scheduled"
+      "serviceId": 1,
+      "serviceName": "Classic Haircut",
+      "date": "2025-05-29",
+      "time": "10:30 AM",
+      "status": "scheduled"
+    },
+    {
+      "id": "2893",
+      "clientId": 1,
+      "clientName": "Admin User",
+      "serviceId": 1,
+      "serviceName": "Classic Haircut",
+      "date": "2025-05-29",
+      "time": "12:30 PM",
+      "status": "scheduled"
     }
   ]
 }

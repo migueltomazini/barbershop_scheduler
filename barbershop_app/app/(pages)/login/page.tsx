@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 import { useAuth } from "@/app/contexts/AuthContext";
 
-import { LoginForm } from "@/app/components/sections/loginForm";
+import { LoginForm } from "@/app/components/sections/login/loginForm";
 import { Navbar } from "@/app/components/layout/navbar";
 import { Footer } from "@/app/components/layout/footer";
 

@@ -2,7 +2,7 @@
 export type UserRole = "client" | "admin";
 
 export interface BaseUser {
-  id: number;
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -48,11 +48,12 @@ export type InventoryItem = ProductType | ServiceType;
 export interface Appointment {
   id: number;
   clientId: number;
+  clientName?: string;
   serviceId: number;
+  serviceName?: string;
   date: string;       // ISO date string
-  startTime: string;  // "HH:MM" format
-  endTime: string;    // "HH:MM" format
-  status: "scheduled" | "completed" | "cancelled";
+  time: string;
+  status: "scheduled" | "completed" | "cancelled" | "pending";
 }
 
 // Order types

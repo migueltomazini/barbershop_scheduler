@@ -1,4 +1,3 @@
-// app/components/cart/OrderSummary.tsx
 "use client";
 
 import React from "react";

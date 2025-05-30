@@ -7,9 +7,9 @@ import { toast } from "sonner";
 
 import { Navbar } from "@/app/components/layout/navbar";
 import { Footer } from "@/app/components/layout/footer";
-import { CartItemsSection } from "@/app/components/sections/cartItemsSection";
-import { OrderSummary } from "@/app/components/sections/orderSummary";
-import { PaymentForm } from "@/app/components/sections/paymentDetails";
+import { CartItemsSection } from "@/app/components/sections/cart/cartItemsSection";
+import { OrderSummary } from "@/app/components/sections/cart/orderSummary";
+import { PaymentForm } from "@/app/components/sections/cart/paymentDetails";
 import { useCart } from "@/app/contexts/CartContext";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { Button } from "@/app/components/ui/button";
