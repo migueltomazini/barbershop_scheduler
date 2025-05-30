@@ -14,7 +14,7 @@ export default function Home() {
       <Navbar/>
       <HeroSection />
       <ServicesSection variant="home"/>
-      <ProductsSection />
+      <ProductsSection variant="full"/>
       <CtaSection />
       <Footer />
     </div>
