@@ -83,13 +83,6 @@ export function AdminDashboardHeader({
             onChange={(e) => onSearchTermChange(e.target.value)}
           />
         </div>
-        <Button
-          onClick={onAddItem}
-          className="bg-barber-brown hover:bg-barber-dark-brown w-full sm:w-auto"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add {singularTabName}
-        </Button>
       </div>
     </>
   );
