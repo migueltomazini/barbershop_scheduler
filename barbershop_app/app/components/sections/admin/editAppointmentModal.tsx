@@ -23,7 +23,7 @@ interface EditAppointmentModalProps {
   appointment: Appointment | null; // The appointment object to be edited
   // Callback function to save the updated appointment data
   onSave: (
-    appointmentId: number,
+    appointmentId: string,
     appointmentData: {
       clientId: number;
       serviceId: number;

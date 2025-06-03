@@ -6,7 +6,7 @@
       "price": 22,
       "description": "Nourish and soften your beard with our signature beard oil. Infused with natural oils to promote healthy growth and a subtle, masculine scent.",
       "image": "/images/products/beard_oil.jpg",
-      "quantity": 11,
+      "quantity": 12,
       "soldQuantity": 1
     },
     {
@@ -51,10 +51,11 @@
       "id": "1",
       "name": "Classic Haircut",
       "description": "A traditional cut tailored to your desired style. Includes a refreshing rinse and styling.",
-      "price": 25,
-      "duration": "45 min",
+      "price": 24,
+      "duration": 45,
       "icon": "Scissors",
-      "image": "/images/services/classic_haircut.jpg"
+      "image": "/images/services/classic_haircut.jpg",
+      "type": "service"
     },
     {
       "id": "2",
@@ -95,23 +96,43 @@
   ],
   "appointments": [
     {
-      "id": "2ff1",
+      "id": "2",
       "clientId": 1,
       "clientName": "Admin User",
       "serviceId": 1,
       "serviceName": "Classic Haircut",
       "date": "2025-05-29",
+      "time": "13:00 PM",
+      "status": "scheduled"
+    },
+    {
+      "id": "3",
+      "clientId": 1,
+      "clientName": "Admin User",
+      "serviceId": 3,
+      "serviceName": "Hot Towel Shave",
+      "date": "2026-02-23",
       "time": "10:30 AM",
       "status": "scheduled"
     },
     {
-      "id": "2893",
+      "id": "0044",
       "clientId": 1,
       "clientName": "Admin User",
-      "serviceId": 1,
-      "serviceName": "Classic Haircut",
-      "date": "2025-05-29",
-      "time": "12:30 PM",
+      "serviceId": 2,
+      "serviceName": "Beard Trim",
+      "date": "2025-07-03",
+      "time": "19:00",
+      "status": "scheduled"
+    },
+    {
+      "id": "ec87",
+      "clientId": 1,
+      "clientName": "Admin User",
+      "serviceId": 4,
+      "serviceName": "Facial Grooming",
+      "date": "2025-07-22",
+      "time": "10:30 AM",
       "status": "scheduled"
     }
   ]

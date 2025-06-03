@@ -136,7 +136,7 @@ export default function AdminPage() {
       setAppointments(
         appointmentsData.map(
           (a: any): Appointment => ({
-            id: Number(a.id),
+            id: a.id,
             clientId: Number(a.clientId),
             clientName: a.clientName || `Client ID: ${a.clientId}`,
             serviceId: Number(a.serviceId),
@@ -470,7 +470,7 @@ export default function AdminPage() {
 
       if (savedAppointmentApi) {
         const finalSavedAppointment: Appointment = {
-          id: Number(savedAppointmentApi.id),
+          id: savedAppointmentApi.id,
           clientId: Number(savedAppointmentApi.clientId),
           clientName:
             savedAppointmentApi.clientName ||
@@ -531,7 +531,7 @@ export default function AdminPage() {
       const defaultService = services.length > 0 ? services[0] : null;
 
       const newAppointmentShell: Appointment = {
-        id: Number(`new-${Date.now()}`),
+        id: `new-${Date.now()}`,
         clientId: Number(defaultClient ? String(defaultClient.id) : ""),
         clientName: defaultClient ? defaultClient.name : "Select Client",
         serviceId: defaultService ? defaultService.id : 0,

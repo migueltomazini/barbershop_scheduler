@@ -46,7 +46,7 @@ export type InventoryItem = ProductType | ServiceType;
 
 // Appointment types
 export interface Appointment {
-  id: number;
+  id: string;
   clientId: number;
   clientName?: string;
   serviceId: number;
