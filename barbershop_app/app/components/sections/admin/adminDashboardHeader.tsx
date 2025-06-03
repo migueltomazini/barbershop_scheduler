@@ -3,14 +3,12 @@
 import React from "react";
 // Imports specific UI components: TabsList and TabsTrigger
 import { TabsList, TabsTrigger } from "@/app/components/ui/tabs";
-import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import {
   Users,
   Package,
   Scissors,
   Calendar as CalendarIconLucide,
-  Plus,
   Search,
 } from "lucide-react";
 

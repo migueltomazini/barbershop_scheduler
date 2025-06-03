@@ -7,9 +7,9 @@ import { ProductType } from "@/app/types";
 
 // Defines the props for the ProductManagementTab component
 interface ProductManagementTabProps {
-  products: ProductType[]; // Array of product objects
-  onEdit: (product: ProductType) => void; // Callback for editing a product
-  onDelete: (productId: number) => void; // Callback for deleting a product
+  products: ProductType[];
+  onEdit: (product: ProductType) => void;
+  onDelete: (productId: number) => void;
 }
 
 // ProductManagementTab functional component

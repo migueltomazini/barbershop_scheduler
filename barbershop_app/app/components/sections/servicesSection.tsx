@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { Button } from "../ui/button";
@@ -14,6 +15,7 @@ type ServicesSectionProps = {
 
 export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => {
   const isHome = variant === "home";
+  const router = useRouter()
 
   const [services, setServices] = useState<ServiceType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,20 +93,24 @@ export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => {
         >
           {/* Render service cards */}
           {servicesToShow.map((service) => (
-            <Link key={service.id} href="/services" className="block">
+            <div
+              key={service.id}
+              className="cursor-pointer block"
+              onClick={() => router.push("/appointments")}
+            >
               <ServiceCard
                 service={service}
                 variant={isHome ? "carousel" : "detailed"}
                 icon={isHome ? service.icon : undefined}
                 showButton={!isHome}
               />
-            </Link>
+            </div>
           ))}
         </div>
       </section>
 
       {/* Conditional footer content depending on page */}
-      {isHome ? (
+      { isHome ? (
         <div className="text-center mt-10">
           <Link href="/services">
             <Button className="bg-barber-brown hover:bg-barber-dark-brown text-white">
@@ -118,16 +124,9 @@ export const ServicesSection = ({ variant = "home" }: ServicesSectionProps) => {
             Need a Special Service?
           </h3>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Have specific requirements or looking for a custom grooming
-            experience? Contact us to discuss your needs.
+            Have specific requirements or looking for a custom grooming experience? 
+            Contact us by email or phone to discuss your needs.
           </p>
-          <div className="flex justify-center space-x-4">
-            <Link href="/contact">
-              <Button className="bg-barber-navy hover:bg-barber-navy/90 text-white">
-                Contact Us
-              </Button>
-            </Link>
-          </div>
         </div>
       )}
     </section>

@@ -102,7 +102,7 @@
       "serviceId": 1,
       "serviceName": "Classic Haircut",
       "date": "2025-05-29",
-      "time": "13:00 PM",
+      "time": "22:22",
       "status": "scheduled"
     },
     {
@@ -112,7 +112,7 @@
       "serviceId": 3,
       "serviceName": "Hot Towel Shave",
       "date": "2026-02-23",
-      "time": "10:30 AM",
+      "time": "10:30",
       "status": "scheduled"
     },
     {
@@ -132,7 +132,17 @@
       "serviceId": 4,
       "serviceName": "Facial Grooming",
       "date": "2025-07-22",
-      "time": "10:30 AM",
+      "time": "10:30",
+      "status": "scheduled"
+    },
+    {
+      "id": "ec43",
+      "clientId": 1,
+      "clientName": "Admin User",
+      "serviceId": 2,
+      "serviceName": "Beard Trim",
+      "date": "2026-02-07",
+      "time": "13:30",
       "status": "scheduled"
     }
   ]
