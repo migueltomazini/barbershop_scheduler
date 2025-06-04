@@ -25,13 +25,7 @@ export function AdminDashboardHeader({
   activeTab,
   searchTerm,
   onSearchTermChange,
-  onAddItem,
 }: AdminDashboardHeaderProps) {
-  // Derives the singular form of the active tab name for display purposes
-  const singularTabName = activeTab.endsWith("s")
-    ? activeTab.slice(0, -1)
-    : activeTab;
-
   return (
     <>
       <h1 className="text-3xl font-bold mb-8 font-serif text-barber-brown">

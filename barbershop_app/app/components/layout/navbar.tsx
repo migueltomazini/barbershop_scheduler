@@ -10,13 +10,13 @@ import { Button } from "../ui/button";
 import { ShoppingCart, Menu, X, User, LogOut, Scissors } from "lucide-react";
 
 export function Navbar() {
-  const { user, logout, isAuthenticated, isAdmin } = useAuth();
+  const { logout, isAuthenticated, isAdmin } = useAuth();
   const { totalItems } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-barber-cream shadow-sm">
-      <div className="container mx-auto px-4 py-3">
+      <div className="container mx-auto py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link

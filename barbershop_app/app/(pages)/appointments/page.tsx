@@ -14,12 +14,7 @@ import {
 import { useAuth } from "@/app/contexts/AuthContext";
 import { toast } from "sonner";
 import { Clock, Calendar as CalendarIconLucide } from "lucide-react";
-import {
-  format,
-  isPast,
-  parseISO,
-  isToday as dateFnsIsToday,
-} from "date-fns";
+import { format, isPast, parseISO, isToday as dateFnsIsToday } from "date-fns";
 import { Navbar } from "@/app/components/layout/navbar";
 import { Footer } from "@/app/components/layout/footer";
 import {
@@ -38,7 +33,7 @@ function generateTimes(startHour = 9, endHour = 17, interval = 30) {
   endDate.setHours(endHour, 30, 0, 0);
   let tempDate = new Date(currentDate);
   while (tempDate <= endDate) {
-    times.push(format(tempDate, "h:mm aa"));
+    times.push(format(tempDate, "HH:mm"));
     tempDate = new Date(tempDate.getTime() + interval * 60000);
   }
   return times;
@@ -82,8 +77,14 @@ export default function AppointmentsPage() {
         if (!response.ok) throw new Error("Failed to fetch services.");
         const data: AppServiceType[] = await response.json();
         setServices(data);
-      } catch (error: any) {
-        toast.error(error.message || "Could not load services.");
+      } catch (error: unknown) {
+        let message = "Could not load services.";
+        if (error instanceof Error) {
+          message = error.message;
+        } else if (typeof error === "string") {
+          message = error;
+        }
+        toast.error(message);
         console.error("Error fetching services:", error);
       } finally {
         setLoadingServices(false);
@@ -146,8 +147,14 @@ export default function AppointmentsPage() {
       setSelectedDate("");
       setSelectedServiceId("");
       setSelectedTime("");
-    } catch (error: any) {
-      toast.error(error.message || "An error occurred while booking.");
+    } catch (error: unknown) {
+      let message = "An error occurred while booking.";
+      if (error instanceof Error) {
+        message = error.message;
+      } else if (typeof error === "string") {
+        message = error;
+      }
+      toast.error(message);
       console.error("Booking error:", error);
     } finally {
       setIsBooking(false);
@@ -182,7 +189,7 @@ export default function AppointmentsPage() {
           Book Your Appointment
         </h1>
         <p className="mb-8 text-center text-muted-foreground max-w-xl">
-          Select your preferred service, date, and time, and we'll reserve your
+          Select your preferred service, date, and time, and we&apos;ll reserve your
           spot.
         </p>
         <div className="w-full max-w-3xl bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-200">

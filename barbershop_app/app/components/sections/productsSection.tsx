@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { Button } from "../ui/button";
 import { ProductCard } from "../ui/productCard";
@@ -41,8 +42,12 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
         }
         const data: ProductType[] = await response.json();
         setProducts(data);
-      } catch (e: any) {
-        setError(e.message || "Failed to fetch products");
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError("Failed to fetch products. An unknown error occurred.");
+        }
       } finally {
         setLoading(false);
       }
@@ -171,10 +176,12 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
             onClick={() => setSelectedProduct(product)}
           >
             <div className="h-48 bg-gray-100 flex items-center justify-center">
-              <img
-                src={product.image}
+              <Image
+                src={product.image || "/placeholder.png"} 
                 alt={product.name}
                 className="h-full w-full object-cover"
+                width={1000}
+                height={1000}
               />
             </div>
             <div className="p-4">
@@ -218,10 +225,12 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
               <X size={20} />
             </button>
             <div className="mb-4">
-              <img
+              <Image
                 src={selectedProduct.image}
                 alt={selectedProduct.name}
                 className="w-full h-48 object-cover rounded"
+                width={1000}
+                height={1000}
               />
             </div>
             <h2 className="text-xl font-bold mb-2">{selectedProduct.name}</h2>

@@ -19,6 +19,30 @@ export function AppointmentManagementTab({
   onEdit,
   onDelete,
 }: AppointmentManagementTabProps) {
+  // Sort appointments by date and time
+  const sortedAppointments = [...appointments].sort((a, b) => {
+    const dateTimeStrA = `${a.date}T${a.time}`;
+    const dateTimeStrB = `${b.date}T${b.time}`;
+
+    const dateA = new Date(dateTimeStrA);
+    const dateB = new Date(dateTimeStrB);
+
+    const aIsValid = !isNaN(dateA.getTime());
+    const bIsValid = !isNaN(dateB.getTime());
+
+    if (aIsValid && !bIsValid) return -1;
+    if (!aIsValid && bIsValid) return 1;
+    if (!aIsValid && !bIsValid) {
+      const dateStrCompare = (a.date || "").localeCompare(b.date || "");
+      if (dateStrCompare !== 0) return dateStrCompare;
+      return (a.time || "").localeCompare(b.time || "");
+    }
+
+    if (dateA < dateB) return -1;
+    if (dateA > dateB) return 1;
+    return 0;
+  });
+
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
       <table className="w-full min-w-[600px]">
@@ -35,9 +59,9 @@ export function AppointmentManagementTab({
         </thead>
         {/* Table body */}
         <tbody className="divide-y divide-barber-cream text-sm">
-          {appointments.length > 0 ? (
-            // Maps through appointments to render each row
-            appointments.map((appt) => (
+          {sortedAppointments.length > 0 ? (
+            // Maps through sorted appointments to render each row
+            sortedAppointments.map((appt) => (
               <tr key={appt.id}>
                 <td className="p-3 sm:p-4 whitespace-nowrap">
                   {appt.clientName}
@@ -56,13 +80,13 @@ export function AppointmentManagementTab({
                   {/* Renders appointment status with dynamic styling */}
                   <span
                     className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      appt.status === "scheduled"
+                      appt.status.toLocaleLowerCase() === "scheduled"
                         ? "bg-blue-100 text-blue-700"
-                        : appt.status === "completed"
+                        : appt.status.toLocaleLowerCase() === "completed"
                         ? "bg-green-100 text-green-700"
-                        : appt.status === "cancelled"
+                        : appt.status.toLocaleLowerCase() === "cancelled"
                         ? "bg-red-100 text-red-700"
-                        : "bg-yellow-100 text-yellow-700"
+                        : "bg-yellow-100 text-yellow-700" // Default for "pending" or other statuses
                     }`}
                   >
                     {appt.status}

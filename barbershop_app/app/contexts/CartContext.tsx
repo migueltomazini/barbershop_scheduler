@@ -65,24 +65,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("barber-cart", JSON.stringify(items));
   }, [items]);
 
-  const addItem = async (itemToAdd: ItemToAdd) => { // Made async to check stock
-    if (itemToAdd.type === 'product') {
-        try {
-            const response = await fetch(`http://localhost:3001/products/${itemToAdd.id}`);
-            if (!response.ok) throw new Error("Product not found for stock check.");
-            const productInDb = await response.json();
+  const addItem = async (itemToAdd: ItemToAdd) => {
+    // Made async to check stock
+    if (itemToAdd.type === "product") {
+      try {
+        const response = await fetch(
+          `http://localhost:3001/products/${itemToAdd.id}`
+        );
+        if (!response.ok) throw new Error("Product not found for stock check.");
+        const productInDb = await response.json();
 
-            const existingCartItem = items.find(i => i.id === itemToAdd.id && i.type === 'product');
-            const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
+        const existingCartItem = items.find(
+          (i) => i.id === itemToAdd.id && i.type === "product"
+        );
+        const currentCartQuantity = existingCartItem
+          ? existingCartItem.quantity
+          : 0;
 
-            if (productInDb.quantity < (currentCartQuantity + 1)) {
-                toast.error(`Sorry, only ${productInDb.quantity} of ${itemToAdd.name} in stock. You have ${currentCartQuantity} in cart.`);
-                return;
-            }
-        } catch (error: any) {
-            toast.error(error.message || "Could not verify product stock.");
-            return;
+        if (productInDb.quantity < currentCartQuantity + 1) {
+          toast.error(
+            `Sorry, only ${productInDb.quantity} of ${itemToAdd.name} in stock. You have ${currentCartQuantity} in cart.`
+          );
+          return;
         }
+      } catch (error: unknown) {
+        let message = "Could not verify product stock.";
+        if (error instanceof Error) {
+          message = error.message;
+        } else if (typeof error === "string") {
+          message = error;
+        }
+        toast.error(message);
+        return;
+      }
     }
 
     setItems((prevItems) => {
@@ -106,27 +121,35 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  const updateQuantity = async ( // Made async to check stock
+  const updateQuantity = async (
+    // Made async to check stock
     id: number,
     type: "product" | "service",
     newCartQuantity: number
   ) => {
-    if (type === 'product' && newCartQuantity > 0) {
-        try {
-            const response = await fetch(`http://localhost:3001/products/${id}`);
-            if (!response.ok) throw new Error("Product not found for stock check.");
-            const productInDb = await response.json();
+    if (type === "product" && newCartQuantity > 0) {
+      try {
+        const response = await fetch(`http://localhost:3001/products/${id}`);
+        if (!response.ok) throw new Error("Product not found for stock check.");
+        const productInDb = await response.json();
 
-            if (productInDb.quantity < newCartQuantity) {
-                toast.error(`Sorry, only ${productInDb.quantity} of this item in stock.`);
-                return;
-            }
-        } catch (error: any) {
-            toast.error(error.message || "Could not verify product stock.");
-            return;
+        if (productInDb.quantity < newCartQuantity) {
+          toast.error(
+            `Sorry, only ${productInDb.quantity} of this item in stock.`
+          );
+          return;
         }
+      } catch (error: unknown) {
+        let message = "Could not verify product stock.";
+        if (error instanceof Error) {
+          message = error.message;
+        } else if (typeof error === "string") {
+          message = error;
+        }
+        toast.error(message);
+        return;
+      }
     }
-
 
     if (newCartQuantity <= 0) {
       removeItem(id, type);
@@ -134,7 +157,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
     setItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id && item.type === type ? { ...item, quantity: newCartQuantity } : item
+        item.id === id && item.type === type
+          ? { ...item, quantity: newCartQuantity }
+          : item
       )
     );
   };
@@ -152,32 +177,42 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const updatePromises = items
-        .filter(item => item.type === 'product')
+        .filter((item) => item.type === "product")
         .map(async (cartItem) => {
           // Fetch current product data from server
-          const productResponse = await fetch(`http://localhost:3001/products/${cartItem.id}`);
+          const productResponse = await fetch(
+            `http://localhost:3001/products/${cartItem.id}`
+          );
           if (!productResponse.ok) {
-            throw new Error(`Failed to fetch product ${cartItem.name} for stock update.`);
+            throw new Error(
+              `Failed to fetch product ${cartItem.name} for stock update.`
+            );
           }
           const productData = await productResponse.json();
 
           // Calculate new stock and sold quantity
           const newStock = productData.quantity - cartItem.quantity;
-          const newSoldQuantity = (productData.soldQuantity || 0) + cartItem.quantity;
+          const newSoldQuantity =
+            (productData.soldQuantity || 0) + cartItem.quantity;
 
           if (newStock < 0) {
-            throw new Error(`Not enough stock for ${cartItem.name}. Purchase cannot be completed.`);
+            throw new Error(
+              `Not enough stock for ${cartItem.name}. Purchase cannot be completed.`
+            );
           }
 
           // Update product on the server
-          const updateResponse = await fetch(`http://localhost:3001/products/${cartItem.id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              quantity: newStock,
-              soldQuantity: newSoldQuantity,
-            }),
-          });
+          const updateResponse = await fetch(
+            `http://localhost:3001/products/${cartItem.id}`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                quantity: newStock,
+                soldQuantity: newSoldQuantity,
+              }),
+            }
+          );
 
           if (!updateResponse.ok) {
             throw new Error(`Failed to update stock for ${cartItem.name}.`);
@@ -189,9 +224,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       clearCart();
       return true;
-
-    } catch (error: any) {
-      toast.error(error.message || "An error occurred during checkout.");
+    } catch (error: unknown) {
+      let message = "An error occurred during checkout.";
+      if (error instanceof Error) {
+        message = error.message;
+      } else if (typeof error === "string") {
+        message = error;
+      }
+      toast.error(message);
       console.error("Checkout processing error:", error);
       return false;
     }

@@ -57,7 +57,7 @@ export function EditAppointmentModal({
       setFormState({
         ...appointment,
         date: formDate,
-        time: appointment.time || (appointment as any).time,
+        time: appointment.time || "",
       });
     } else {
       // Clears formState if no appointment is provided

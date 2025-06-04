@@ -15,8 +15,8 @@
       "price": 15,
       "description": "Experience a smooth, irritation-free shave with our rich and luxurious shaving cream. Creates a thick lather for ultimate razor glide.",
       "image": "/images/products/shaving_cream.jpg",
-      "quantity": 12,
-      "soldQuantity": 0
+      "quantity": 11,
+      "soldQuantity": 1
     },
     {
       "id": "4",
@@ -102,18 +102,8 @@
       "serviceId": 1,
       "serviceName": "Classic Haircut",
       "date": "2025-05-29",
-      "time": "22:22",
-      "status": "scheduled"
-    },
-    {
-      "id": "3",
-      "clientId": 1,
-      "clientName": "Admin User",
-      "serviceId": 3,
-      "serviceName": "Hot Towel Shave",
-      "date": "2026-02-23",
-      "time": "10:30",
-      "status": "scheduled"
+      "time": "22:00",
+      "status": "completed"
     },
     {
       "id": "0044",
@@ -143,6 +133,16 @@
       "serviceName": "Beard Trim",
       "date": "2026-02-07",
       "time": "13:30",
+      "status": "cancelled"
+    },
+    {
+      "id": "1bfa",
+      "clientId": 1,
+      "clientName": "Admin User",
+      "serviceId": 4,
+      "serviceName": "Facial Grooming",
+      "date": "2025-06-05",
+      "time": "11:30",
       "status": "scheduled"
     }
   ]

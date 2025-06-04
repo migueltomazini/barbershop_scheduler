@@ -11,7 +11,7 @@ import {
 // Mock Admins
 export const mockAdmins: Admin[] = [
   {
-    id: 1,
+    id: "1",
     name: "Admin User",
     email: "admin@barbershop.com",
     phone: "555-1234",
@@ -22,7 +22,7 @@ export const mockAdmins: Admin[] = [
 // Mock Clients
 export const mockClients: Client[] = [
   {
-    id: 1,
+    id: "2",
     name: "John Doe",
     email: "john@example.com",
     phone: "555-5678",
@@ -30,7 +30,7 @@ export const mockClients: Client[] = [
     address: "123 Main St"
   },
   {
-    id: 2,
+    id: "3",
     name: "Jane Smith",
     email: "jane@example.com",
     phone: "555-9876",
@@ -90,12 +90,11 @@ export const mockServices: ServiceType[] = [
 // Mock Appointments
 export const mockAppointments: Appointment[] = [
   {
-    id: 1,
+    id: "1",
     clientId: 1,
     serviceId: 1,
     date: "2023-06-15",
-    startTime: "14:00",
-    endTime: "14:30",
+    time: "14:00",
     status: "scheduled"
   }
 ];

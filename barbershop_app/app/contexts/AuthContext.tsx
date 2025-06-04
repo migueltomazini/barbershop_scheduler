@@ -77,7 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) { // Used Re
       (u) => u.email === email && u.password === password
     );
     if (foundUser) {
-      const { password: _, ...userToStore } = foundUser;
+      const { password: _password, ...userToStore } = foundUser;
+      void _password;
       setUser(userToStore);
       localStorage.setItem("barber-user", JSON.stringify(userToStore));
       return true;
@@ -103,7 +104,8 @@ export function AuthProvider({ children }: { children: ReactNode }) { // Used Re
       role: "client" as UserRole, address: "",
     };
     setMockUsers((prevUsers) => [...prevUsers, newUser]);
-    const { password: _, ...userToStore } = newUser;
+    const { password: _password, ...userToStore } = newUser;
+    void _password;
     setUser(userToStore);
     localStorage.setItem("barber-user", JSON.stringify(userToStore));
     return { success: true };

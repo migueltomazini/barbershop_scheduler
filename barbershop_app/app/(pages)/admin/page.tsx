@@ -114,7 +114,7 @@ export default function AdminPage() {
       if (!productsRes.ok) throw new Error("Failed to fetch products");
       const productsData = await productsRes.json();
       setProducts(
-        productsData.map((p: any) => ({
+        productsData.map((p: Record<string, unknown>) => ({
           ...p,
           type: "product",
         })) as ProductType[]
@@ -123,7 +123,7 @@ export default function AdminPage() {
       if (!servicesRes.ok) throw new Error("Failed to fetch services");
       const servicesData = await servicesRes.json();
       setServices(
-        servicesData.map((s: any) => ({
+        servicesData.map((s: { duration: string; [key: string]: unknown }) => ({
           ...s,
           duration: parseInt(s.duration, 10) || 0,
           type: "service",
@@ -135,7 +135,17 @@ export default function AdminPage() {
       const appointmentsData = await appointmentsResFromAPI.json();
       setAppointments(
         appointmentsData.map(
-          (a: any): Appointment => ({
+          (a: {
+            id: string | string;
+            clientId: string | number;
+            clientName?: string;
+            serviceId: string | number;
+            serviceName?: string;
+            date: string;
+            time?: string;
+            status?: string;
+            [key: string]: unknown;
+          }): Appointment => ({
             id: a.id,
             clientId: Number(a.clientId),
             clientName: a.clientName || `Client ID: ${a.clientId}`,
@@ -152,7 +162,8 @@ export default function AdminPage() {
       if (allAuthUsers) {
         const manageableUsers = allAuthUsers.map(
           (u: MockUserWithPassword): Client => {
-            const { password, ...clientData } = u;
+            const { password: _password, ...clientData } = u;
+            void _password;
             return {
               ...clientData,
               id: String(clientData.id),
@@ -174,11 +185,15 @@ export default function AdminPage() {
         );
         setClients([]);
       }
-    } catch (err: any) {
-      const errorMessage =
-        err.message || "Failed to load data. Check if json-server is running.";
-      setError(errorMessage);
-      toast.error(errorMessage);
+    } catch (err: unknown) {
+      let message = "Failed to load data. Check if json-server is running.";
+      if (err instanceof Error) {
+        message = err.message;
+      } else if (typeof err === "string") {
+        message = err;
+      }
+      setError(message);
+      toast.error(message);
     } finally {
       setLoadingData(false);
     }
@@ -248,7 +263,7 @@ export default function AdminPage() {
   const makeApiRequest = async (
     endpoint: string,
     method: string,
-    body?: any,
+    body?: unknown,
     successMessage?: string
   ) => {
     try {
@@ -267,9 +282,14 @@ export default function AdminPage() {
       }
       if (successMessage) toast.success(successMessage);
       return method !== "DELETE" ? await response.json() : true;
-    } catch (err: any) {
-      toast.error(err.message || `Error performing action.`);
-      throw err;
+    } catch (err: unknown) {
+      let message = `Error performing action.`;
+      if (err instanceof Error) {
+        message = err.message;
+      } else if (typeof err === "string") {
+        message = err;
+      }
+      toast.error(message);
     }
   };
 
@@ -336,7 +356,7 @@ export default function AdminPage() {
       ...serviceData,
       duration:
         Number(serviceData.duration) || Number(serviceToUpdate.duration),
-      type: "service" as "service",
+      type: "service" as const,
     };
     const updatedService = await makeApiRequest(
       `/services/${serviceId}`,
@@ -403,7 +423,7 @@ export default function AdminPage() {
   };
 
   const handleDeleteClient = async (clientId: string) => {
-    if (!confirm(`Are you sure you want to delete client ${clientId}?`)) return;
+    if (!confirm(`Are you sure you want to delete this client?`)) return;
     toast.info(`Client ${clientId} removed from local view (simulated).`);
     setClients((prev) => prev.filter((c) => c.id !== clientId));
   };
@@ -505,7 +525,7 @@ export default function AdminPage() {
 
   const handleDeleteAppointment = async (appointmentId: number | string) => {
     if (
-      !confirm(`Are you sure you want to delete appointment ${appointmentId}?`)
+      !confirm(`Are you sure you want to delete this appointment?`)
     )
       return;
     await makeApiRequest(
