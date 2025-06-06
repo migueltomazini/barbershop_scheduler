@@ -6,7 +6,7 @@ import { Button } from "../../ui/button";
 // Call-to-action section encouraging users to book an appointment
 export const CtaSection = () => {
   return (
-    <section className="container mx-auto px-4 py-16 text-center">
+    <section className="container mx-auto px-4 py-16 text-center rounded-lg bg-barber-gold/10 mb-10">
       <h2 className="text-3xl font-bold mb-6 font-serif text-barber-brown">
         Ready for a Fresh Look?
       </h2>

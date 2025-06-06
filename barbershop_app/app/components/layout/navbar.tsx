@@ -32,31 +32,31 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <nav
-            className="hidden md:flex items-center space-x-6"
+            className="hidden md:flex items-center md:space-x-3 lg:space-x-6"
             aria-label="Primary Navigation"
           >
             <Link
               href="/"
-              className="text-barber-navy hover:text-barber-brown transition-colors"
+              className="md:text-sm lg:text-base text-barber-navy hover:text-barber-brown transition-colors"
             >
               Home
             </Link>
             <Link
               href="/services"
-              className="text-barber-navy hover:text-barber-brown transition-colors"
+              className="md:text-sm lg:text-base text-barber-navy hover:text-barber-brown transition-colors"
             >
               Services
             </Link>
             <Link
               href="/shop"
-              className="text-barber-navy hover:text-barber-brown transition-colors"
+              className="md:text-sm lg:text-base text-barber-navy hover:text-barber-brown transition-colors"
             >
               Shop
             </Link>
             {isAuthenticated && (
               <Link
                 href="/appointments"
-                className="text-barber-navy hover:text-barber-brown transition-colors flex items-center gap-1"
+                className="md:text-sm lg:text-base text-barber-navy hover:text-barber-brown transition-colors flex items-center gap-1"
               >
                 Appointments
               </Link>
@@ -64,7 +64,7 @@ export function Navbar() {
             {isAdmin && (
               <Link
                 href="/admin"
-                className="text-barber-navy hover:text-barber-brown transition-colors"
+                className="md:text-sm lg:text-base text-barber-navy hover:text-barber-brown transition-colors"
               >
                 Admin Dashboard
               </Link>
