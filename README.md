@@ -143,7 +143,7 @@ To set up and run this project locally (Milestone 2 - Client Functionality with 
 
 1.  **Prerequisites:**
     *   Node.js (v18.x or later [text](barbershop_app/app/components/sections)recommended)
-    *   npm or yarn
+    *   npm
 
 2.  **Clone the Repository:**
     ```bash
@@ -151,11 +151,10 @@ To set up and run this project locally (Milestone 2 - Client Functionality with 
     cd <project-directory-name>
     ```
 
-3.  **Install Dependencies:**
+3.  **Navigate to the Application Directory and Install Dependencies:**
     ```bash
+    cd barbershop_app
     npm install
-    # or
-    yarn install
     ```
 
 4.  **Prepare Mock Backend (`json-server`):**
@@ -170,8 +169,6 @@ To set up and run this project locally (Milestone 2 - Client Functionality with 
     *   In another terminal window, from the project root:
         ```bash
         npm run dev
-        # or
-        yarn dev
         ```
 
 6.  **Access the Application:**
