@@ -1,3 +1,5 @@
+// appointmentManagementTab.tsx
+
 "use client";
 
 import React from "react";
@@ -10,7 +12,7 @@ import { Appointment } from "@/app/types";
 interface AppointmentManagementTabProps {
   appointments: Appointment[]; // Array of appointment objects
   onEdit: (appointment: Appointment) => void; // Callback for editing an appointment
-  onDelete: (appointmentId: number | string) => void; // Callback for deleting an appointment
+  onDelete: (appointmentId: string) => void; // Callback for deleting an appointment
 }
 
 // AppointmentManagementTab functional component
@@ -21,26 +23,9 @@ export function AppointmentManagementTab({
 }: AppointmentManagementTabProps) {
   // Sort appointments by date and time
   const sortedAppointments = [...appointments].sort((a, b) => {
-    const dateTimeStrA = `${a.date}T${a.time}`;
-    const dateTimeStrB = `${b.date}T${b.time}`;
-
-    const dateA = new Date(dateTimeStrA);
-    const dateB = new Date(dateTimeStrB);
-
-    const aIsValid = !isNaN(dateA.getTime());
-    const bIsValid = !isNaN(dateB.getTime());
-
-    if (aIsValid && !bIsValid) return -1;
-    if (!aIsValid && bIsValid) return 1;
-    if (!aIsValid && !bIsValid) {
-      const dateStrCompare = (a.date || "").localeCompare(b.date || "");
-      if (dateStrCompare !== 0) return dateStrCompare;
-      return (a.time || "").localeCompare(b.time || "");
-    }
-
-    if (dateA < dateB) return -1;
-    if (dateA > dateB) return 1;
-    return 0;
+    const dateTimeA = new Date(`${a.date}T${a.time}`);
+    const dateTimeB = new Date(`${b.date}T${b.time}`);
+    return dateTimeB.getTime() - dateTimeA.getTime(); // Sort descending
   });
 
   return (
@@ -70,31 +55,26 @@ export function AppointmentManagementTab({
                   {appt.serviceName}
                 </td>
                 <td className="p-3 sm:p-4">
-                  {/* Formats the date for display */}
-                  {appt.date
-                    ? format(parseISO(appt.date), "MM/dd/yyyy")
-                    : "N/A"}
+                  {format(parseISO(appt.date), "MM/dd/yyyy")}
                 </td>
                 <td className="p-3 sm:p-4">{appt.time}</td>
                 <td className="p-3 sm:p-4">
-                  {/* Renders appointment status with dynamic styling */}
                   <span
                     className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      appt.status.toLocaleLowerCase() === "scheduled"
+                      appt.status === "scheduled"
                         ? "bg-blue-100 text-blue-700"
-                        : appt.status.toLocaleLowerCase() === "completed"
+                        : appt.status === "completed"
                         ? "bg-green-100 text-green-700"
-                        : appt.status.toLocaleLowerCase() === "cancelled"
+                        : appt.status === "cancelled"
                         ? "bg-red-100 text-red-700"
-                        : "bg-yellow-100 text-yellow-700" // Default for "pending" or other statuses
+                        : "bg-yellow-100 text-yellow-700"
                     }`}
                   >
-                    {appt.status}
+                    {appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
                   </span>
                 </td>
                 <td className="p-3 sm:p-4">
                   <div className="flex justify-center space-x-2">
-                    {/* Edit button */}
                     <Button
                       size="sm"
                       variant="outline"
@@ -103,7 +83,6 @@ export function AppointmentManagementTab({
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
-                    {/* Delete button */}
                     <Button
                       size="sm"
                       variant="outline"
@@ -117,7 +96,6 @@ export function AppointmentManagementTab({
               </tr>
             ))
           ) : (
-            // Displays a message if no appointments are found
             <tr>
               <td colSpan={6} className="text-center p-8 text-muted-foreground">
                 No appointments found.

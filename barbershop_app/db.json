@@ -1,5 +1,61 @@
 {
+  "users": [
+    {
+      "id": "1",
+      "name": "Admin User",
+      "email": "admin",
+      "password": "admin",
+      "phone": "555-1234",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "name": "Client User",
+      "email": "client@example.com",
+      "password": "password",
+      "phone": "555-5678",
+      "role": "client",
+      "address": "123 Main St"
+    },
+    {
+      "id": "3",
+      "name": "Jane Smith",
+      "email": "jane@example.com",
+      "password": "password123",
+      "phone": "555-9876",
+      "role": "client",
+      "address": "456 Oak Ave"
+    },
+    {
+      "id": "7994",
+      "name": "Miguel Tomazini",
+      "email": "migueltomazini@hotmail.com",
+      "phone": "14991624803",
+      "password": "11111111",
+      "role": "client",
+      "address": ""
+    },
+    {
+      "id": "30ee",
+      "name": "a",
+      "email": "a@gmail.com",
+      "phone": "111",
+      "password": "11111111",
+      "role": "client",
+      "address": ""
+    }
+  ],
   "products": [
+    {
+      "id": "1",
+      "name": "Premium Hair Pomade",
+      "price": 24.99,
+      "description": "High-quality styling pomade with medium hold and matte finish",
+      "image": "/images/products/pomade.jpg",
+      "quantity": 50,
+      "soldQuantity": 25,
+      "type": "product"
+    },
     {
       "id": "2",
       "name": "Beard Oil",
@@ -7,7 +63,8 @@
       "description": "Nourish and soften your beard with our signature beard oil. Infused with natural oils to promote healthy growth and a subtle, masculine scent.",
       "image": "/images/products/beard_oil.jpg",
       "quantity": 12,
-      "soldQuantity": 1
+      "soldQuantity": 1,
+      "type": "product"
     },
     {
       "id": "3",
@@ -16,7 +73,8 @@
       "description": "Experience a smooth, irritation-free shave with our rich and luxurious shaving cream. Creates a thick lather for ultimate razor glide.",
       "image": "/images/products/shaving_cream.jpg",
       "quantity": 11,
-      "soldQuantity": 1
+      "soldQuantity": 1,
+      "type": "product"
     },
     {
       "id": "4",
@@ -25,7 +83,8 @@
       "description": "Soothe and protect your skin post-shave with our hydrating aftershave balm. Reduces redness and provides a refreshing sensation.",
       "image": "/images/products/aftershave_balm.jpg",
       "quantity": 7,
-      "soldQuantity": 0
+      "soldQuantity": 0,
+      "type": "product"
     },
     {
       "id": "5",
@@ -34,7 +93,8 @@
       "description": "Achieve the closest shave with our perfectly balanced classic straight razor. Designed for precision and comfort, a true barber's tool.",
       "image": "/images/products/straight_razor.jpg",
       "quantity": 3,
-      "soldQuantity": 3
+      "soldQuantity": 3,
+      "type": "product"
     },
     {
       "id": "6",
@@ -43,7 +103,8 @@
       "description": "Keep your hair and beard looking neat and tidy with our high-quality brush. Designed for detangling and styling.",
       "image": "/images/products/brush.jpg",
       "quantity": 11,
-      "soldQuantity": 0
+      "soldQuantity": 0,
+      "type": "product"
     }
   ],
   "services": [
@@ -51,7 +112,7 @@
       "id": "1",
       "name": "Classic Haircut",
       "description": "A traditional cut tailored to your desired style. Includes a refreshing rinse and styling.",
-      "price": 24,
+      "price": 30,
       "duration": 45,
       "icon": "Scissors",
       "image": "/images/services/classic_haircut.jpg",
@@ -62,44 +123,58 @@
       "name": "Beard Trim",
       "description": "Expert shaping and grooming for your beard, complete with a hot towel and balm application.",
       "price": 20,
-      "duration": "30 min",
+      "duration": 30,
       "icon": "Brush",
-      "image": "/images/services/beard_trim.jpg"
+      "image": "/images/services/beard_trim.jpg",
+      "type": "service"
     },
     {
       "id": "3",
       "name": "Hot Towel Shave",
       "description": "Indulge in the ultimate shaving experience with multiple hot towels, pre-shave oil, and a precise straight razor shave.",
       "price": 45,
-      "duration": "60 min",
+      "duration": 60,
       "icon": "ShowerHead",
-      "image": "/images/services/hot_towel_shave.jpg"
+      "image": "/images/services/hot_towel_shave.jpg",
+      "type": "service"
     },
     {
       "id": "4",
       "name": "Facial Grooming",
       "description": "Rejuvenate your skin with a cleansing facial, exfoliation, and a relaxing massage.",
       "price": 35,
-      "duration": "45 min",
+      "duration": 45,
       "icon": "Sparkles",
-      "image": "/images/services/facial_grooming.jpg"
+      "image": "/images/services/facial_grooming.jpg",
+      "type": "service"
     },
     {
       "id": "5",
       "name": "Kids Haircut",
       "description": "A stylish and comfortable haircut for our younger gentlemen.",
       "price": 25,
-      "duration": "30 min",
+      "duration": 30,
       "icon": "Baby",
-      "image": "/images/services/kids_haircut.jpg"
+      "image": "/images/services/kids_haircut.jpg",
+      "type": "service"
     }
   ],
   "appointments": [
     {
+      "id": "1",
+      "clientId": "2",
+      "clientName": "John Doe",
+      "serviceId": "1",
+      "serviceName": "Classic Haircut",
+      "date": "2023-06-15",
+      "time": "14:00",
+      "status": "scheduled"
+    },
+    {
       "id": "2",
-      "clientId": 1,
+      "clientId": "1",
       "clientName": "Admin User",
-      "serviceId": 1,
+      "serviceId": "1",
       "serviceName": "Classic Haircut",
       "date": "2025-05-29",
       "time": "22:00",
@@ -107,9 +182,9 @@
     },
     {
       "id": "0044",
-      "clientId": 1,
+      "clientId": "1",
       "clientName": "Admin User",
-      "serviceId": 2,
+      "serviceId": "2",
       "serviceName": "Beard Trim",
       "date": "2025-07-03",
       "time": "19:00",
@@ -117,9 +192,9 @@
     },
     {
       "id": "ec87",
-      "clientId": 1,
+      "clientId": "1",
       "clientName": "Admin User",
-      "serviceId": 4,
+      "serviceId": "4",
       "serviceName": "Facial Grooming",
       "date": "2025-07-22",
       "time": "10:30",
@@ -127,9 +202,9 @@
     },
     {
       "id": "ec43",
-      "clientId": 1,
+      "clientId": "1",
       "clientName": "Admin User",
-      "serviceId": 2,
+      "serviceId": "2",
       "serviceName": "Beard Trim",
       "date": "2026-02-07",
       "time": "13:30",
@@ -137,12 +212,22 @@
     },
     {
       "id": "1bfa",
-      "clientId": 1,
+      "clientId": "1",
       "clientName": "Admin User",
-      "serviceId": 4,
+      "serviceId": "4",
       "serviceName": "Facial Grooming",
       "date": "2025-06-05",
       "time": "11:30",
+      "status": "scheduled"
+    },
+    {
+      "id": "4341",
+      "clientId": "1",
+      "clientName": "Admin User",
+      "serviceId": "1",
+      "serviceName": "Classic Haircut",
+      "date": "2025-06-06",
+      "time": "11:00",
       "status": "scheduled"
     }
   ]

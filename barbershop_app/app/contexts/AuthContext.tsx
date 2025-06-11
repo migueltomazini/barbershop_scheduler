@@ -1,67 +1,35 @@
 // app/contexts/AuthContext.tsx
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react"; // Added ReactNode
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { toast } from "sonner";
-
-// Allowed user roles
-type UserRole = "client" | "admin";
-
-export type User = { // Export User type if needed by other components like AdminPage
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: UserRole;
-  address?: string;
-};
-
-export type MockUserWithPassword = User & { password?: string };
-
-// Type for data passed to signup function
-export type SignupData = {
-    name: string;
-    email: string;
-    phone: string;
-    password?: string;
-};
+import { User, UserRole, SignupData, MockUserWithPassword } from "@/app/types"; // Make sure types are correctly imported
 
 type AuthContextType = {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  signup: (signupData: SignupData) => Promise<{ success: boolean; message?: string }>;
+  signup: (
+    signupData: SignupData
+  ) => Promise<{ success: boolean; message?: string }>;
   isAuthenticated: boolean;
   isAdmin: boolean;
-  mockUsers: MockUserWithPassword[]; // <--- ADICIONADO AQUI
+  updateUserContext: (updatedUser: User) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) { // Used ReactNode
+const API_BASE_URL = "http://localhost:3001";
+
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // Store mock users in state so we can add to it
-  const [mockUsers, setMockUsers] = useState<MockUserWithPassword[]>([
-    {
-      id: "1",
-      name: "Admin User",
-      email: "admin",
-      password: "admin",
-      phone: "555-1234",
-      role: "admin" as UserRole,
-    },
-    {
-      id: "2",
-      name: "Client User",
-      email: "client@example.com",
-      password: "password",
-      phone: "555-5678",
-      role: "client" as UserRole,
-      address: "123 Main St",
-    },
-  ]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("barber-user");
@@ -71,44 +39,85 @@ export function AuthProvider({ children }: { children: ReactNode }) { // Used Re
     setLoading(false);
   }, []);
 
-
   const login = async (email: string, password: string): Promise<boolean> => {
-    const foundUser = mockUsers.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (foundUser) {
-      const { password: _password, ...userToStore } = foundUser;
-      void _password;
-      setUser(userToStore);
-      localStorage.setItem("barber-user", JSON.stringify(userToStore));
-      return true;
+    const trimmedEmail = email.trim();
+    try {
+      const res = await fetch(`${API_BASE_URL}/users?email=${trimmedEmail}`);
+      if (!res.ok) throw new Error("Server error");
+      const users: MockUserWithPassword[] = await res.json();
+      const foundUser = users.find((u) => u.password === password);
+
+      if (foundUser) {
+        const { password: _password, ...userToStore } = foundUser;
+        setUser(userToStore);
+        localStorage.setItem("barber-user", JSON.stringify(userToStore));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Login API error:", error);
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("barber-user");
-    toast.success("You have been logged out successfully."); // Translated
+    toast.success("You have been logged out successfully.");
   };
 
   const signup = async (
     signupData: SignupData
   ): Promise<{ success: boolean; message?: string }> => {
     const { name, email, phone, password } = signupData;
-    if (mockUsers.some((u) => u.email === email)) {
-      return { success: false, message: "This email is already in use." }; // Translated
+
+    try {
+      // Check if email already exists
+      const emailCheckRes = await fetch(`${API_BASE_URL}/users?email=${email}`);
+      if (!emailCheckRes.ok) throw new Error("Failed to check email.");
+      const existingUsers = await emailCheckRes.json();
+      if (existingUsers.length > 0) {
+        return { success: false, message: "This email is already in use." };
+      }
+
+      // Create the new user object to be sent to the API
+      const newUserPayload = {
+        name,
+        email,
+        phone,
+        password,
+        role: "client" as UserRole,
+        address: "",
+      };
+
+      const createRes = await fetch(`${API_BASE_URL}/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newUserPayload),
+      });
+
+      if (!createRes.ok) throw new Error("Failed to create user on server.");
+
+      const createdUser: User = await createRes.json();
+
+      // Log the new user in immediately after creation
+      const { password: _password, ...userToStore } = createdUser;
+      setUser(userToStore);
+      localStorage.setItem("barber-user", JSON.stringify(userToStore));
+      return { success: true };
+    } catch (error) {
+      console.error("Signup API error:", error);
+      const message =
+        error instanceof Error ? error.message : "A server error occurred.";
+      return { success: false, message };
     }
-    const newUser: MockUserWithPassword = {
-      id: String(mockUsers.length + 1 + Date.now()), name, email, phone, password,
-      role: "client" as UserRole, address: "",
-    };
-    setMockUsers((prevUsers) => [...prevUsers, newUser]);
-    const { password: _password, ...userToStore } = newUser;
-    void _password;
-    setUser(userToStore);
-    localStorage.setItem("barber-user", JSON.stringify(userToStore));
-    return { success: true };
+  };
+
+  const updateUserContext = (updatedUser: User) => {
+    if (user && user.id === updatedUser.id) {
+      setUser(updatedUser);
+      localStorage.setItem("barber-user", JSON.stringify(updatedUser));
+    }
   };
 
   const isAuthenticated = !!user;
@@ -116,7 +125,15 @@ export function AuthProvider({ children }: { children: ReactNode }) { // Used Re
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, signup, isAuthenticated, isAdmin, mockUsers }} // <--- mockUsers ADICIONADO AO VALOR
+      value={{
+        user,
+        login,
+        logout,
+        signup,
+        isAuthenticated,
+        isAdmin,
+        updateUserContext,
+      }}
     >
       {!loading && children}
     </AuthContext.Provider>
@@ -126,7 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) { // Used Re
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error("useAuth must be used within a AuthProvider");
   }
   return context;
 };

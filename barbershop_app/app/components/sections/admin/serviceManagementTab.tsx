@@ -1,3 +1,5 @@
+// serviceManagementTab.tsx
+
 "use client";
 
 import React from "react";
@@ -9,7 +11,7 @@ import { ServiceType } from "@/app/types";
 interface ServiceManagementTabProps {
   services: ServiceType[]; // Array of service objects
   onEdit: (service: ServiceType) => void; // Callback for editing a service
-  onDelete: (serviceId: number) => void; // Callback for deleting a service
+  onDelete: (serviceId: string) => void; // Callback for deleting a service
 }
 
 // ServiceManagementTab functional component
@@ -26,14 +28,13 @@ export function ServiceManagementTab({
           <tr>
             <th className="p-3 sm:p-4 font-semibold">Name</th>
             <th className="p-3 sm:p-4 font-semibold">Price</th>
-            <th className="p-3 sm:p-4 font-semibold">Duration</th>
+            <th className="p-3 sm:p-4 font-semibold">Duration (min)</th>
             <th className="p-3 sm:p-4 font-semibold text-center">Actions</th>
           </tr>
         </thead>
         {/* Table body */}
         <tbody className="divide-y divide-barber-cream text-sm">
           {services.length > 0 ? (
-            // Maps through services to render each row
             services.map((service) => (
               <tr key={service.id}>
                 <td className="p-3 sm:p-4 whitespace-nowrap">{service.name}</td>
@@ -41,7 +42,6 @@ export function ServiceManagementTab({
                 <td className="p-3 sm:p-4">{service.duration}</td>
                 <td className="p-3 sm:p-4">
                   <div className="flex justify-center space-x-2">
-                    {/* Edit button */}
                     <Button
                       size="sm"
                       variant="outline"
@@ -50,7 +50,6 @@ export function ServiceManagementTab({
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
-                    {/* Delete button */}
                     <Button
                       size="sm"
                       variant="outline"
@@ -64,7 +63,6 @@ export function ServiceManagementTab({
               </tr>
             ))
           ) : (
-            // Displays a message if no services are found
             <tr>
               <td colSpan={4} className="text-center p-8 text-muted-foreground">
                 No services found.

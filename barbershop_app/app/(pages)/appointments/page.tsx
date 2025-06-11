@@ -14,7 +14,7 @@ import {
 import { useAuth } from "@/app/contexts/AuthContext";
 import { toast } from "sonner";
 import { Clock, Calendar as CalendarIconLucide } from "lucide-react";
-import { format, isPast, parseISO, isToday as dateFnsIsToday } from "date-fns";
+import { format, addYears, isPast, isToday, parseISO } from "date-fns";
 import { Navbar } from "@/app/components/layout/navbar";
 import { Footer } from "@/app/components/layout/footer";
 import {
@@ -27,28 +27,27 @@ const API_BASE_URL = "http://localhost:3001";
 // Generates an array of time strings for appointment slots
 function generateTimes(startHour = 9, endHour = 17, interval = 30) {
   const times: string[] = [];
-  const currentDate = new Date();
-  currentDate.setHours(startHour, 0, 0, 0);
-  const endDate = new Date();
-  endDate.setHours(endHour, 30, 0, 0);
-  let tempDate = new Date(currentDate);
-  while (tempDate <= endDate) {
-    times.push(format(tempDate, "HH:mm"));
-    tempDate = new Date(tempDate.getTime() + interval * 60000);
+  for (let hour = startHour; hour <= endHour; hour++) {
+    for (let minute = 0; minute < 60; minute += interval) {
+      if (hour === endHour && minute >= interval) break;
+      const time = `${hour.toString().padStart(2, "0")}:${minute
+        .toString()
+        .padStart(2, "0")}`;
+      times.push(time);
+    }
   }
   return times;
 }
 
 // Returns today's date in 'YYYY-MM-DD' format
-const getTodayDateString = () => {
-  return format(new Date(), "yyyy-MM-dd");
-};
+const getTodayDateString = () => format(new Date(), "yyyy-MM-dd");
+const getMaxDateString = () => format(addYears(new Date(), 1), "yyyy-MM-dd");
 
 export default function AppointmentsPage() {
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
 
-  // State variables for managing services, selected date, service, time, and booking status
+  // State variables
   const [services, setServices] = useState<AppServiceType[]>([]);
   const [loadingServices, setLoadingServices] = useState(true);
   const [selectedDate, setSelectedDate] = useState<string>("");
@@ -56,19 +55,17 @@ export default function AppointmentsPage() {
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [isBooking, setIsBooking] = useState(false);
 
-  // Generates available time slots for the scheduler
-  const availableTimes = generateTimes();
+  const allAvailableTimes = generateTimes();
 
-  // Effect to redirect unauthenticated users to the login page
+  // Effect to redirect unauthenticated users
   useEffect(() => {
-    // Wait for user auth state to be resolved before redirecting
     if (user !== undefined && !isAuthenticated) {
       toast.error("Please log in to book an appointment.");
       router.push("/login?redirect=/appointments");
     }
   }, [user, isAuthenticated, router]);
 
-  // Effect to fetch available services from the API
+  // Effect to fetch available services
   useEffect(() => {
     const fetchServices = async () => {
       setLoadingServices(true);
@@ -76,22 +73,27 @@ export default function AppointmentsPage() {
         const response = await fetch(`${API_BASE_URL}/services`);
         if (!response.ok) throw new Error("Failed to fetch services.");
         const data: AppServiceType[] = await response.json();
-        setServices(data);
-      } catch (error: unknown) {
-        let message = "Could not load services.";
-        if (error instanceof Error) {
-          message = error.message;
-        } else if (typeof error === "string") {
-          message = error;
-        }
-        toast.error(message);
-        console.error("Error fetching services:", error);
+        setServices(
+          data.map((s) => ({ ...s, duration: Number(s.duration) || 30 }))
+        );
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : "Could not load services."
+        );
       } finally {
         setLoadingServices(false);
       }
     };
     fetchServices();
   }, []);
+
+  // A helper function to check if a specific time slot is in the past
+  const isTimeSlotPast = (date: string, time: string): boolean => {
+    if (!date || !time) return true;
+    // Creates a full ISO 8601 date-time string and compares it to now
+    const dateTimeString = `${date}T${time}:00`;
+    return isPast(new Date(dateTimeString));
+  };
 
   // Handles the appointment booking process
   const handleBooking = async () => {
@@ -104,9 +106,10 @@ export default function AppointmentsPage() {
       toast.error("Please fill out all fields before booking.");
       return;
     }
-    const chosenDate = parseISO(selectedDate);
-    if (isPast(chosenDate) && !dateFnsIsToday(chosenDate)) {
-      toast.error("You cannot book an appointment for a past date.");
+
+    // Explicitly validate if the selected datetime is in the past before sending
+    if (isTimeSlotPast(selectedDate, selectedTime)) {
+      toast.error("You cannot book an appointment for a past date or time.");
       return;
     }
 
@@ -120,11 +123,10 @@ export default function AppointmentsPage() {
       return;
     }
 
-    // Constructs the booking data payload for the API
     const bookingData: Omit<NewAppointmentDataType, "id"> = {
-      clientId: Number(user.id),
+      clientId: user.id,
       clientName: user.name,
-      serviceId: parseInt(selectedServiceId),
+      serviceId: selectedServiceId,
       serviceName: selectedService.name,
       date: selectedDate,
       time: selectedTime,
@@ -139,34 +141,33 @@ export default function AppointmentsPage() {
       });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.message || "Failed to book appointment. Please try again."
-        );
+        throw new Error(errorData.message || "Failed to book appointment.");
       }
       toast.success("Appointment booked successfully!");
       setSelectedDate("");
       setSelectedServiceId("");
       setSelectedTime("");
-    } catch (error: unknown) {
-      let message = "An error occurred while booking.";
-      if (error instanceof Error) {
-        message = error.message;
-      } else if (typeof error === "string") {
-        message = error;
-      }
-      toast.error(message);
-      console.error("Booking error:", error);
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An error occurred while booking."
+      );
     } finally {
       setIsBooking(false);
     }
   };
 
-  // Finds the selected service object based on the selected service ID
   const selectedServiceObj = services.find(
     (s) => s.id.toString() === selectedServiceId
   );
 
-  // Displays loading state if authentication is still resolving or services are loading
+  // Filter time slots to show only future times
+  const filteredTimes = selectedDate
+    ? allAvailableTimes.filter((time) => !isTimeSlotPast(selectedDate, time))
+    : [];
+
+  // Loading state
   if (user === undefined || (isAuthenticated && loadingServices)) {
     return (
       <>
@@ -189,12 +190,12 @@ export default function AppointmentsPage() {
           Book Your Appointment
         </h1>
         <p className="mb-8 text-center text-muted-foreground max-w-xl">
-          Select your preferred service, date, and time, and we&apos;ll reserve your
+          Select your preferred service, date, and time, and we'll reserve your
           spot.
         </p>
         <div className="w-full max-w-3xl bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-200">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Date & Service Selection Section */}
+            {/* Date & Service Selection */}
             <div className="space-y-6">
               <section>
                 <h2 className="text-xl font-semibold mb-2 text-gray-700">
@@ -210,6 +211,7 @@ export default function AppointmentsPage() {
                       setSelectedTime("");
                     }}
                     min={getTodayDateString()}
+                    max={getMaxDateString()}
                     className="pl-10 h-12 w-full border border-barber-cream rounded-lg p-2 text-lg focus:ring-barber-gold focus:border-barber-gold"
                   />
                 </div>
@@ -219,19 +221,13 @@ export default function AppointmentsPage() {
                   2. Select a Service
                 </h2>
                 {loadingServices ? (
-                  <p className="text-gray-500 h-12 flex items-center">
-                    Loading services...
-                  </p>
-                ) : services.length === 0 ? (
-                  <p className="text-gray-500 h-12 flex items-center">
-                    No services available.
-                  </p>
+                  <p>Loading services...</p>
                 ) : (
                   <Select
                     value={selectedServiceId}
                     onValueChange={setSelectedServiceId}
                   >
-                    <SelectTrigger className="h-12 w-full border border-barber-cream rounded-lg text-lg">
+                    <SelectTrigger className="h-12 w-full border-barber-cream rounded-lg text-lg">
                       <SelectValue placeholder="Select a service" />
                     </SelectTrigger>
                     <SelectContent>
@@ -250,8 +246,7 @@ export default function AppointmentsPage() {
                 )}
               </section>
             </div>
-
-            {/* Time Slots Selection Section */}
+            {/* Time Slots Selection */}
             <section>
               <h2 className="text-xl font-semibold mb-2 text-gray-700">
                 3. Choose a Time
@@ -262,16 +257,16 @@ export default function AppointmentsPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[20rem] md:max-h-[22rem] overflow-y-auto p-1 border border-barber-cream rounded-lg">
-                  {availableTimes.length > 0 ? (
-                    availableTimes.map((time) => (
+                  {filteredTimes.length > 0 ? (
+                    filteredTimes.map((time) => (
                       <Button
                         key={time}
                         variant={selectedTime === time ? "default" : "outline"}
                         onClick={() => setSelectedTime(time)}
                         className={`h-12 w-full justify-start text-sm ${
                           selectedTime === time
-                            ? "bg-barber-gold text-black hover:bg-barber-gold/90"
-                            : "border-barber-brown text-barber-brown hover:bg-barber-brown/10"
+                            ? "bg-barber-gold text-black"
+                            : "border-barber-brown text-barber-brown"
                         }`}
                       >
                         <Clock className="mr-2 h-4 w-4" /> {time}
@@ -279,22 +274,20 @@ export default function AppointmentsPage() {
                     ))
                   ) : (
                     <p className="col-span-full text-center text-gray-500 p-4">
-                      No general time slots listed. (Dynamic availability to be
-                      implemented)
+                      No available time slots for today.
                     </p>
                   )}
                 </div>
               )}
             </section>
           </div>
-
           {/* Confirmation Section */}
           <section className="mt-8 pt-6 border-t border-gray-200">
             <h2 className="text-xl font-semibold mb-3 text-gray-700">
               4. Confirm Your Booking
             </h2>
             {!(selectedDate && selectedServiceId && selectedTime) ? (
-              <div className="p-4 bg-gray-100 border border-barber-cream rounded-lg text-gray-600">
+              <div className="p-4 bg-gray-100 border-barber-cream rounded-lg text-gray-600">
                 Please select a date, service, and time to see your booking
                 summary.
               </div>
@@ -313,9 +306,6 @@ export default function AppointmentsPage() {
                   <strong>Service:</strong> {selectedServiceObj?.name || "N/A"}
                 </p>
                 <p>
-                  <strong>Client:</strong> {user?.name || "Guest"}
-                </p>
-                <p>
                   <strong>Price:</strong> $
                   {selectedServiceObj?.price
                     ? selectedServiceObj.price.toFixed(2)
@@ -326,22 +316,16 @@ export default function AppointmentsPage() {
             <Button
               onClick={handleBooking}
               disabled={
-                !(
-                  selectedDate &&
-                  selectedServiceId &&
-                  selectedTime &&
-                  isAuthenticated
-                ) || isBooking
+                !selectedDate ||
+                !selectedServiceId ||
+                !selectedTime ||
+                !isAuthenticated ||
+                isBooking
               }
-              className="mt-6 w-full h-12 bg-barber-gold hover:bg-barber-gold/90 text-black text-lg font-semibold rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="mt-6 w-full h-12 bg-barber-gold hover:bg-barber-gold/90 text-black text-lg font-semibold rounded-lg"
             >
               {isBooking ? "Booking..." : "Book Appointment"}
             </Button>
-            {!isAuthenticated && (
-              <p className="text-sm text-red-600 text-center mt-2">
-                Please log in to book an appointment.
-              </p>
-            )}
           </section>
         </div>
       </div>

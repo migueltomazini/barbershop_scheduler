@@ -1,3 +1,5 @@
+// productManagementTab.tsx
+
 "use client";
 
 import React from "react";
@@ -9,7 +11,7 @@ import { ProductType } from "@/app/types";
 interface ProductManagementTabProps {
   products: ProductType[];
   onEdit: (product: ProductType) => void;
-  onDelete: (productId: number) => void;
+  onDelete: (productId: string) => void;
 }
 
 // ProductManagementTab functional component
@@ -34,7 +36,6 @@ export function ProductManagementTab({
         {/* Table body */}
         <tbody className="divide-y divide-barber-cream text-sm">
           {products.length > 0 ? (
-            // Maps through products to render each row
             products.map((product) => (
               <tr key={product.id}>
                 <td className="p-3 sm:p-4 whitespace-nowrap">{product.name}</td>
@@ -43,7 +44,6 @@ export function ProductManagementTab({
                 <td className="p-3 sm:p-4">{product.soldQuantity || 0}</td>
                 <td className="p-3 sm:p-4">
                   <div className="flex justify-center space-x-2">
-                    {/* Edit button */}
                     <Button
                       size="sm"
                       variant="outline"
@@ -52,7 +52,6 @@ export function ProductManagementTab({
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
-                    {/* Delete button */}
                     <Button
                       size="sm"
                       variant="outline"
@@ -66,7 +65,6 @@ export function ProductManagementTab({
               </tr>
             ))
           ) : (
-            // Displays a message if no products are found
             <tr>
               <td colSpan={5} className="text-center p-8 text-muted-foreground">
                 No products found.

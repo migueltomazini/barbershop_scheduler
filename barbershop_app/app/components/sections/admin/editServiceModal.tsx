@@ -1,3 +1,5 @@
+// app/components/sections/admin/editServiceModal.tsx
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -6,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
+import { Textarea } from "@/app/components/ui/textArea"; // Assuming textarea component exists
 import { ServiceType } from "@/app/types";
 import {
   Dialog,
@@ -21,10 +24,7 @@ interface EditServiceModalProps {
   isOpen: boolean; // Controls whether the dialog is open
   onOpenChange: (isOpen: boolean) => void; // Callback to handle dialog open/close
   service: ServiceType | null; // The service object to be edited
-  onSave: (
-    serviceId: number,
-    serviceData: Partial<ServiceType>
-  ) => Promise<void>; // Callback to save service changes
+  onSave: (serviceData: Partial<ServiceType>) => Promise<void>; // Callback to save service changes
 }
 
 // EditServiceModal functional component
@@ -34,35 +34,38 @@ export function EditServiceModal({
   service,
   onSave,
 }: EditServiceModalProps) {
-  // State to manage form input values for the service
   const [formState, setFormState] = useState<Partial<ServiceType>>({});
 
   // Effect to populate formState with current service data when the modal opens
   useEffect(() => {
     if (service) {
-      setFormState({
-        name: service.name,
-        price: service.price,
-        duration: service.duration,
-        description: service.description,
-      });
+      setFormState({ ...service });
     } else {
-      // Resets formState if no service is provided
-      setFormState({ name: "", price: 0, duration: 0, description: "" });
+      // Resets formState for creating a new service
+      setFormState({
+        name: "",
+        price: 0,
+        duration: 0,
+        description: "",
+        image: "",
+        type: "service",
+      });
     }
-  }, [service]);
+  }, [service, isOpen]);
 
-  // Renders nothing if no service object is provided for editing
-  if (!service) return null;
-
-  // Handles changes to form input fields, converting price to a float
+  // Handles changes to form input fields
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     setFormState((prev) => ({
       ...prev,
-      [name]: name === "price" ? parseFloat(value) || 0 : value,
+      [name]:
+        type === "number"
+          ? name === "price"
+            ? parseFloat(value) || 0
+            : parseInt(value, 10) || 0
+          : value,
     }));
   };
 
@@ -72,24 +75,23 @@ export function EditServiceModal({
       toast.error("Please fill all required service fields.");
       return;
     }
-    // Calls the onSave callback with the service ID and updated data
-    await onSave(service.id, {
-      name: formState.name,
-      price: Number(formState.price), // Ensures price is a number
-      duration: formState.duration,
-      description: formState.description || "",
-    });
+    await onSave(formState);
     onOpenChange(false); // Closes the modal after saving
   };
+
+  const isNewService = !service;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Service: {service.name}</DialogTitle>
+          <DialogTitle>
+            {isNewService
+              ? "Create New Service"
+              : `Edit Service: ${service?.name}`}
+          </DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          {/* Service Name Input Field */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label
               htmlFor="serviceFormNameModal"
@@ -102,10 +104,9 @@ export function EditServiceModal({
               name="name"
               value={formState.name || ""}
               onChange={handleChange}
-              className="col-span-3 border-barber-cream"
+              className="col-span-3"
             />
           </div>
-          {/* Service Price Input Field */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label
               htmlFor="serviceFormPriceModal"
@@ -119,29 +120,44 @@ export function EditServiceModal({
               type="number"
               value={formState.price || ""}
               onChange={handleChange}
-              className="col-span-3 border-barber-cream"
+              className="col-span-3"
               step="0.01"
               min="0"
             />
           </div>
-          {/* Service Duration Input Field */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label
               htmlFor="serviceFormDurationModal"
               className="text-right col-span-1"
             >
-              Duration
+              Duration (min)
             </Label>
             <Input
               id="serviceFormDurationModal"
               name="duration"
+              type="number"
               value={formState.duration || ""}
               onChange={handleChange}
-              className="col-span-3 border-barber-cream"
-              placeholder="e.g., 45 min"
+              className="col-span-3"
+              min="0"
             />
           </div>
-          {/* Service Description Textarea Field */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label
+              htmlFor="serviceFormImageModal"
+              className="text-right col-span-1"
+            >
+              Image URL
+            </Label>
+            <Input
+              id="serviceFormImageModal"
+              name="image"
+              value={formState.image || ""}
+              onChange={handleChange}
+              className="col-span-3"
+              placeholder="/images/services/service.jpg"
+            />
+          </div>
           <div className="grid grid-cols-4 items-start gap-4">
             <Label
               htmlFor="serviceFormDescriptionModal"
@@ -149,24 +165,19 @@ export function EditServiceModal({
             >
               Description
             </Label>
-            <textarea
+            <Textarea
               id="serviceFormDescriptionModal"
               name="description"
               value={formState.description || ""}
               onChange={handleChange}
-              className="col-span-3 border-barber-cream rounded-md p-2 h-24 resize-none"
-              placeholder="Service description (optional)"
+              className="col-span-3 border rounded-md p-2 h-24 resize-none"
             />
           </div>
         </div>
         <DialogFooter>
-          {/* Cancel Button */}
           <DialogClose asChild>
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
+            <Button variant="outline">Cancel</Button>
           </DialogClose>
-          {/* Save Service Button */}
           <Button
             onClick={handleSave}
             className="bg-barber-brown hover:bg-barber-dark-brown"

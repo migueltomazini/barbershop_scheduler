@@ -1,3 +1,5 @@
+// app/types/index.ts
+
 // User types
 export type UserRole = "client" | "admin";
 
@@ -7,6 +9,8 @@ export interface BaseUser {
   email: string;
   phone: string;
   role: UserRole;
+  address?: string; // Address is now optional on BaseUser
+  password?: string; // Password can be part of the object
 }
 
 export interface Admin extends BaseUser {
@@ -15,12 +19,15 @@ export interface Admin extends BaseUser {
 
 export interface Client extends BaseUser {
   role: "client";
-  address: string;
+  address: string; // Address is required for a Client
 }
+
+// Export a general User type
+export type User = Admin | Client;
 
 // Product/Service types
 export interface ProductType {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -31,7 +38,7 @@ export interface ProductType {
 }
 
 export interface ServiceType {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -47,9 +54,9 @@ export type InventoryItem = ProductType | ServiceType;
 // Appointment types
 export interface Appointment {
   id: string;
-  clientId: number;
+  clientId: string;
   clientName?: string;
-  serviceId: number;
+  serviceId: string;
   serviceName?: string;
   date: string;       // ISO date string
   time: string;
@@ -58,15 +65,15 @@ export interface Appointment {
 
 // Order types
 export interface OrderItem {
-  id: number;
-  productId: number;
+  id: string;
+  productId: string;
   quantity: number;
   unitPrice: number;
 }
 
 export interface Order {
-  id: number;
-  clientId: number;
+  id: string;
+  clientId: string;
   items: OrderItem[];
   totalAmount: number;
   date: string;       // ISO date string

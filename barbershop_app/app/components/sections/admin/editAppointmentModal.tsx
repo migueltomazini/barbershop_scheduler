@@ -1,3 +1,5 @@
+// app/components/sections/admin/editAppointmentModal.tsx
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -21,21 +23,14 @@ interface EditAppointmentModalProps {
   isOpen: boolean; // Controls whether the dialog is open
   onOpenChange: (isOpen: boolean) => void; // Callback to handle dialog open/close
   appointment: Appointment | null; // The appointment object to be edited
-  // Callback function to save the updated appointment data
   onSave: (
     appointmentId: string,
-    appointmentData: {
-      clientId: number;
-      serviceId: number;
-      date: string;
-      time: string;
-      status: "scheduled" | "completed" | "cancelled" | "pending";
-      notes?: string;
-      clientName?: string;
-      serviceName?: string;
-    }
+    appointmentData: Partial<Appointment>
   ) => Promise<void>;
 }
+
+// Helper to capitalize first letter
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 // EditAppointmentModal functional component
 export function EditAppointmentModal({
@@ -44,24 +39,24 @@ export function EditAppointmentModal({
   appointment,
   onSave,
 }: EditAppointmentModalProps) {
-  // State to manage form input values
-  const [formState, setFormState] = useState<Partial<Appointment>>({});
+  // State to manage form input values, status is managed as a capitalized string for the select input
+  const [formState, setFormState] = useState({
+    date: "",
+    time: "",
+    status: "Scheduled", // Default capitalized value
+  });
 
   // Effect to populate formState when a new appointment is provided or when the modal opens
   useEffect(() => {
     if (appointment) {
-      // Formats the date to 'yyyy-MM-dd' for the date input field
       const formDate = appointment.date
         ? format(parseISO(appointment.date), "yyyy-MM-dd")
         : "";
       setFormState({
-        ...appointment,
         date: formDate,
         time: appointment.time || "",
+        status: capitalize(appointment.status),
       });
-    } else {
-      // Clears formState if no appointment is provided
-      setFormState({});
     }
   }, [appointment]);
 
@@ -70,9 +65,7 @@ export function EditAppointmentModal({
 
   // Handles changes to form input fields
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormState((prev) => ({ ...prev, [name]: value }));
@@ -81,21 +74,18 @@ export function EditAppointmentModal({
   // Handles the save action, validating input and calling the onSave callback
   const handleSave = async () => {
     if (!formState.date || !formState.time || !formState.status) {
-      toast.error("Date, time, and status are required for appointments.");
+      toast.error("Date, time, and status are required.");
       return;
     }
-    // Calls the onSave callback with the appointment ID and updated data
-    await onSave(appointment.id, {
+
+    // Create the payload for onSave, converting status back to lowercase
+    const saveData: Partial<Appointment> = {
       date: formState.date,
       time: formState.time,
-      status: formState.status as Appointment["status"],
-      // Preserves original IDs and names as they are not editable in this modal
-      clientId: appointment.clientId,
-      clientName: appointment.clientName,
-      serviceId: appointment.serviceId,
-      serviceName: appointment.serviceName,
-    });
-    // Closes the modal after saving
+      status: formState.status.toLowerCase() as Appointment["status"],
+    };
+
+    await onSave(appointment.id, saveData);
     onOpenChange(false);
   };
 
@@ -108,21 +98,14 @@ export function EditAppointmentModal({
           </DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          {/* Client Name Field (read-only) */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right col-span-1">Client</Label>
-            <p className="col-span-3 font-medium">
-              {formState.clientName || appointment.clientName}
-            </p>
+            <p className="col-span-3 font-medium">{appointment.clientName}</p>
           </div>
-          {/* Service Name Field (read-only) */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right col-span-1">Service</Label>
-            <p className="col-span-3 font-medium">
-              {formState.serviceName || appointment.serviceName}
-            </p>
+            <p className="col-span-3 font-medium">{appointment.serviceName}</p>
           </div>
-          {/* Date Input Field */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label
               htmlFor="apptFormDateModal"
@@ -134,12 +117,11 @@ export function EditAppointmentModal({
               id="apptFormDateModal"
               name="date"
               type="date"
-              value={formState.date || ""}
+              value={formState.date}
               onChange={handleChange}
-              className="col-span-3 border-barber-cream"
+              className="col-span-3"
             />
           </div>
-          {/* Time Input Field */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label
               htmlFor="apptFormTimeModal"
@@ -151,12 +133,11 @@ export function EditAppointmentModal({
               id="apptFormTimeModal"
               name="time"
               type="time"
-              value={formState.time || ""}
+              value={formState.time}
               onChange={handleChange}
-              className="col-span-3 border-barber-cream"
+              className="col-span-3"
             />
           </div>
-          {/* Status Select Field */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label
               htmlFor="apptFormStatusModal"
@@ -167,9 +148,9 @@ export function EditAppointmentModal({
             <select
               id="apptFormStatusModal"
               name="status"
-              value={formState.status || ""}
+              value={formState.status}
               onChange={handleChange}
-              className="col-span-3 border-barber-cream rounded-md p-2 h-10 focus:ring-barber-gold focus:border-barber-gold"
+              className="col-span-3 border-input rounded-md p-2 h-10 w-full bg-transparent border"
             >
               <option value="Scheduled">Scheduled</option>
               <option value="Completed">Completed</option>
@@ -179,13 +160,9 @@ export function EditAppointmentModal({
           </div>
         </div>
         <DialogFooter>
-          {/* Cancel Button */}
           <DialogClose asChild>
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
+            <Button variant="outline">Cancel</Button>
           </DialogClose>
-          {/* Save Button */}
           <Button
             onClick={handleSave}
             className="bg-barber-brown hover:bg-barber-dark-brown"

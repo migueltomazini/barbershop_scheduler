@@ -1,15 +1,18 @@
+// adminDashboardHeader.tsx
+
 "use client";
 
 import React from "react";
-// Imports specific UI components: TabsList and TabsTrigger
 import { TabsList, TabsTrigger } from "@/app/components/ui/tabs";
 import { Input } from "@/app/components/ui/input";
+import { Button } from "@/app/components/ui/button"; // Import Button
 import {
   Users,
   Package,
   Scissors,
   Calendar as CalendarIconLucide,
   Search,
+  PlusCircle, // Import PlusCircle
 } from "lucide-react";
 
 // Defines the props for the AdminDashboardHeader component
@@ -25,7 +28,11 @@ export function AdminDashboardHeader({
   activeTab,
   searchTerm,
   onSearchTermChange,
+  onAddItem,
 }: AdminDashboardHeaderProps) {
+  // Determine if the "Add New" button should be enabled for the current tab
+  const isAddable = ["products", "services"].includes(activeTab);
+
   return (
     <>
       <h1 className="text-3xl font-bold mb-8 font-serif text-barber-brown">
@@ -75,6 +82,14 @@ export function AdminDashboardHeader({
             onChange={(e) => onSearchTermChange(e.target.value)}
           />
         </div>
+        
+        {/* Add New Item Button */}
+        {isAddable && (
+          <Button onClick={onAddItem} className="text-white w-full sm:w-auto bg-barber-brown hover:bg-barber-dark-brown">
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Add New {activeTab.charAt(0).toUpperCase() + activeTab.slice(1, -1)}
+          </Button>
+        )}
       </div>
     </>
   );
