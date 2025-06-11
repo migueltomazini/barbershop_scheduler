@@ -8,11 +8,11 @@ import { Button } from "../../ui/button";
 interface CartItemsSectionProps {
   items: CartItem[];
   onUpdateQuantity: (
-    id: number,
+    id: string,
     type: "product" | "service",
     quantity: number
   ) => void;
-  onRemoveItem: (id: number, type: "product" | "service") => void;
+  onRemoveItem: (id: string, type: "product" | "service") => void;
 }
 
 // Section displaying the list of cart items

@@ -128,7 +128,7 @@ export function EditProductModal({
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button onClick={handleSaveChanges} className="bg-barber-brown hover:bg-barber-dark-brown">
+          <Button onClick={handleSaveChanges} className="bg-barber-brown text-white hover:bg-barber-dark-brown">
             Save {isNewProduct ? "Product" : "Changes"}
           </Button>
         </DialogFooter>

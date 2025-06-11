@@ -115,7 +115,7 @@ export function EditClientModal({
         </div>
         <DialogFooter>
           <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
-          <Button onClick={handleSaveChanges} className="bg-barber-brown hover:bg-barber-dark-brown">Save User</Button>
+          <Button onClick={handleSaveChanges} className="bg-barber-brown text-white hover:bg-barber-dark-brown">Save User</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

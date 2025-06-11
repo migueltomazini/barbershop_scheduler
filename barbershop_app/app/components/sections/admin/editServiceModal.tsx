@@ -180,7 +180,7 @@ export function EditServiceModal({
           </DialogClose>
           <Button
             onClick={handleSave}
-            className="bg-barber-brown hover:bg-barber-dark-brown"
+            className="bg-barber-brown text-white hover:bg-barber-dark-brown"
           >
             Save Service
           </Button>

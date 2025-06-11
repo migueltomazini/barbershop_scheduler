@@ -9,8 +9,8 @@ export interface BaseUser {
   email: string;
   phone: string;
   role: UserRole;
-  address?: string; // Address is now optional on BaseUser
-  password?: string; // Password can be part of the object
+  address?: string;
+  password?: string;
 }
 
 export interface Admin extends BaseUser {
@@ -19,11 +19,22 @@ export interface Admin extends BaseUser {
 
 export interface Client extends BaseUser {
   role: "client";
-  address: string; // Address is required for a Client
+  address: string;
 }
 
-// Export a general User type
 export type User = Admin | Client;
+
+// Type for mock user stored in db.json, including password
+export type MockUserWithPassword = User & { password?: string };
+
+// Type for data passed to signup function
+export type SignupData = {
+    name: string;
+    email: string;
+    phone: string;
+    password: string; // Password is required for signup
+};
+
 
 // Product/Service types
 export interface ProductType {
@@ -31,8 +42,8 @@ export interface ProductType {
   name: string;
   description: string;
   price: number;
-  quantity: number;        // Current stock
-  soldQuantity?: number;   // Optional tracking
+  quantity: number;
+  soldQuantity?: number;
   image: string;
   type: "product";
 }
@@ -42,9 +53,9 @@ export interface ServiceType {
   name: string;
   description: string;
   price: number;
-  duration: number;  // in minutes
+  duration: number;
   image: string;
-  icon?: string;     // Optional icon for UI
+  icon?: string;
   type: "service";
 }
 
@@ -58,7 +69,7 @@ export interface Appointment {
   clientName?: string;
   serviceId: string;
   serviceName?: string;
-  date: string;       // ISO date string
+  date: string;
   time: string;
   status: "scheduled" | "completed" | "cancelled" | "pending";
 }
@@ -76,6 +87,6 @@ export interface Order {
   clientId: string;
   items: OrderItem[];
   totalAmount: number;
-  date: string;       // ISO date string
+  date: string;
   status: "pending" | "completed" | "cancelled";
 }

@@ -7,8 +7,8 @@ import { Minus, Plus, Trash2, Clock } from 'lucide-react';
 
 interface CartItemCardProps {
   item: CartItem;
-  onUpdateQuantity: (id: number, type: 'product' | 'service', quantity: number) => void;
-  onRemoveItem: (id: number, type: 'product' | 'service') => void;
+  onUpdateQuantity: (id: string, type: 'product' | 'service', quantity: number) => void;
+  onRemoveItem: (id: string, type: 'product' | 'service') => void;
 }
 
 export const CartItemCard: React.FC<CartItemCardProps> = ({ item, onUpdateQuantity, onRemoveItem }) => {

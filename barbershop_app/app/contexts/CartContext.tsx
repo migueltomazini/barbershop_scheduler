@@ -1,3 +1,5 @@
+// app/contexts/CartContext.tsx
+
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
@@ -11,13 +13,13 @@ export type ProductCartItemDetails = {
 
 export type ServiceCartItemDetails = {
   type: "service";
-  duration?: string;
+  duration?: number;
   icon?: string;
 };
 
-// Base item structure
+// Base item structure - Changed id to string
 type BaseCartItem = {
-  id: number;
+  id: string; // <--- MUDANÇA PRINCIPAL AQUI
   name: string;
   price: number;
   quantity: number;
@@ -35,9 +37,9 @@ export type ItemToAdd = Omit<BaseCartItem, "quantity"> &
 type CartContextType = {
   items: CartItem[];
   addItem: (item: ItemToAdd) => void;
-  removeItem: (id: number, type: "product" | "service") => void;
+  removeItem: (id: string, type: "product" | "service") => void; // <--- MUDANÇA AQUI
   updateQuantity: (
-    id: number,
+    id: string, // <--- MUDANÇA AQUI
     type: "product" | "service",
     cartQuantity: number
   ) => void;
@@ -115,15 +117,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     toast.success(`${itemToAdd.name} added to cart!`);
   };
 
-  const removeItem = (id: number, type: "product" | "service") => {
+  const removeItem = (id: string, type: "product" | "service") => { // <-- id is now string
     setItems((prevItems) =>
       prevItems.filter((item) => !(item.id === id && item.type === type))
     );
   };
 
   const updateQuantity = async (
-    // Made async to check stock
-    id: number,
+    id: string, // <-- id is now string
     type: "product" | "service",
     newCartQuantity: number
   ) => {

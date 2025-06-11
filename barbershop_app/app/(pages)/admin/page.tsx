@@ -7,26 +7,23 @@ import { toast } from "sonner";
 
 import { useAuth } from "@/app/contexts/AuthContext";
 
-// ... (other imports remain the same)
+import { Tabs, TabsContent } from "@/app/components/ui/tabs";
 import { Navbar } from "@/app/components/layout/navbar";
 import { Footer } from "@/app/components/layout/footer";
 import { AdminDashboardHeader } from "@/app/components/sections/admin/adminDashboardHeader";
-import { ClientManagementTab } from "@/app/components/sections/admin/clientManagementTab";
-import { EditClientModal } from "@/app/components/sections/admin/editClientModal";
-// ... (the rest of your component imports)
-import { ProductType, ServiceType, Client, Appointment, User } from "@/app/types";
-import { Tabs, TabsContent } from "@/app/components/ui/tabs";
 import { AppointmentManagementTab } from "@/app/components/sections/admin/appointmentManagementTab";
+import { ClientManagementTab } from "@/app/components/sections/admin/clientManagementTab";
 import { EditAppointmentModal } from "@/app/components/sections/admin/editAppointmentModal";
+import { EditClientModal } from "@/app/components/sections/admin/editClientModal";
 import { EditProductModal } from "@/app/components/sections/admin/editProductModal";
 import { EditServiceModal } from "@/app/components/sections/admin/editServiceModal";
 import { ProductManagementTab } from "@/app/components/sections/admin/productManagementTab";
 import { ServiceManagementTab } from "@/app/components/sections/admin/serviceManagementTab";
 
+import { ProductType, ServiceType, Client, Appointment, User } from "@/app/types";
 
 const API_BASE_URL = "http://localhost:3001";
 
-// ... (helper functions decapitalizeStatus remain the same)
 const decapitalizeStatus = (status: string): Appointment["status"] => {
     const lower = status.toLowerCase();
     if (["scheduled", "completed", "cancelled", "pending"].includes(lower)) {
@@ -36,16 +33,14 @@ const decapitalizeStatus = (status: string): Appointment["status"] => {
 };
 
 export default function AdminPage() {
-  const { isAdmin, user, updateUserContext } = useAuth(); // Get updateUserContext
+  const { isAdmin, user, updateUserContext } = useAuth();
   const router = useRouter();
 
-  // State variables
   const [products, setProducts] = useState<ProductType[]>([]);
   const [services, setServices] = useState<ServiceType[]>([]);
-  const [allUsers, setAllUsers] = useState<User[]>([]); // Store all users
+  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
-  // ... (other state variables remain the same)
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("products");
@@ -61,7 +56,6 @@ export default function AdminPage() {
   const [editingClient, setEditingClient] = useState<User | null>(null);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
 
-  // ... (useEffect for redirecting non-admins remains the same)
   useEffect(() => {
     if (user !== undefined && !isAdmin) {
       toast.error("Access Denied. Redirecting to home page.");
@@ -69,7 +63,6 @@ export default function AdminPage() {
     }
   }, [isAdmin, user, router]);
 
-  // Callback to fetch all administrative data
   const fetchData = useCallback(async () => {
     if (!isAdmin && user !== undefined) {
       setLoadingData(false);
@@ -111,7 +104,6 @@ export default function AdminPage() {
     }
   }, [fetchData, isAdmin, user]);
 
-  // ... (makeApiRequest function remains the same)
   const makeApiRequest = async (endpoint: string, method: "POST" | "PATCH" | "DELETE" | "PUT", body?: unknown) => {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method,
@@ -125,22 +117,16 @@ export default function AdminPage() {
     return method !== "DELETE" ? await response.json() : true;
   };
 
-  // --- Modal Openers ---
-  const handleOpenEditModal = (item: any, type: string) => {
+  const handleOpenEditModal = (item: ProductType | ServiceType | User | Appointment, type: string) => {
     switch (type) {
-      // ... (cases for product, service, appointment)
-      case "product": setEditingProduct(item); setIsEditProductModalOpen(true); break;
-      case "service": setEditingService(item); setIsEditServiceModalOpen(true); break;
-      case "appointment": setEditingAppointment(item); setIsEditAppointmentModalOpen(true); break;
-      case "client":
-        setEditingClient(item);
-        setIsEditClientModalOpen(true);
-        break;
+      case "product": setEditingProduct(item as ProductType); setIsEditProductModalOpen(true); break;
+      case "service": setEditingService(item as ServiceType); setIsEditServiceModalOpen(true); break;
+      case "appointment": setEditingAppointment(item as Appointment); setIsEditAppointmentModalOpen(true); break;
+      case "client": setEditingClient(item as User); setIsEditClientModalOpen(true); break;
       default: break;
     }
   };
   
-  // ... (handleOpenNewItemModal remains the same)
   const handleOpenNewItemModal = (type: string) => {
     switch (type) {
       case 'products': setEditingProduct(null); setIsEditProductModalOpen(true); break;
@@ -149,32 +135,32 @@ export default function AdminPage() {
     }
   };
 
-  // --- Handlers ---
-  // ... (handleSaveProduct, handleSaveService, handleSaveAppointment remain the same)
   const handleSaveProduct = async (productData: Omit<ProductType, "type">) => {
     const { id, ...data } = productData;
     const isNew = !id;
     try {
-      const savedProduct = await makeApiRequest(isNew ? "/products" : `/products/${id}`, isNew ? "POST" : "PUT", { ...data, type: 'product' });
+      await makeApiRequest(isNew ? "/products" : `/products/${id}`, isNew ? "POST" : "PUT", { ...data, type: 'product' });
       toast.success(`Product ${isNew ? 'created' : 'updated'} successfully!`);
-      fetchData(); // Refetch all data to ensure consistency
+      fetchData();
       setIsEditProductModalOpen(false);
-    } catch (e: any) {
-      toast.error(e.message || 'Failed to save product.');
+    } catch (e: unknown) {
+      toast.error((e instanceof Error ? e.message : 'Failed to save product.'));
     }
   };
+
   const handleSaveService = async (serviceData: Partial<ServiceType>) => {
     const { id, ...data } = serviceData;
     const isNew = !id;
     try {
-      const savedService = await makeApiRequest(isNew ? "/services" : `/services/${id}`, isNew ? "POST" : "PUT", { ...data, type: 'service' });
+      await makeApiRequest(isNew ? "/services" : `/services/${id}`, isNew ? "POST" : "PUT", { ...data, type: 'service' });
       toast.success(`Service ${isNew ? 'created' : 'updated'} successfully!`);
       fetchData();
       setIsEditServiceModalOpen(false);
-    } catch (e: any) {
-      toast.error(e.message || 'Failed to save service.');
+    } catch (e: unknown) {
+      toast.error((e instanceof Error ? e.message : 'Failed to save service.'));
     }
   };
+
   const handleSaveAppointment = async (appointmentId: string, data: Partial<Appointment>) => {
     const dataToSave = { ...data, status: decapitalizeStatus(data.status!) };
     try {
@@ -182,8 +168,8 @@ export default function AdminPage() {
       toast.success("Appointment updated successfully!");
       fetchData();
       setIsEditAppointmentModalOpen(false);
-    } catch (e: any) {
-      toast.error(e.message || 'Failed to save appointment.');
+    } catch (e: unknown) {
+      toast.error((e instanceof Error ? e.message : 'Failed to save appointment.'));
     }
   };
   
@@ -191,16 +177,11 @@ export default function AdminPage() {
     try {
       const updatedUser = await makeApiRequest(`/users/${userId}`, "PATCH", userData);
       toast.success(`User details for "${userData.name}" updated.`);
-      
-      // Update the local state for all users
       setAllUsers((prev) => prev.map((u) => u.id === userId ? { ...u, ...updatedUser } : u));
-      
-      // Crucially, update the AuthContext if the modified user is the one logged in
       updateUserContext(updatedUser);
-      
       setIsEditClientModalOpen(false);
-    } catch (e: any) {
-       toast.error(e.message || 'Failed to save user.');
+    } catch (e: unknown) {
+       toast.error((e instanceof Error ? e.message : 'Failed to save user.'));
     }
   };
 
@@ -218,13 +199,12 @@ export default function AdminPage() {
     try {
       await makeApiRequest(`/${endpoint}/${id}`, "DELETE");
       toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully!`);
-      fetchData(); // Refetch data
-    } catch(e: any) {
-      toast.error(e.message || `Failed to delete ${type}.`);
+      fetchData();
+    } catch(e: unknown) {
+      toast.error((e instanceof Error ? e.message : `Failed to delete ${type}.`));
     }
   };
   
-  // Filtering logic
   const lowerSearchTerm = searchTerm.toLowerCase();
   const filteredProducts = products.filter(p => p.name.toLowerCase().includes(lowerSearchTerm));
   const filteredServices = services.filter(s => s.name.toLowerCase().includes(lowerSearchTerm));
@@ -236,7 +216,6 @@ export default function AdminPage() {
       a.status.toLowerCase().includes(lowerSearchTerm)
   );
 
-  // ... (Loading, Error, and Return JSX remains largely the same)
   if (loadingData) { return <div className="flex flex-col min-h-screen"><Navbar /><main className="flex-grow flex items-center justify-center"><p>Loading administrative data...</p></main><Footer /></div>; }
   if (user !== undefined && !isAdmin) { return <div className="flex flex-col min-h-screen"><Navbar /><main className="flex-grow flex items-center justify-center"><p>Access Denied.</p></main><Footer /></div>; }
   if (error) { return <div className="flex flex-col min-h-screen"><Navbar /><main className="flex-grow flex items-center justify-center"><p>Error: {error}</p></main><Footer /></div>; }
@@ -248,16 +227,16 @@ export default function AdminPage() {
         <Tabs value={activeTab} onValueChange={value => { setActiveTab(value); setSearchTerm(""); }} className="w-full">
           <AdminDashboardHeader activeTab={activeTab} searchTerm={searchTerm} onSearchTermChange={setSearchTerm} onAddItem={() => handleOpenNewItemModal(activeTab)}/>
           <TabsContent value="products" className="mt-0">
-            <ProductManagementTab products={filteredProducts} onEdit={product => handleOpenEditModal(product, 'product')} onDelete={productId => handleDeleteItem(productId, 'product')}/>
+            <ProductManagementTab products={filteredProducts} onEdit={(product) => handleOpenEditModal(product, 'product')} onDelete={(productId) => handleDeleteItem(productId, 'product')}/>
           </TabsContent>
           <TabsContent value="services" className="mt-0">
-            <ServiceManagementTab services={filteredServices} onEdit={service => handleOpenEditModal(service, 'service')} onDelete={serviceId => handleDeleteItem(serviceId, 'service')}/>
+            <ServiceManagementTab services={filteredServices} onEdit={(service) => handleOpenEditModal(service, 'service')} onDelete={(serviceId) => handleDeleteItem(serviceId, 'service')}/>
           </TabsContent>
           <TabsContent value="clients" className="mt-0">
-            <ClientManagementTab clients={filteredClients as Client[]} onEdit={client => handleOpenEditModal(client, 'client')} onDelete={clientId => handleDeleteItem(clientId, 'client')}/>
+            <ClientManagementTab clients={filteredClients as Client[]} onEdit={(client) => handleOpenEditModal(client, 'client')} onDelete={(clientId) => handleDeleteItem(clientId, 'client')}/>
           </TabsContent>
           <TabsContent value="appointments" className="mt-0">
-            <AppointmentManagementTab appointments={filteredAppointments} onEdit={appointment => handleOpenEditModal(appointment, 'appointment')} onDelete={appointmentId => handleDeleteItem(appointmentId, 'appointment')}/>
+            <AppointmentManagementTab appointments={filteredAppointments} onEdit={(appointment) => handleOpenEditModal(appointment, 'appointment')} onDelete={(appointmentId) => handleDeleteItem(appointmentId, 'appointment')}/>
           </TabsContent>
         </Tabs>
       </main>

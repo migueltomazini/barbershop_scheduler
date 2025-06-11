@@ -51,7 +51,7 @@
       "name": "Premium Hair Pomade",
       "price": 24.99,
       "description": "High-quality styling pomade with medium hold and matte finish",
-      "image": "/images/products/pomade.jpg",
+      "image": "/images/products/hair_pomade.jpg",
       "quantity": 50,
       "soldQuantity": 25,
       "type": "product"
@@ -62,8 +62,8 @@
       "price": 22,
       "description": "Nourish and soften your beard with our signature beard oil. Infused with natural oils to promote healthy growth and a subtle, masculine scent.",
       "image": "/images/products/beard_oil.jpg",
-      "quantity": 12,
-      "soldQuantity": 1,
+      "quantity": 11,
+      "soldQuantity": 2,
       "type": "product"
     },
     {
@@ -168,7 +168,7 @@
       "serviceName": "Classic Haircut",
       "date": "2023-06-15",
       "time": "14:00",
-      "status": "scheduled"
+      "status": "completed"
     },
     {
       "id": "2",
@@ -218,7 +218,7 @@
       "serviceName": "Facial Grooming",
       "date": "2025-06-05",
       "time": "11:30",
-      "status": "scheduled"
+      "status": "cancelled"
     },
     {
       "id": "4341",
@@ -228,6 +228,26 @@
       "serviceName": "Classic Haircut",
       "date": "2025-06-06",
       "time": "11:00",
+      "status": "completed"
+    },
+    {
+      "id": "de17",
+      "clientId": "1",
+      "clientName": "Admin User",
+      "serviceId": "1",
+      "serviceName": "Classic Haircut",
+      "date": "2025-06-13",
+      "time": "09:30",
+      "status": "scheduled"
+    },
+    {
+      "id": "5967",
+      "clientId": "1",
+      "clientName": "Admin User",
+      "serviceId": "2",
+      "serviceName": "Beard Trim",
+      "date": "2025-06-16",
+      "time": "16:00",
       "status": "scheduled"
     }
   ]

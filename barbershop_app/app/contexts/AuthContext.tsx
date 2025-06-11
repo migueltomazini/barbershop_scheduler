@@ -9,7 +9,7 @@ import React, {
   ReactNode,
 } from "react";
 import { toast } from "sonner";
-import { User, UserRole, SignupData, MockUserWithPassword } from "@/app/types"; // Make sure types are correctly imported
+import { User, UserRole, SignupData, MockUserWithPassword } from "@/app/types";
 
 type AuthContextType = {
   user: User | null;
@@ -49,7 +49,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (foundUser) {
         const { password: _password, ...userToStore } = foundUser;
-        setUser(userToStore);
+        void _password; // Explicitly mark as unused
+        setUser(userToStore as User);
         localStorage.setItem("barber-user", JSON.stringify(userToStore));
         return true;
       }
@@ -72,7 +73,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { name, email, phone, password } = signupData;
 
     try {
-      // Check if email already exists
       const emailCheckRes = await fetch(`${API_BASE_URL}/users?email=${email}`);
       if (!emailCheckRes.ok) throw new Error("Failed to check email.");
       const existingUsers = await emailCheckRes.json();
@@ -80,7 +80,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: false, message: "This email is already in use." };
       }
 
-      // Create the new user object to be sent to the API
       const newUserPayload = {
         name,
         email,
@@ -98,11 +97,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (!createRes.ok) throw new Error("Failed to create user on server.");
 
-      const createdUser: User = await createRes.json();
-
-      // Log the new user in immediately after creation
+      const createdUser: MockUserWithPassword = await createRes.json();
+      
       const { password: _password, ...userToStore } = createdUser;
-      setUser(userToStore);
+      void _password; // Explicitly mark as unused
+      setUser(userToStore as User);
       localStorage.setItem("barber-user", JSON.stringify(userToStore));
       return { success: true };
     } catch (error) {
