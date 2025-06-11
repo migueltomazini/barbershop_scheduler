@@ -147,8 +147,7 @@ To set up and run this project locally (Milestone 2 - Client Functionality with 
 
 2.  **Clone the Repository:**
     ```bash
-    git clone <your-repository-url>
-    cd <project-directory-name>
+    git clone https://github.com/migueltomazini/barbershop_scheduler
     ```
 
 3.  **Navigate to the Application Directory and Install Dependencies:**
