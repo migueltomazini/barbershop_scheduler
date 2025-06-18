@@ -29,7 +29,7 @@ const decapitalizeStatus = (status: string): Appointment["status"] => {
     if (["scheduled", "completed", "cancelled", "pending"].includes(lower)) {
       return lower as Appointment["status"];
     }
-    return "pending";
+    return "scheduled";
 };
 
 export default function AdminPage() {

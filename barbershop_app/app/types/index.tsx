@@ -1,5 +1,14 @@
 // app/types/index.ts
 
+// Nova estrutura para o endereço
+export type Address = {
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+};
+
 // User types
 export type UserRole = "client" | "admin";
 
@@ -9,7 +18,7 @@ export interface BaseUser {
   email: string;
   phone: string;
   role: UserRole;
-  address?: string;
+  address?: Address; // <-- ATUALIZADO para usar o tipo Address
   password?: string;
 }
 
@@ -19,7 +28,7 @@ export interface Admin extends BaseUser {
 
 export interface Client extends BaseUser {
   role: "client";
-  address: string;
+  address: Address; // <-- ATUALIZADO para ser obrigatório e do tipo Address
 }
 
 export type User = Admin | Client;
@@ -32,7 +41,8 @@ export type SignupData = {
     name: string;
     email: string;
     phone: string;
-    password: string; // Password is required for signup
+    password: string;
+    address: Address; // <-- ADICIONADO o objeto de endereço
 };
 
 
@@ -49,7 +59,7 @@ export interface ProductType {
 }
 
 export interface ServiceType {
-  id: string;
+  id:string;
   name: string;
   description: string;
   price: number;
@@ -62,16 +72,16 @@ export interface ServiceType {
 // Combined inventory type
 export type InventoryItem = ProductType | ServiceType;
 
-// Appointment types
+// Appointment types (Seu tipo Appointment estava um pouco diferente, ajustei para o mais recente)
 export interface Appointment {
   id: string;
   clientId: string;
-  clientName?: string;
+  clientName: string;
   serviceId: string;
-  serviceName?: string;
+  serviceName: string;
   date: string;
   time: string;
-  status: "scheduled" | "completed" | "cancelled" | "pending";
+  status: "scheduled" | "completed" | "canceled";
 }
 
 // Order types

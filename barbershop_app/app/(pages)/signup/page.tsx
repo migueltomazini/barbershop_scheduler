@@ -15,32 +15,36 @@ import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import { Button } from "@/app/components/ui/button";
 
-// Regex for basic phone number validation (allows digits, spaces, hyphens, parentheses)
+// Regex
 const PHONE_REGEX = /^[0-9\s-()+]*$/;
-// Regex for basic email format validation
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// Password requirements: at least 8 characters
 const PASSWORD_MIN_LENGTH = 8;
+const ZIP_CODE_REGEX = /^(?:[0-9]{5}(?:-[0-9]{4})?|[0-9]{5}-?[0-9]{3})$/;
 
-// Type for tracking validation errors on each field
 type FormErrors = {
   [key: string]: string | null;
 };
 
 export default function SignupPage() {
+  // Adiciona campos de endereço ao estado do formulário
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     password: "",
     confirmPassword: "",
+    street: "",
+    city: "",
+    state: "",
+    zip: "",
+    country: "",
   });
+  
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const { signup, isAuthenticated } = useAuth();
   const router = useRouter();
 
-  // Redirect if user is already authenticated
   useEffect(() => {
     if (isAuthenticated) {
       toast.info("You are already logged in.");
@@ -51,57 +55,54 @@ export default function SignupPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear the error for the field being edited
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: null }));
     }
-    // Also clear confirmPassword error if password is changed
     if (name === "password" && errors.confirmPassword) {
       setErrors((prev) => ({ ...prev, confirmPassword: null }));
     }
   };
 
-  // Validation function
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    const { name, email, phone, password, confirmPassword } = formData;
+    // Desestrutura todos os campos, incluindo endereço
+    const { name, email, phone, password, confirmPassword, street, city, state, zip, country } = formData;
 
+    // Validações existentes
     if (!name.trim()) newErrors.name = "Full name is required.";
-    if (!EMAIL_REGEX.test(email))
-      newErrors.email = "Please enter a valid email address.";
-    if (!PHONE_REGEX.test(phone))
-      newErrors.phone = "Phone number contains invalid characters.";
-    if (password.length < PASSWORD_MIN_LENGTH)
-      newErrors.password = `Password must be at least ${PASSWORD_MIN_LENGTH} characters.`;
-    if (password !== confirmPassword)
-      newErrors.confirmPassword = "Passwords do not match.";
+    if (!EMAIL_REGEX.test(email)) newErrors.email = "Please enter a valid email address.";
+    if (!PHONE_REGEX.test(phone)) newErrors.phone = "Phone number contains invalid characters.";
+    if (password.length < PASSWORD_MIN_LENGTH) newErrors.password = `Password must be at least ${PASSWORD_MIN_LENGTH} characters.`;
+    if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match.";
+
+    // Novas validações de endereço
+    if (!street.trim()) newErrors.street = "Street address is required.";
+    if (!city.trim()) newErrors.city = "City is required.";
+    if (!state.trim()) newErrors.state = "State / Province is required.";
+    if (!zip.trim()) {
+      newErrors.zip = "ZIP / Postal code is required.";
+    } else if (!ZIP_CODE_REGEX.test(zip)) {
+      newErrors.zip = "Please enter a valid ZIP / Postal code.";
+    }
+    if (!country.trim()) newErrors.country = "Country is required.";
 
     setErrors(newErrors);
 
-    // Get all error messages from the newErrors object
-    const errorMessages = Object.values(newErrors).filter(
-      (msg) => msg !== null
-    );
-
+    const errorMessages = Object.values(newErrors).filter((msg) => msg !== null);
     if (errorMessages.length > 0) {
-      // Use the description property of the toast to list the errors
       toast.error("Please correct the following errors:", {
         description: (
           <ul className="list-disc list-inside">
-            {errorMessages.map((msg, index) => (
-              <li key={index}>{msg}</li>
-            ))}
+            {errorMessages.map((msg, index) => <li key={index}>{msg}</li>)}
           </ul>
         ),
-        duration: 5000, // Give more time to read the list
+        duration: 5000,
       });
       return false;
     }
-
     return true;
   };
 
-  // Handle signup form submission
   const handleSignupSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -112,11 +113,19 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
+      // Monta o objeto de dados para a função signup, incluindo o endereço
       const result = await signup({
         name: formData.name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         password: formData.password,
+        address: {
+          street: formData.street.trim(),
+          city: formData.city.trim(),
+          state: formData.state.trim(),
+          zip: formData.zip.trim(),
+          country: formData.zip.trim(),
+        },
       });
 
       if (result.success) {
@@ -141,7 +150,7 @@ export default function SignupPage() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
+        <div className="max-w-lg w-full space-y-8">
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl font-extrabold font-serif text-barber-brown">
               Create an Account
@@ -152,78 +161,67 @@ export default function SignupPage() {
           </div>
 
           <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xl border border-barber-cream">
-            <form
-              onSubmit={handleSignupSubmit}
-              className="space-y-6"
-              noValidate
-            >
-              <div>
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className={errors.name ? "border-red-500" : ""}
-                />
+            <form onSubmit={handleSignupSubmit} className="space-y-6" noValidate>
+              {/* --- DADOS PESSOAIS --- */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-900 border-b pb-2">Personal Information</h3>
+                <div>
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input id="name" name="name" type="text" required value={formData.name} onChange={handleChange} className={errors.name ? "border-red-500" : ""} />
+                </div>
+                <div>
+                  <Label htmlFor="email">Email Address</Label>
+                  <Input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} className={errors.email ? "border-red-500" : ""} />
+                </div>
+                <div>
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input id="phone" name="phone" type="tel" required value={formData.phone} onChange={handleChange} className={errors.phone ? "border-red-500" : ""} />
+                </div>
               </div>
-              <div>
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={errors.email ? "border-red-500" : ""}
-                />
+              
+              {/* --- ENDEREÇO DE ENTREGA --- */}
+              <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-gray-900 border-b pb-2">Shipping Address</h3>
+                  <div>
+                      <Label htmlFor="street">Street Address</Label>
+                      <Input id="street" name="street" type="text" required value={formData.street} onChange={handleChange} className={errors.street ? "border-red-500" : ""} />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                          <Label htmlFor="city">City</Label>
+                          <Input id="city" name="city" type="text" required value={formData.city} onChange={handleChange} className={errors.city ? "border-red-500" : ""} />
+                      </div>
+                      <div>
+                          <Label htmlFor="state">State / Province</Label>
+                          <Input id="state" name="state" type="text" required value={formData.state} onChange={handleChange} className={errors.state ? "border-red-500" : ""} />
+                      </div>
+                      
+                  </div>
+                  <div>
+                      <Label htmlFor="zip">ZIP / Postal Code</Label>
+                      <Input id="zip" name="zip" type="text" required value={formData.zip} onChange={handleChange} className={errors.zip ? "border-red-500" : ""} />
+                  </div>
+                  <div>
+                      <Label htmlFor="country">Country</Label>
+                      <Input id="country" name="country" type="text" required value={formData.country} onChange={handleChange} className={errors.country ? "border-red-500" : ""} />
+                  </div>
               </div>
-              <div>
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  required
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className={errors.phone ? "border-red-500" : ""}
-                />
+
+              {/* --- SENHA --- */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-900 border-b pb-2">Password</h3>
+                <div>
+                  <Label htmlFor="password">Password</Label>
+                  <Input id="password" name="password" type="password" required value={formData.password} onChange={handleChange} placeholder={`At least ${PASSWORD_MIN_LENGTH} characters`} className={errors.password ? "border-red-500" : ""} />
+                </div>
+                <div>
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Input id="confirmPassword" name="confirmPassword" type="password" required value={formData.confirmPassword} onChange={handleChange} className={errors.confirmPassword ? "border-red-500" : ""} />
+                </div>
               </div>
+
               <div>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder={`At least ${PASSWORD_MIN_LENGTH} characters`}
-                  className={errors.password ? "border-red-500" : ""}
-                />
-              </div>
-              <div>
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className={errors.confirmPassword ? "border-red-500" : ""}
-                />
-              </div>
-              <div>
-                <Button
-                  type="submit"
-                  className="w-full text-white bg-barber-brown hover:bg-barber-dark-brown"
-                  disabled={isLoading}
-                >
+                <Button type="submit" className="w-full text-white bg-barber-brown hover:bg-barber-dark-brown" disabled={isLoading}>
                   {isLoading ? "Creating Account..." : "Create Account"}
                 </Button>
               </div>
@@ -232,10 +230,7 @@ export default function SignupPage() {
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
                 Already have an account?{" "}
-                <Link
-                  href="/login"
-                  className="font-medium text-barber-brown hover:underline"
-                >
+                <Link href="/login" className="font-medium text-barber-brown hover:underline">
                   Log in
                 </Link>
               </p>

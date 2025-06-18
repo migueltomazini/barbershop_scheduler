@@ -43,6 +43,21 @@
       "password": "11111111",
       "role": "client",
       "address": ""
+    },
+    {
+      "id": "8236",
+      "name": "Miguel Tomazini",
+      "email": "miguel@gmail.com",
+      "phone": "11111111111",
+      "password": "11111111",
+      "address": {
+        "street": "Ruaa",
+        "city": "São",
+        "state": "São",
+        "zip": "18652052",
+        "country": "18652052"
+      },
+      "role": "client"
     }
   ],
   "products": [
@@ -186,8 +201,8 @@
       "clientName": "Admin User",
       "serviceId": "2",
       "serviceName": "Beard Trim",
-      "date": "2025-07-03",
-      "time": "19:00",
+      "date": "2025-07-04",
+      "time": "09:00",
       "status": "scheduled"
     },
     {
@@ -198,7 +213,7 @@
       "serviceName": "Facial Grooming",
       "date": "2025-07-22",
       "time": "10:30",
-      "status": "scheduled"
+      "status": "canceled"
     },
     {
       "id": "ec43",

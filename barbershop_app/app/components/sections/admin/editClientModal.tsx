@@ -96,10 +96,6 @@ export function EditClientModal({
             <Input id="clientFormPhoneModal" name="phone" value={formState.phone || ""} onChange={handleChange} className="col-span-3"/>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="clientFormAddressModal" className="text-right col-span-1">Address</Label>
-            <Input id="clientFormAddressModal" name="address" value={formState.address || ""} onChange={handleChange} className="col-span-3" placeholder="User's address"/>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="clientFormRoleModal" className="text-right col-span-1">Role</Label>
             <select
                 id="clientFormRoleModal"

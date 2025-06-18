@@ -4,6 +4,16 @@ import React from "react";
 import { Button } from "@/app/components/ui/button";
 import { Edit, Trash } from "lucide-react";
 import { Client } from "@/app/types";
+import { Address } from '@/app/types'; // Importe o tipo Address
+
+const formatAddress = (address: Address | undefined | null): string => {
+  // Se o endereço não existir, retorne "N/A"
+  if (!address) {
+    return "N/A";
+  }
+  // Retorna uma string formatada com os dados do endereço
+  return `${address.street}, ${address.city} - ${address.state}, ${address.zip}`;
+};
 
 // Defines the props for the ClientManagementTab component
 interface ClientManagementTabProps {
@@ -40,7 +50,7 @@ export function ClientManagementTab({
                 <td className="p-3 sm:p-4 whitespace-nowrap">{client.name}</td>
                 <td className="p-3 sm:p-4 whitespace-nowrap">{client.email}</td>
                 <td className="p-3 sm:p-4">{client.phone}</td>
-                <td className="p-3 sm:p-4">{client.address || "N/A"}</td>
+                <td className="p-3 sm:p-4">{formatAddress(client.address)}</td>
                 <td className="p-3 sm:p-4">
                   <div className="flex justify-center space-x-2">
                     {/* Edit button */}

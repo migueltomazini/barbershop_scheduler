@@ -68,9 +68,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signup = async (
-    signupData: SignupData
+    signupData: SignupData // O tipo SignupData agora inclui o endereço
   ): Promise<{ success: boolean; message?: string }> => {
-    const { name, email, phone, password } = signupData;
+    // Desestrutura todos os campos, incluindo o endereço
+    const { name, email, phone, password, address } = signupData;
 
     try {
       const emailCheckRes = await fetch(`${API_BASE_URL}/users?email=${email}`);
@@ -80,13 +81,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: false, message: "This email is already in use." };
       }
 
+      // O payload agora inclui o objeto de endereço
       const newUserPayload = {
         name,
         email,
         phone,
         password,
+        address, // <-- ADICIONADO o objeto de endereço aqui
         role: "client" as UserRole,
-        address: "",
       };
 
       const createRes = await fetch(`${API_BASE_URL}/users`, {
@@ -100,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const createdUser: MockUserWithPassword = await createRes.json();
       
       const { password: _password, ...userToStore } = createdUser;
-      void _password; // Explicitly mark as unused
+      void _password;
       setUser(userToStore as User);
       localStorage.setItem("barber-user", JSON.stringify(userToStore));
       return { success: true };
