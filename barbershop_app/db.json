@@ -67,8 +67,8 @@
       "price": 24.99,
       "description": "High-quality styling pomade with medium hold and matte finish",
       "image": "/images/products/hair_pomade.jpg",
-      "quantity": 50,
-      "soldQuantity": 25,
+      "quantity": 48,
+      "soldQuantity": 27,
       "type": "product"
     },
     {

@@ -92,12 +92,12 @@ export const SignupForm: React.FC<SignupFormProps> = ({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Full Name input field. */}
       <div>
-        <Label htmlFor="signup-name">Nome Completo</Label>
+        <Label htmlFor="signup-name">Full Name</Label>
         <Input
           id="signup-name"
           type="text"
           name="name"
-          placeholder="Seu nome completo"
+          placeholder="Your full name"
           value={formData.name}
           onChange={handleChange}
           required
@@ -112,7 +112,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           id="signup-email"
           type="email"
           name="email"
-          placeholder="seuemail@exemplo.com"
+          placeholder="youremail@example.com"
           value={formData.email}
           onChange={handleChange}
           required
@@ -122,7 +122,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
       </div>
       {/* Phone number input field (optional). */}
       <div>
-        <Label htmlFor="signup-phone">Telefone (opcional)</Label>
+        <Label htmlFor="signup-phone">Phone (optional)</Label>
         <Input
           id="signup-phone"
           type="tel"
@@ -136,13 +136,13 @@ export const SignupForm: React.FC<SignupFormProps> = ({
       </div>
       {/* Password input field with visibility toggle. */}
       <div>
-        <Label htmlFor="signup-password">Senha</Label>
+        <Label htmlFor="signup-password">Password</Label>
         <div className="relative mt-1">
           <Input
             id="signup-password"
             type={showPassword ? "text" : "password"}
             name="password"
-            placeholder="Pelo menos 6 caracteres"
+            placeholder="At least 6 characters"
             value={formData.password}
             onChange={handleChange}
             required
@@ -154,7 +154,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-barber-brown"
-            aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
+            aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -162,13 +162,13 @@ export const SignupForm: React.FC<SignupFormProps> = ({
       </div>
       {/* Confirm Password input field with visibility toggle. */}
       <div>
-        <Label htmlFor="signup-confirmPassword">Confirmar Senha</Label>
+        <Label htmlFor="signup-confirmPassword">Confirm Password</Label>
         <div className="relative mt-1">
           <Input
             id="signup-confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
             name="confirmPassword"
-            placeholder="Repita sua senha"
+            placeholder="Repeat your password"
             value={formData.confirmPassword}
             onChange={handleChange}
             required
@@ -180,9 +180,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-barber-brown"
-            aria-label={
-              showConfirmPassword ? "Esconder senha" : "Mostrar senha"
-            }
+            aria-label={showConfirmPassword ? "Hide password" : "Show password"}
           >
             {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -195,7 +193,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
         className="w-full bg-barber-brown hover:bg-barber-dark-brown text-white py-3 text-lg"
         disabled={isLoading}
       >
-        {isLoading ? "Criando conta..." : "Criar Conta"}
+        {isLoading ? "Creating account..." : "Create Account"}
       </Button>
     </form>
   );

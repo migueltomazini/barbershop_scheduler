@@ -1,12 +1,12 @@
 /**
  * @file barbershop_app/app/components/sections/cart/paymentDetails.tsx
  * @description This component contains the payment form for the checkout process.
- * It handles user authentication checks and credit card input fields.
+ * It handles user authentication, credit card input formatting, and strict field validation before submission.
  */
 
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 
 import { Button } from "../../ui/button";
@@ -49,6 +49,17 @@ interface PaymentFormProps {
 }
 
 /**
+ * @interface PaymentFormErrors
+ * @description Defines the structure for storing validation error messages for the payment form.
+ */
+interface PaymentFormErrors {
+  cardName?: string;
+  cardNumber?: string;
+  cardExpiry?: string;
+  cardCVC?: string;
+}
+
+/**
  * @component PaymentForm
  * @description Renders the payment details form. If the user is not authenticated, it shows a login prompt instead.
  * @param {PaymentFormProps} props - The props for the component.
@@ -68,9 +79,128 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
   totalPrice,
   cartIsEmpty,
 }) => {
+  /**
+   * @state errors
+   * @description Holds the validation error messages for the form fields.
+   */
+  const [errors, setErrors] = useState<PaymentFormErrors>({});
+
+  /**
+   * @function validateForm
+   * @description Performs a comprehensive validation of the payment form fields.
+   * @returns {boolean} - Returns `true` if the form is valid, otherwise `false`.
+   */
+  const validateForm = (): boolean => {
+    const newErrors: PaymentFormErrors = {};
+
+    // 1. Validate Cardholder Name
+    if (!cardName.trim()) {
+      newErrors.cardName = "Cardholder name is required.";
+    } else if (/\d/.test(cardName)) {
+      newErrors.cardName = "Name should not contain numbers.";
+    }
+
+    // 2. Validate Card Number
+    const cleanedCardNumber = cardNumber.replace(/\D/g, "");
+    if (cleanedCardNumber.length !== 16) {
+      newErrors.cardNumber = "Card number must be 16 digits.";
+    }
+
+    // 3. Validate CVC
+    const cleanedCVC = cardCVC.replace(/\D/g, "");
+    if (cleanedCVC.length !== 3) {
+      newErrors.cardCVC = "CVC must be 3 digits.";
+    }
+
+    // 4. Validate Expiration Date
+    if (!/^\d{2}\/\d{2}$/.test(cardExpiry)) {
+      newErrors.cardExpiry = "Invalid format. Use MM/YY.";
+    } else {
+      const [month, year] = cardExpiry.split("/").map(Number);
+      const now = new Date();
+      const currentYear = now.getFullYear() % 100;
+      const currentMonth = now.getMonth() + 1;
+
+      if (month < 1 || month > 12) {
+        newErrors.cardExpiry = "Invalid month.";
+      } else if (
+        year < currentYear ||
+        (year === currentYear && month < currentMonth)
+      ) {
+        newErrors.cardExpiry = "Card has expired.";
+      }
+    }
+
+    setErrors(newErrors);
+    // The form is valid if the newErrors object has no keys.
+    return Object.keys(newErrors).length === 0;
+  };
+
+  /**
+   * @function handleFormSubmit
+   * @description A wrapper for the form's `onSubmit` event. It first validates the form.
+   * If the form is valid, it proceeds with the `handleCheckout` function provided in props.
+   * @param {React.FormEvent} e - The form submission event.
+   */
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      handleCheckout(e);
+    }
+  };
+
+  /**
+   * @function handleInputChange
+   * @description A generic handler to update state and clear the corresponding error message upon user input.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event.
+   * @param {(value: string) => void} setter - The state setter function for the field.
+   * @param {keyof PaymentFormErrors} errorKey - The key for the field in the errors state object.
+   */
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: (value: string) => void,
+    errorKey: keyof PaymentFormErrors
+  ) => {
+    setter(e.target.value);
+    if (errors[errorKey]) {
+      setErrors((prev) => ({ ...prev, [errorKey]: undefined }));
+    }
+  };
+
+  // Handlers for input formatting remain the same.
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const cleanedValue = value.replace(/\D/g, "").slice(0, 16);
+    const formattedValue = cleanedValue.match(/.{1,4}/g)?.join(" ") || "";
+    setCardNumber(formattedValue);
+    if (errors.cardNumber) {
+      setErrors((prev) => ({ ...prev, cardNumber: undefined }));
+    }
+  };
+
+  const handleCardExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    let cleanedValue = value.replace(/\D/g, "").slice(0, 4);
+    if (cleanedValue.length > 2) {
+      cleanedValue = `${cleanedValue.slice(0, 2)}/${cleanedValue.slice(2)}`;
+    }
+    setCardExpiry(cleanedValue);
+    if (errors.cardExpiry) {
+      setErrors((prev) => ({ ...prev, cardExpiry: undefined }));
+    }
+  };
+
+  const handleCardCVCChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const cleanedValue = value.replace(/\D/g, "").slice(0, 3); // CVC is 3 digits
+    setCardCVC(cleanedValue);
+    if (errors.cardCVC) {
+      setErrors((prev) => ({ ...prev, cardCVC: undefined }));
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md border border-barber-cream p-6">
-      {/* If the user is not authenticated, show a login prompt. */}
       {!isAuthenticated ? (
         <div className="text-center py-4">
           <h2 className="text-xl font-bold mb-4 text-gray-800">
@@ -79,7 +209,6 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
           <p className="text-muted-foreground mb-4">
             Please log in to complete your purchase.
           </p>
-          {/* This link redirects to the login page and includes a query parameter to return the user to the cart after logging in. */}
           <Link href="/login?redirect=/cart">
             <Button className="w-full bg-barber-brown hover:bg-barber-dark-brown text-white">
               <LogIn className="h-4 w-4 mr-2" />
@@ -88,8 +217,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
           </Link>
         </div>
       ) : (
-        // If authenticated, show the payment form.
-        <form onSubmit={handleCheckout}>
+        <form onSubmit={handleFormSubmit}>
           <h2 className="text-xl font-bold mb-4 text-gray-800">
             Payment Details
           </h2>
@@ -107,11 +235,15 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                 type="text"
                 placeholder="John Doe"
                 value={cardName}
-                onChange={(e) => setCardName(e.target.value)}
-                className="mt-1 border-barber-cream focus:ring-barber-gold focus:border-barber-gold"
-                required
+                onChange={(e) => handleInputChange(e, setCardName, "cardName")}
+                className={`mt-1 border-barber-cream focus:ring-barber-gold focus:border-barber-gold ${
+                  errors.cardName ? "border-red-500" : ""
+                }`}
                 autoComplete="cc-name"
               />
+              {errors.cardName && (
+                <p className="text-red-500 text-xs mt-1">{errors.cardName}</p>
+              )}
             </div>
 
             {/* Card Number Input */}
@@ -127,15 +259,20 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                 type="text"
                 placeholder="1234 5678 9012 3456"
                 value={cardNumber}
-                onChange={(e) => setCardNumber(e.target.value)}
-                className="mt-1 border-barber-cream focus:ring-barber-gold focus:border-barber-gold"
-                required
+                onChange={handleCardNumberChange}
+                className={`mt-1 border-barber-cream focus:ring-barber-gold focus:border-barber-gold ${
+                  errors.cardNumber ? "border-red-500" : ""
+                }`}
                 autoComplete="cc-number"
                 inputMode="numeric"
+                maxLength={19}
               />
+              {errors.cardNumber && (
+                <p className="text-red-500 text-xs mt-1">{errors.cardNumber}</p>
+              )}
             </div>
 
-            {/* Expiration Date and CVC inputs, arranged side-by-side. */}
+            {/* Expiration Date and CVC inputs */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label
@@ -149,11 +286,18 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                   type="text"
                   placeholder="MM/YY"
                   value={cardExpiry}
-                  onChange={(e) => setCardExpiry(e.target.value)}
-                  className="mt-1 border-barber-cream focus:ring-barber-gold focus:border-barber-gold"
-                  required
+                  onChange={handleCardExpiryChange}
+                  className={`mt-1 border-barber-cream focus:ring-barber-gold focus:border-barber-gold ${
+                    errors.cardExpiry ? "border-red-500" : ""
+                  }`}
                   autoComplete="cc-exp"
+                  maxLength={5}
                 />
+                {errors.cardExpiry && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.cardExpiry}
+                  </p>
+                )}
               </div>
               <div>
                 <Label
@@ -167,16 +311,20 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                   type="text"
                   placeholder="123"
                   value={cardCVC}
-                  onChange={(e) => setCardCVC(e.target.value)}
-                  className="mt-1 border-barber-cream focus:ring-barber-gold focus:border-barber-gold"
-                  required
+                  onChange={handleCardCVCChange}
+                  className={`mt-1 border-barber-cream focus:ring-barber-gold focus:border-barber-gold ${
+                    errors.cardCVC ? "border-red-500" : ""
+                  }`}
                   autoComplete="cc-csc"
                   inputMode="numeric"
+                  maxLength={3}
                 />
+                {errors.cardCVC && (
+                  <p className="text-red-500 text-xs mt-1">{errors.cardCVC}</p>
+                )}
               </div>
             </div>
 
-            {/* Submit Payment Button with dynamic text and disabled state. */}
             <Button
               type="submit"
               className="w-full bg-barber-gold hover:bg-barber-dark-gold text-black py-3 text-lg font-semibold mt-4"
@@ -186,13 +334,13 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                 "Processing..."
               ) : (
                 <>
-                  <CreditCard className="h-5 w-5 mr-2" />
-                  Pay ${totalPrice.toFixed(2)}
+                  {" "}
+                  <CreditCard className="h-5 w-5 mr-2" /> Pay $
+                  {totalPrice.toFixed(2)}
                 </>
               )}
             </Button>
 
-            {/* A small disclaimer for the user. */}
             <p className="text-xs text-muted-foreground text-center mt-2">
               For demonstration purposes only. No actual payment will be
               processed.
