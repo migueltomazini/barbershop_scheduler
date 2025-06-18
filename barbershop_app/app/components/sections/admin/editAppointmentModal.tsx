@@ -1,4 +1,7 @@
-// app/components/sections/admin/editAppointmentModal.tsx
+/**
+ * @file barbershop_app/app/components/sections/admin/editAppointmentModal.tsx
+ * @description This file contains the EditAppointmentModal component, a dialog for editing the details of an existing appointment.
+ */
 
 "use client";
 
@@ -18,35 +21,51 @@ import { Label } from "@/app/components/ui/label";
 import { toast } from "sonner";
 import { Appointment } from "@/app/types";
 
-// Defines the props for the EditAppointmentModal component
+/**
+ * @interface EditAppointmentModalProps
+ * @description Defines the properties for the EditAppointmentModal component.
+ * @property {boolean} isOpen - Controls the visibility of the dialog.
+ * @property {(isOpen: boolean) => void} onOpenChange - Callback function to handle the dialog's open/close state.
+ * @property {Appointment | null} appointment - The appointment object to be edited.
+ * @property {(appointmentId: string, appointmentData: Partial<Appointment>) => Promise<void>} onSave - Async callback function to save appointment changes.
+ */
 interface EditAppointmentModalProps {
-  isOpen: boolean; // Controls whether the dialog is open
-  onOpenChange: (isOpen: boolean) => void; // Callback to handle dialog open/close
-  appointment: Appointment | null; // The appointment object to be edited
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  appointment: Appointment | null;
   onSave: (
     appointmentId: string,
     appointmentData: Partial<Appointment>
   ) => Promise<void>;
 }
 
-// Helper to capitalize first letter
+/**
+ * @function capitalize
+ * @description Helper function to capitalize the first letter of a string.
+ * @param {string} s - The input string.
+ * @returns {string} The string with the first letter capitalized.
+ */
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-// EditAppointmentModal functional component
+/**
+ * @component EditAppointmentModal
+ * @description A modal dialog component for editing an appointment's date, time, and status.
+ * @param {EditAppointmentModalProps} props - The props for the component.
+ */
 export function EditAppointmentModal({
   isOpen,
   onOpenChange,
   appointment,
   onSave,
 }: EditAppointmentModalProps) {
-  // State to manage form input values, status is managed as a capitalized string for the select input
+  // Manages the state of the form inputs. Status is capitalized for the select input UI.
   const [formState, setFormState] = useState({
     date: "",
     time: "",
-    status: "Scheduled", // Default capitalized value
+    status: "Scheduled",
   });
 
-  // Effect to populate formState when a new appointment is provided or when the modal opens
+  // Populates the form with the current appointment data whenever the 'appointment' prop changes.
   useEffect(() => {
     if (appointment) {
       const formDate = appointment.date
@@ -60,10 +79,13 @@ export function EditAppointmentModal({
     }
   }, [appointment]);
 
-  // Renders nothing if no appointment object is provided
+  // If there is no appointment data, the modal does not render.
   if (!appointment) return null;
 
-  // Handles changes to form input fields
+  /**
+   * @function handleChange
+   * @description Updates the form state when an input value changes.
+   */
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -71,14 +93,17 @@ export function EditAppointmentModal({
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handles the save action, validating input and calling the onSave callback
+  /**
+   * @function handleSave
+   * @description Validates the form, prepares the data, and calls the onSave prop to persist the changes.
+   */
   const handleSave = async () => {
     if (!formState.date || !formState.time || !formState.status) {
       toast.error("Date, time, and status are required.");
       return;
     }
 
-    // Create the payload for onSave, converting status back to lowercase
+    // Prepares the data payload for saving, converting status back to lowercase for consistency.
     const saveData: Partial<Appointment> = {
       date: formState.date,
       time: formState.time,
@@ -86,7 +111,7 @@ export function EditAppointmentModal({
     };
 
     await onSave(appointment.id, saveData);
-    onOpenChange(false);
+    onOpenChange(false); // Closes the modal on successful save.
   };
 
   return (
@@ -97,6 +122,7 @@ export function EditAppointmentModal({
             Edit Appointment for {appointment.clientName}
           </DialogTitle>
         </DialogHeader>
+        {/* Form fields for editing appointment details */}
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right col-span-1">Client</Label>

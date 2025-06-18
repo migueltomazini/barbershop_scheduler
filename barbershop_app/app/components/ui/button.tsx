@@ -1,10 +1,16 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+/**
+ * @file barbershop_app/app/components/ui/button.tsx
+ * @description This file exports a versatile Button component based on class-variance-authority (CVA) for different styles and sizes.
+ * It's a foundational UI element for user interactions.
+ */
 
-import { cn } from "../../../lib/utils"
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
 
-// Defines button style variants
+import { cn } from "../../../lib/utils";
+
+// Defines the CSS classes for different button variants and sizes using CVA.
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
@@ -32,27 +38,38 @@ const buttonVariants = cva(
       size: "default",
     },
   }
-)
+);
 
+/**
+ * @interface ButtonProps
+ * @description Extends standard button attributes with CVA variants.
+ * @property {boolean} [asChild] - If true, the button will render as its child component, merging props.
+ */
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean
+  asChild?: boolean;
 }
 
-// Button component
+/**
+ * @component Button
+ * @description A customizable button component with predefined variants and sizes.
+ * @param {ButtonProps} props - The props for the component.
+ * @param {React.Ref<HTMLButtonElement>} ref - The ref to forward to the button element.
+ */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+    // If 'asChild' is true, render the child component using Slot. Otherwise, render a standard button.
+    const Comp = asChild ? Slot : "button";
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
       />
-    )
+    );
   }
-)
-Button.displayName = "Button"
+);
+Button.displayName = "Button";
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

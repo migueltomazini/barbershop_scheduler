@@ -1,11 +1,21 @@
-// app/components/ui/textarea.tsx
-import * as React from "react"
+/**
+ * @file barbershop_app/app/components/ui/textarea.tsx
+ * @description This file exports a standardized Textarea component for multi-line text input.
+ */
 
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
 // Use 'type' instead of 'interface' to extend HTML attributes and avoid the empty interface error.
-export type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>
+export type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
+/**
+ * @component Textarea
+ * @description A styled multi-line text input component. It is a forward-ref component, allowing parent
+ * components to get a ref to the underlying HTML textarea element.
+ * @param {TextareaProps} props - Standard HTML textarea attributes.
+ * @param {React.Ref<HTMLTextAreaElement>} ref - The ref to forward.
+ */
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, ...props }, ref) => {
     return (
@@ -17,9 +27,9 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         ref={ref}
         {...props}
       />
-    )
+    );
   }
-)
-Textarea.displayName = "Textarea"
+);
+Textarea.displayName = "Textarea";
 
-export { Textarea }
+export { Textarea };

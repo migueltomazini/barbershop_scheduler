@@ -1,7 +1,18 @@
-import React from "react";
+/**
+ * @file barbershop_app/app/components/ui/input.tsx
+ * @description This file exports a standardized Input component for use throughout the application.
+ */
 
+import React from "react";
 import { cn } from "@/lib/utils";
 
+/**
+ * @component Input
+ * @description A styled text input component that can be used for various forms.
+ * It's a forward-ref component, allowing parent components to get a ref to the underlying HTML input element.
+ * @param {React.InputHTMLAttributes<HTMLInputElement>} props - Standard HTML input attributes.
+ * @param {React.Ref<HTMLInputElement>} ref - The ref to forward.
+ */
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
     return (

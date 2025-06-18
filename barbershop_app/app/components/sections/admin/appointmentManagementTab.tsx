@@ -1,4 +1,8 @@
-// appointmentManagementTab.tsx
+/**
+ * @file barbershop_app/app/components/sections/admin/appointmentManagementTab.tsx
+ * @description This file contains the AppointmentManagementTab component, which displays a table of appointments
+ * with functionality to edit or delete them.
+ */
 
 "use client";
 
@@ -8,30 +12,42 @@ import { Edit, Trash } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { Appointment } from "@/app/types";
 
-// Defines the props for the AppointmentManagementTab component
+/**
+ * @interface AppointmentManagementTabProps
+ * @description Defines the properties for the AppointmentManagementTab component.
+ * @property {Appointment[]} appointments - An array of appointment objects to display.
+ * @property {(appointment: Appointment) => void} onEdit - Callback function triggered when editing an appointment.
+ * @property {(appointmentId: string) => void} onDelete - Callback function triggered when deleting an appointment.
+ */
 interface AppointmentManagementTabProps {
-  appointments: Appointment[]; // Array of appointment objects
-  onEdit: (appointment: Appointment) => void; // Callback for editing an appointment
-  onDelete: (appointmentId: string) => void; // Callback for deleting an appointment
+  appointments: Appointment[];
+  onEdit: (appointment: Appointment) => void;
+  onDelete: (appointmentId: string) => void;
 }
 
-// AppointmentManagementTab functional component
+/**
+ * @component AppointmentManagementTab
+ * @description A component that displays a table of appointments with options to edit or delete them.
+ * Appointments are sorted to show the most recent ones first.
+ * @param {AppointmentManagementTabProps} props - The props for the component.
+ */
 export function AppointmentManagementTab({
   appointments,
   onEdit,
   onDelete,
 }: AppointmentManagementTabProps) {
-  // Sort appointments by date and time
+  // Create a sorted copy of the appointments array.
+  // They are sorted in descending order by date and time to show the most recent appointments first.
   const sortedAppointments = [...appointments].sort((a, b) => {
     const dateTimeA = new Date(`${a.date}T${a.time}`);
     const dateTimeB = new Date(`${b.date}T${b.time}`);
-    return dateTimeB.getTime() - dateTimeA.getTime(); // Sort descending
+    return dateTimeB.getTime() - dateTimeA.getTime();
   });
 
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
       <table className="w-full min-w-[600px]">
-        {/* Table header */}
+        {/* Table Head */}
         <thead className="bg-barber-cream text-left text-sm text-gray-700">
           <tr>
             <th className="p-3 sm:p-4 font-semibold">Client</th>
@@ -42,10 +58,10 @@ export function AppointmentManagementTab({
             <th className="p-3 sm:p-4 font-semibold text-center">Actions</th>
           </tr>
         </thead>
-        {/* Table body */}
+        {/* Table Body */}
         <tbody className="divide-y divide-barber-cream text-sm">
           {sortedAppointments.length > 0 ? (
-            // Maps through sorted appointments to render each row
+            // Map through the sorted appointments to render each row.
             sortedAppointments.map((appt) => (
               <tr key={appt.id}>
                 <td className="p-3 sm:p-4 whitespace-nowrap">
@@ -59,6 +75,7 @@ export function AppointmentManagementTab({
                 </td>
                 <td className="p-3 sm:p-4">{appt.time}</td>
                 <td className="p-3 sm:p-4">
+                  {/* Dynamically styles the status badge based on the appointment status. */}
                   <span
                     className={`px-2 py-1 text-xs font-medium rounded-full ${
                       appt.status === "scheduled"
@@ -74,6 +91,7 @@ export function AppointmentManagementTab({
                   </span>
                 </td>
                 <td className="p-3 sm:p-4">
+                  {/* Action buttons for editing and deleting an appointment. */}
                   <div className="flex justify-center space-x-2">
                     <Button
                       size="sm"
@@ -96,6 +114,7 @@ export function AppointmentManagementTab({
               </tr>
             ))
           ) : (
+            // Renders a message if there are no appointments to display.
             <tr>
               <td colSpan={6} className="text-center p-8 text-muted-foreground">
                 No appointments found.

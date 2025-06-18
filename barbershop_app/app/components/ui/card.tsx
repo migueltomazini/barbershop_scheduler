@@ -1,7 +1,16 @@
-import * as React from "react"
+/**
+ * @file barbershop_app/app/components/ui/card.tsx
+ * @description This file exports a set of composable Card components for building card-based UI layouts.
+ * It includes components for the card root, header, content, and footer.
+ */
 
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
+/**
+ * @component Card
+ * @description The main container for a card component.
+ */
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -12,9 +21,13 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
       )}
       {...props}
     />
-  )
+  );
 }
 
+/**
+ * @component CardHeader
+ * @description The header section of a card, typically containing a title and description.
+ */
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -25,9 +38,13 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
       )}
       {...props}
     />
-  )
+  );
 }
 
+/**
+ * @component CardTitle
+ * @description The title element within a CardHeader.
+ */
 function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -35,9 +52,13 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("leading-none font-semibold", className)}
       {...props}
     />
-  )
+  );
 }
 
+/**
+ * @component CardDescription
+ * @description The description element within a CardHeader.
+ */
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -45,9 +66,13 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("text-muted-foreground text-sm", className)}
       {...props}
     />
-  )
+  );
 }
 
+/**
+ * @component CardAction
+ * @description A container for action elements (e.g., a button) within the CardHeader, typically aligned to the right.
+ */
 function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -58,9 +83,13 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
       )}
       {...props}
     />
-  )
+  );
 }
 
+/**
+ * @component CardContent
+ * @description The main content area of a card.
+ */
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -68,9 +97,13 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("px-6", className)}
       {...props}
     />
-  )
+  );
 }
 
+/**
+ * @component CardFooter
+ * @description The footer section of a card, often used for buttons or summary information.
+ */
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -78,7 +111,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
       {...props}
     />
-  )
+  );
 }
 
 export {
@@ -89,4 +122,4 @@ export {
   CardAction,
   CardDescription,
   CardContent,
-}
+};

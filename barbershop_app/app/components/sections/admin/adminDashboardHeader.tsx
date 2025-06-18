@@ -1,21 +1,32 @@
-// adminDashboardHeader.tsx
+/**
+ * @file barbershop_app/app/components/sections/admin/adminDashboardHeader.tsx
+ * @description This file contains the AdminDashboardHeader component, which renders the main header for the admin dashboard,
+ * including the title, navigation tabs, a search bar, and an "Add New" button.
+ */
 
 "use client";
 
 import React from "react";
 import { TabsList, TabsTrigger } from "@/app/components/ui/tabs";
 import { Input } from "@/app/components/ui/input";
-import { Button } from "@/app/components/ui/button"; // Import Button
+import { Button } from "@/app/components/ui/button";
 import {
   Users,
   Package,
   Scissors,
   Calendar as CalendarIconLucide,
   Search,
-  PlusCircle, // Import PlusCircle
+  PlusCircle,
 } from "lucide-react";
 
-// Defines the props for the AdminDashboardHeader component
+/**
+ * @interface AdminDashboardHeaderProps
+ * @description Defines the properties for the AdminDashboardHeader component.
+ * @property {string} activeTab - The currently active tab identifier (e.g., 'products', 'services').
+ * @property {string} searchTerm - The current value of the search input.
+ * @property {(value: string) => void} onSearchTermChange - Callback function to handle changes in the search term.
+ * @property {() => void} onAddItem - Callback function to trigger the "Add New Item" action.
+ */
 interface AdminDashboardHeaderProps {
   activeTab: string;
   searchTerm: string;
@@ -23,14 +34,20 @@ interface AdminDashboardHeaderProps {
   onAddItem: () => void;
 }
 
-// AdminDashboardHeader functional component
+/**
+ * @component AdminDashboardHeader
+ * @description Renders the header section for the admin dashboard. This includes the main title,
+ * navigation tabs for different management sections, a search input, and a button to add new items.
+ * @param {AdminDashboardHeaderProps} props - The props for the component.
+ */
 export function AdminDashboardHeader({
   activeTab,
   searchTerm,
   onSearchTermChange,
   onAddItem,
 }: AdminDashboardHeaderProps) {
-  // Determine if the "Add New" button should be enabled for the current tab
+  // Determines if the "Add New" button should be displayed based on the active tab.
+  // This functionality is only available for 'products' and 'services'.
   const isAddable = ["products", "services"].includes(activeTab);
 
   return (
@@ -39,7 +56,7 @@ export function AdminDashboardHeader({
         Admin Dashboard
       </h1>
 
-      {/* TabsList for navigating between different management sections */}
+      {/* Navigation tabs for switching between different management areas. */}
       <TabsList className="w-full mb-8 bg-barber-cream grid grid-cols-2 md:grid-cols-4">
         <TabsTrigger
           value="products"
@@ -67,8 +84,9 @@ export function AdminDashboardHeader({
         </TabsTrigger>
       </TabsList>
 
-      {/* Search input and Add Item button section */}
+      {/* Container for search input and the "Add New" button. */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+        {/* Search input field with a search icon. */}
         <div className="relative w-full sm:max-w-sm">
           <Search
             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
@@ -82,10 +100,13 @@ export function AdminDashboardHeader({
             onChange={(e) => onSearchTermChange(e.target.value)}
           />
         </div>
-        
-        {/* Add New Item Button */}
+
+        {/* Conditionally renders the "Add New" button if the current tab supports it. */}
         {isAddable && (
-          <Button onClick={onAddItem} className="text-white w-full sm:w-auto bg-barber-brown hover:bg-barber-dark-brown">
+          <Button
+            onClick={onAddItem}
+            className="text-white w-full sm:w-auto bg-barber-brown hover:bg-barber-dark-brown"
+          >
             <PlusCircle className="h-4 w-4 mr-2" />
             Add New {activeTab.charAt(0).toUpperCase() + activeTab.slice(1, -1)}
           </Button>

@@ -1,17 +1,28 @@
-import * as React from "react"
-import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { X } from "lucide-react"
+/**
+ * @file barbershop_app/app/components/ui/dialog.tsx
+ * @description This file exports a set of accessible dialog (modal) components built on top of Radix UI's Dialog primitive.
+ * It provides a complete solution for modals including the trigger, content, header, footer, and close button.
+ */
 
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
 
-const Dialog = DialogPrimitive.Root
+import { cn } from "@/lib/utils";
 
-const DialogTrigger = DialogPrimitive.Trigger
+// The root component for the dialog.
+const Dialog = DialogPrimitive.Root;
 
-const DialogPortal = DialogPrimitive.Portal
+// A component that triggers the dialog to open.
+const DialogTrigger = DialogPrimitive.Trigger;
 
-const DialogClose = DialogPrimitive.Close
+// A component that portals the dialog content to the end of the document body.
+const DialogPortal = DialogPrimitive.Portal;
 
+// A component that triggers the dialog to close.
+const DialogClose = DialogPrimitive.Close;
+
+// A component for the semi-transparent overlay that covers the page content.
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
@@ -24,9 +35,10 @@ const DialogOverlay = React.forwardRef<
     )}
     {...props}
   />
-))
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
+));
+DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
+// The main content container for the dialog.
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
@@ -42,15 +54,17 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
+      {/* The default close button with an 'X' icon. */}
       <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>
-))
-DialogContent.displayName = DialogPrimitive.Content.displayName
+));
+DialogContent.displayName = DialogPrimitive.Content.displayName;
 
+// A header component for the dialog, typically containing the title and description.
 const DialogHeader = ({
   className,
   ...props
@@ -62,9 +76,10 @@ const DialogHeader = ({
     )}
     {...props}
   />
-)
-DialogHeader.displayName = "DialogHeader"
+);
+DialogHeader.displayName = "DialogHeader";
 
+// A footer component for the dialog, typically containing action buttons.
 const DialogFooter = ({
   className,
   ...props
@@ -76,9 +91,10 @@ const DialogFooter = ({
     )}
     {...props}
   />
-)
-DialogFooter.displayName = "DialogFooter"
+);
+DialogFooter.displayName = "DialogFooter";
 
+// The title component for the dialog header.
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
@@ -91,9 +107,10 @@ const DialogTitle = React.forwardRef<
     )}
     {...props}
   />
-))
-DialogTitle.displayName = DialogPrimitive.Title.displayName
+));
+DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
+// The description component for the dialog header.
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
@@ -103,8 +120,8 @@ const DialogDescription = React.forwardRef<
     className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
-))
-DialogDescription.displayName = DialogPrimitive.Description.displayName
+));
+DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 export {
   Dialog,
@@ -117,4 +134,4 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
-}
+};

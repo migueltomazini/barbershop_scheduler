@@ -1,3 +1,9 @@
+/**
+ * @file barbershop_app/app/components/sections/productsSection.tsx
+ * @description This component is responsible for displaying a list of products. It can be rendered in two variants:
+ * a limited preview on the homepage ('home') or a full, searchable catalog on the shop page ('full').
+ */
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -13,17 +19,29 @@ import { useCart } from "@/app/contexts/CartContext";
 import { ProductType } from "@/app/types";
 import { Search, ShoppingCart, X } from "lucide-react";
 
+/**
+ * @type ProductsSectionProps
+ * @description Defines the properties for the ProductsSection component.
+ * @property {'home' | 'full'} [variant] - Determines the layout and content. 'home' shows a preview, 'full' shows a complete catalog.
+ */
 type ProductsSectionProps = {
   variant?: "home" | "full";
 };
 
-// Main component for displaying product section (home or full page)
+/**
+ * @component ProductsSection
+ * @description A component that fetches and displays products. It supports different layouts, a search filter,
+ * and a modal for viewing product details.
+ * @param {ProductsSectionProps} props - The props for the component.
+ */
 export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
   const isHome = variant === "home";
 
+  // State for products, loading status, and errors.
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // State for the full-page variant features.
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(
     null
@@ -31,7 +49,7 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
 
   const { addItem } = useCart();
 
-  // Fetch product data from local server on mount
+  // Fetches product data from the API on component mount.
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -43,11 +61,9 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
         const data: ProductType[] = await response.json();
         setProducts(data);
       } catch (e: unknown) {
-        if (e instanceof Error) {
-          setError(e.message);
-        } else {
-          setError("Failed to fetch products. An unknown error occurred.");
-        }
+        const message =
+          e instanceof Error ? e.message : "An unknown error occurred.";
+        setError(`Failed to fetch products. ${message}`);
       } finally {
         setLoading(false);
       }
@@ -55,17 +71,21 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
     fetchProducts();
   }, []);
 
-  // Slice only first 4 products for homepage
+  // Determines which products to display based on the variant.
   const productsToDisplay = isHome ? products.slice(0, 4) : products;
 
-  // Filter products based on search term
+  // Filters products based on the search term for the 'full' variant.
   const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Handle adding a product to cart
+  /**
+   * @function handleAddToCart
+   * @description Adds a specified product to the shopping cart using the CartContext.
+   * @param {ProductType} product - The product to add.
+   */
   const handleAddToCart = (product: ProductType) => {
     addItem({
       id: product.id,
@@ -79,7 +99,7 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
 
   const handleCloseModal = () => setSelectedProduct(null);
 
-  // Loading state UI
+  // Loading state UI.
   if (loading) {
     return (
       <section className="bg-barber-cream py-16 text-center">
@@ -90,12 +110,12 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
     );
   }
 
-  // Error state UI
+  // Error state UI.
   if (error) {
     return (
       <section className="bg-barber-cream py-16 text-center">
         <div className="container mx-auto px-4">
-          <p className="text-red-500 text-lg">Error: {error}</p>
+          <p className="text-red-500 text-lg">{error}</p>
           <p className="text-muted-foreground">
             Please ensure your JSON-Server is running on http://localhost:3001.
           </p>
@@ -104,7 +124,7 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
     );
   }
 
-  // Homepage layout: intro text + product grid + CTA button
+  // Renders the 'home' variant with a title, a grid of 4 products, and a "Browse All" button.
   if (isHome) {
     return (
       <section className="bg-barber-cream py-16">
@@ -118,13 +138,11 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
               products used by our barbers.
             </p>
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {productsToDisplay.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
-
           <div className="text-center mt-10">
             <Link href="/shop">
               <Button className="bg-barber-brown hover:bg-barber-dark-brown text-white">
@@ -137,7 +155,7 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
     );
   }
 
-  // Full product catalog layout with search and filter
+  // Renders the 'full' variant with a search bar and a grid of all filtered products.
   return (
     <div className="container mx-auto px-4 py-12 relative">
       <div className="text-center mb-12">
@@ -150,7 +168,7 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
         </p>
       </div>
 
-      {/* Search bar input */}
+      {/* Search input field. */}
       <div className="flex justify-center mb-8">
         <div className="relative w-full max-w-md">
           <Search
@@ -167,7 +185,7 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
         </div>
       </div>
 
-      {/* Filtered product grid */}
+      {/* Grid of filtered products. */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredProducts.map((product) => (
           <div
@@ -177,7 +195,7 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
           >
             <div className="h-48 bg-gray-100 flex items-center justify-center">
               <Image
-                src={product.image || "/placeholder.png"} 
+                src={product.image || "/placeholder.png"}
                 alt={product.name}
                 className="h-full w-full object-cover"
                 width={1000}
@@ -204,7 +222,7 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
         ))}
       </div>
 
-      {/* No results message */}
+      {/* Message displayed when no products match the search term. */}
       {filteredProducts.length === 0 && (
         <div className="text-center py-12">
           <h3 className="text-xl font-medium mb-2">No products found</h3>
@@ -214,13 +232,14 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
         </div>
       )}
 
-      {/* Product details modal */}
+      {/* Modal for displaying product details. */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
             <button
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
               onClick={handleCloseModal}
+              aria-label="Close modal"
             >
               <X size={20} />
             </button>
@@ -243,9 +262,9 @@ export const ProductsSection = ({ variant = "home" }: ProductsSectionProps) => {
             <div className="flex justify-end">
               <Button
                 onClick={(e) => {
+                  e.stopPropagation(); // Prevents the outer div's onClick from firing.
                   handleAddToCart(selectedProduct);
                   handleCloseModal();
-                  e.stopPropagation();
                 }}
                 disabled={selectedProduct.quantity <= 0}
                 className="bg-barber-navy hover:bg-barber-navy/90 text-white"

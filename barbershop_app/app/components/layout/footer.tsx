@@ -1,6 +1,11 @@
+/**
+ * @file barbershop_app/app/components/layout/footer.tsx
+ * @description This file contains the Footer component, which is displayed on all pages of the application.
+ * It includes contact information, quick navigation links, social media icons, and a copyright notice.
+ */
+
 import React from "react";
 import Link from "next/link";
-
 import {
   Phone,
   MapPin,
@@ -11,19 +16,24 @@ import {
   Twitter,
 } from "lucide-react";
 
+/**
+ * @component Footer
+ * @description Renders the site-wide footer, providing essential business information and navigation.
+ * This is a static component with no props or state.
+ */
 export function Footer() {
   return (
     <footer className="bg-barber-navy text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* About section */}
+          {/* About Section: Displays brand name, a brief description, and social media links. */}
           <div>
             <h3 className="text-xl font-bold mb-4 font-serif">SharpShears</h3>
             <p className="mb-4 text-sm text-gray-300">
               Premium barbershop services with skilled professionals offering
               classic cuts, hot towel shaves, and beard grooming.
             </p>
-            {/* Social media icons */}
+            {/* Social media links with hover effects. */}
             <div className="flex space-x-4">
               <a
                 href="#"
@@ -49,7 +59,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Contact information */}
+          {/* Contact Information Section: Displays physical address, phone, email, and business hours. */}
           <div>
             <h3 className="text-lg font-bold mb-4 font-serif">Contact Info</h3>
             <ul className="space-y-3 text-sm text-gray-300">
@@ -72,7 +82,7 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Quick navigation links */}
+          {/* Quick Links Section: Provides primary navigation links for user convenience. */}
           <div>
             <h3 className="text-lg font-bold mb-4 font-serif">Quick Links</h3>
             <ul className="space-y-2 text-sm text-gray-300">
@@ -112,7 +122,7 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Footer bottom copyright */}
+        {/* Footer Bottom: Displays the copyright notice, updated to the current year. */}
         <div className="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-400">
           <p>© {new Date().getFullYear()} SharpShears. All rights reserved.</p>
         </div>

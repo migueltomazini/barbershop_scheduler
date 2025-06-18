@@ -1,17 +1,27 @@
+/**
+ * @file barbershop_app/app/components/sections/home/heroSection.tsx
+ * @description This file contains the Hero section component, which is the main banner
+ * displayed at the top of the homepage.
+ */
+
 import React from "react";
 import Link from "next/link";
 
 import { Button } from "../../ui/button";
 import { Calendar } from "lucide-react";
 
-// Hero section with background image and CTA buttons
+/**
+ * @component HeroSection
+ * @description Renders a large, visually appealing hero section with a background image,
+ * a headline, a descriptive paragraph, and primary call-to-action buttons.
+ */
 export const HeroSection = () => {
   return (
     <section className="relative bg-barber-navy text-white">
-      {/* Background image overlay */}
+      {/* Background image with an overlay for better text readability. */}
       <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2344&q=100')] bg-cover bg-center"></div>
 
-      {/* Hero content */}
+      {/* Hero content, positioned above the background image. */}
       <div className="container mx-auto px-4 py-24 relative z-10">
         <div className="max-w-2xl">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 font-serif">
@@ -23,7 +33,7 @@ export const HeroSection = () => {
             expertise.
           </p>
 
-          {/* Call-to-action buttons */}
+          {/* Call-to-action buttons for booking and viewing services. */}
           <div className="flex flex-wrap gap-4">
             <Link href="/appointments">
               <Button className="bg-barber-gold hover:bg-barber-gold/90 text-black font-medium px-6 py-2">

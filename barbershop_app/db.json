@@ -77,8 +77,8 @@
       "price": 22,
       "description": "Nourish and soften your beard with our signature beard oil. Infused with natural oils to promote healthy growth and a subtle, masculine scent.",
       "image": "/images/products/beard_oil.jpg",
-      "quantity": 11,
-      "soldQuantity": 2,
+      "quantity": 10,
+      "soldQuantity": 3,
       "type": "product"
     },
     {

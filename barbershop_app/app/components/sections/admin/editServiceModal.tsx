@@ -1,14 +1,16 @@
-// app/components/sections/admin/editServiceModal.tsx
+/**
+ * @file barbershop_app/app/components/sections/admin/editServiceModal.tsx
+ * @description This file contains the EditServiceModal component, a dialog for creating a new service or editing an existing one.
+ */
 
 "use client";
 
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
-
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
-import { Textarea } from "@/app/components/ui/textArea"; // Assuming textarea component exists
+import { Textarea } from "@/app/components/ui/textArea";
 import { ServiceType } from "@/app/types";
 import {
   Dialog,
@@ -19,29 +21,41 @@ import {
   DialogClose,
 } from "@/app/components/ui/dialog";
 
-// Defines the props for the EditServiceModal component
+/**
+ * @interface EditServiceModalProps
+ * @description Defines the properties for the EditServiceModal component.
+ * @property {boolean} isOpen - Controls whether the dialog is open.
+ * @property {(isOpen: boolean) => void} onOpenChange - Callback to handle dialog open/close.
+ * @property {ServiceType | null} service - The service object to edit, or null to create a new one.
+ * @property {(serviceData: Partial<ServiceType>) => Promise<void>} onSave - Async callback to save service changes.
+ */
 interface EditServiceModalProps {
-  isOpen: boolean; // Controls whether the dialog is open
-  onOpenChange: (isOpen: boolean) => void; // Callback to handle dialog open/close
-  service: ServiceType | null; // The service object to be edited
-  onSave: (serviceData: Partial<ServiceType>) => Promise<void>; // Callback to save service changes
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  service: ServiceType | null;
+  onSave: (serviceData: Partial<ServiceType>) => Promise<void>;
 }
 
-// EditServiceModal functional component
+/**
+ * @component EditServiceModal
+ * @description A modal dialog for creating or editing service details like name, price, and duration.
+ * @param {EditServiceModalProps} props - The props for the component.
+ */
 export function EditServiceModal({
   isOpen,
   onOpenChange,
   service,
   onSave,
 }: EditServiceModalProps) {
+  // State to manage the form inputs for the service data.
   const [formState, setFormState] = useState<Partial<ServiceType>>({});
 
-  // Effect to populate formState with current service data when the modal opens
+  // Populates form with existing data when editing, or resets it for a new service.
   useEffect(() => {
     if (service) {
       setFormState({ ...service });
     } else {
-      // Resets formState for creating a new service
+      // Resets form state for creating a new service.
       setFormState({
         name: "",
         price: 0,
@@ -53,7 +67,10 @@ export function EditServiceModal({
     }
   }, [service, isOpen]);
 
-  // Handles changes to form input fields
+  /**
+   * @function handleChange
+   * @description Updates the form state on input change, parsing number values correctly.
+   */
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -69,16 +86,20 @@ export function EditServiceModal({
     }));
   };
 
-  // Handles saving the changes, validating input and calling the onSave callback
+  /**
+   * @function handleSave
+   * @description Validates form fields and triggers the onSave callback.
+   */
   const handleSave = async () => {
     if (!formState.name || formState.price == null || !formState.duration) {
       toast.error("Please fill all required service fields.");
       return;
     }
     await onSave(formState);
-    onOpenChange(false); // Closes the modal after saving
+    onOpenChange(false); // Closes the modal after saving.
   };
 
+  // Flag to determine if creating a new service for UI adjustments.
   const isNewService = !service;
 
   return (

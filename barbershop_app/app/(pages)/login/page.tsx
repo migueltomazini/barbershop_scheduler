@@ -1,3 +1,9 @@
+/**
+ * @file barbershop_app/app/(pages)/login/page.tsx
+ * @description This file contains the Login page component. It handles user authentication,
+ * displays a login form, and redirects users based on their authentication status.
+ */
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -17,7 +23,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Redirect if user is already authenticated
+  // Redirects the user if they are already authenticated.
   useEffect(() => {
     if (isAuthenticated) {
       const redirectPath = searchParams.get("redirect") || "/";
@@ -26,7 +32,13 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, router, searchParams]);
 
-  // Handle login form submission
+  /**
+   * @function handleLoginSubmit
+   * @description Handles the login form submission. It validates inputs, calls the login function
+   * from the AuthContext, and handles success or error responses.
+   * @param {string} email - The user's email.
+   * @param {string} password - The user's password.
+   */
   const handleLoginSubmit = async (email: string, password: string) => {
     if (!email || !password) {
       toast.error("Please enter both email and password.");
@@ -39,6 +51,7 @@ export default function LoginPage() {
       const success = await login(email, password);
       if (success) {
         toast.success("Login successful!");
+        // Redirect to the intended page or home page after successful login.
         const redirectPath = searchParams.get("redirect") || "/";
         router.push(redirectPath);
       } else {
@@ -52,7 +65,7 @@ export default function LoginPage() {
     }
   };
 
-  // User is already authenticated
+  // If the user is already authenticated, show a redirecting message.
   if (isAuthenticated) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
@@ -65,7 +78,7 @@ export default function LoginPage() {
     );
   }
 
-  // Default login page render
+  // Renders the main login page content.
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
@@ -83,7 +96,7 @@ export default function LoginPage() {
           <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xl border border-barber-cream">
             <LoginForm onSubmit={handleLoginSubmit} isLoading={isLoading} />
 
-            {/* Link to signup page */}
+            {/* Link to the signup page */}
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
                 Don’t have an account?{" "}
@@ -95,7 +108,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Demo credentials for testing */}
+            {/* Demo credentials for easy testing */}
             <div className="mt-8 border-t border-gray-200 pt-6">
               <div className="text-xs text-muted-foreground mb-2 text-center">
                 For demonstration:

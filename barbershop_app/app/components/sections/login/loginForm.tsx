@@ -1,3 +1,9 @@
+/**
+ * @file barbershop_app/app/components/sections/login/loginForm.tsx
+ * @description This file contains the reusable LoginForm component, which includes fields for email and password,
+ * a password visibility toggle, and a submit button with a loading state.
+ */
+
 "use client";
 
 import React, { useState } from "react";
@@ -9,22 +15,38 @@ import { Label } from "@/app/components/ui/label";
 
 import { Eye, EyeOff } from "lucide-react";
 
-// Props for the login form
+/**
+ * @interface LoginFormProps
+ * @description Defines the properties for the LoginForm component.
+ * @property {(email: string, password: string) => Promise<void>} onSubmit - The async function to call when the form is submitted.
+ * @property {boolean} isLoading - A boolean to indicate if the form is in a loading state (e.g., waiting for API response).
+ */
 interface LoginFormProps {
   onSubmit: (email: string, password: string) => Promise<void>;
   isLoading: boolean;
 }
 
-// Login form component
+/**
+ * @component LoginForm
+ * @description A form component for user login. It manages its own internal state for email, password,
+ * and password visibility, and calls a parent-provided onSubmit function.
+ * @param {LoginFormProps} props - The props for the component.
+ */
 export const LoginForm: React.FC<LoginFormProps> = ({
   onSubmit,
   isLoading,
 }) => {
+  // State for the form's input fields.
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // State to toggle password visibility.
   const [showPassword, setShowPassword] = useState(false);
 
-  // Handles the form submission
+  /**
+   * @function handleSubmit
+   * @description Prevents default form submission and calls the parent's onSubmit handler.
+   * @param {React.FormEvent} e - The form submission event.
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(email, password);
@@ -32,13 +54,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Email input section */}
+      {/* Email input field. */}
       <div className="space-y-2">
         <Label htmlFor="login-email">Email</Label>
         <Input
           id="login-email"
           type="text"
-          placeholder="Email ou nome de usuário"
+          placeholder="Email or username"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -47,13 +69,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         />
       </div>
 
-      {/* Password input section with show/hide toggle and link to password recovery */}
+      {/* Password input field with visibility toggle and a "Forgot password?" link. */}
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <Label htmlFor="login-password">Senha</Label>
+          <Label htmlFor="login-password">Password</Label>
           <Link href="/forgot-password">
             <span className="text-sm text-barber-brown hover:underline cursor-pointer">
-              Esqueceu a senha?
+              Forgot password?
             </span>
           </Link>
         </div>
@@ -68,6 +90,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             className="border-barber-cream focus:border-barber-brown focus:ring-barber-brown pr-10"
             autoComplete="current-password"
           />
+          {/* Button to toggle password visibility. */}
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
@@ -79,13 +102,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </div>
       </div>
 
-      {/* Submit button with loading state */}
+      {/* Submit button, disabled during loading state. */}
       <Button
         type="submit"
         className="w-full bg-barber-brown hover:bg-barber-dark-brown text-white py-3 text-lg"
         disabled={isLoading}
       >
-        {isLoading ? "Entrando..." : "Entrar"}
+        {isLoading ? "Logging in..." : "Login"}
       </Button>
     </form>
   );

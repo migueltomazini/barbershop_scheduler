@@ -1,3 +1,9 @@
+/**
+ * @file barbershop_app/app/(pages)/page.tsx
+ * @description This file contains the main Home page component for the application. It serves as the landing page
+ * and is composed of several distinct sections to showcase the barbershop's offerings.
+ */
+
 import React from "react";
 
 // Component imports
@@ -11,10 +17,12 @@ import { Footer } from "../components/layout/footer";
 export default function Home() {
   return (
     <div>
-      <Navbar/>
+      <Navbar />
       <HeroSection />
-      <ServicesSection variant="home"/>
-      <ProductsSection variant="full"/>
+      {/* ServicesSection is used with the "home" variant to show a limited preview. */}
+      <ServicesSection variant="home" />
+      {/* ProductsSection is used with the "full" variant to display all products. */}
+      <ProductsSection variant="full" />
       <CtaSection />
       <Footer />
     </div>

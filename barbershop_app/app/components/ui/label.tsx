@@ -1,9 +1,13 @@
+/**
+ * @file barbershop_app/app/components/ui/label.tsx
+ * @description This file exports a styled Label component for form elements, with variants for color and size.
+ */
+
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-
 import { cn } from "@/lib/utils";
 
-// Defines label style variants
+// Defines the CSS classes for different label variants using CVA.
 const labelVariants = cva("text-sm font-medium leading-none", {
   variants: {
     color: {
@@ -23,7 +27,12 @@ const labelVariants = cva("text-sm font-medium leading-none", {
   },
 });
 
-// Label component
+/**
+ * @component Label
+ * @description A styled label component for form inputs, supporting different colors and sizes.
+ * @param {React.ComponentPropsWithoutRef<"label"> & VariantProps<typeof labelVariants>} props - Standard label attributes plus CVA variants.
+ * @param {React.Ref<HTMLLabelElement>} ref - The ref to forward to the label element.
+ */
 const Label = React.forwardRef<
   HTMLLabelElement,
   React.ComponentPropsWithoutRef<"label"> & VariantProps<typeof labelVariants>
@@ -34,7 +43,6 @@ const Label = React.forwardRef<
     {...props}
   />
 ));
-
 Label.displayName = "Label";
 
 export { Label };

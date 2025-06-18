@@ -1,10 +1,18 @@
-import * as React from "react"
-import * as TabsPrimitive from "@radix-ui/react-tabs"
+/**
+ * @file barbershop_app/app/components/ui/tabs.tsx
+ * @description This file exports a set of accessible tab components built on top of Radix UI's Tabs primitive.
+ * It provides a complete solution for creating tabbed interfaces.
+ */
 
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
 
-const Tabs = TabsPrimitive.Root
+import { cn } from "@/lib/utils";
 
+// The root component for a set of tabs.
+const Tabs = TabsPrimitive.Root;
+
+// The component that contains the list of tab triggers.
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
@@ -17,9 +25,10 @@ const TabsList = React.forwardRef<
     )}
     {...props}
   />
-))
-TabsList.displayName = TabsPrimitive.List.displayName
+));
+TabsList.displayName = TabsPrimitive.List.displayName;
 
+// The button component that activates a specific tab.
 const TabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
@@ -32,9 +41,10 @@ const TabsTrigger = React.forwardRef<
     )}
     {...props}
   />
-))
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+));
+TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
+// The content panel that is displayed when its corresponding tab is active.
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
@@ -47,7 +57,7 @@ const TabsContent = React.forwardRef<
     )}
     {...props}
   />
-))
-TabsContent.displayName = TabsPrimitive.Content.displayName
+));
+TabsContent.displayName = TabsPrimitive.Content.displayName;
 
-export { Tabs, TabsList, TabsTrigger, TabsContent }
+export { Tabs, TabsList, TabsTrigger, TabsContent };

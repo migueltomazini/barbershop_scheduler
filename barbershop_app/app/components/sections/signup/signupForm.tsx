@@ -1,3 +1,9 @@
+/**
+ * @file barbershop_app/app/components/sections/signup/signupForm.tsx
+ * @description This file contains the reusable SignupForm component, which includes fields for name, email, phone, password,
+ * and confirm password, with password visibility toggles and a submit button with a loading state.
+ */
+
 "use client";
 
 import React, { useState } from "react";
@@ -8,7 +14,15 @@ import { Label } from "@/app/components/ui/label";
 
 import { Eye, EyeOff } from "lucide-react";
 
-// Define the shape of the form data
+/**
+ * @interface SignupFormData
+ * @description Defines the shape of the data for the signup form.
+ * @property {string} name - The user's full name.
+ * @property {string} email - The user's email address.
+ * @property {string} phone - The user's phone number (optional).
+ * @property {string} password - The user's chosen password.
+ * @property {string} confirmPassword - The confirmation of the user's chosen password.
+ */
 interface SignupFormData {
   name: string;
   email: string;
@@ -17,15 +31,30 @@ interface SignupFormData {
   confirmPassword: string;
 }
 
+/**
+ * @interface SignupFormProps
+ * @description Defines the properties for the SignupForm component.
+ * @property {(formData: SignupFormData) => Promise<void>} onSubmit - The async function to call when the form is submitted,
+ * receiving all form data.
+ * @property {boolean} isLoading - A boolean to indicate if the form is in a loading state (e.g., waiting for API response).
+ */
 interface SignupFormProps {
   onSubmit: (formData: SignupFormData) => Promise<void>;
   isLoading: boolean;
 }
 
+/**
+ * @component SignupForm
+ * @description A form component for user registration. It manages its own internal state for all input fields
+ * (name, email, phone, password, confirm password) and their respective visibility toggles,
+ * calling a parent-provided onSubmit function with all form data upon submission.
+ * @param {SignupFormProps} props - The props for the component.
+ */
 export const SignupForm: React.FC<SignupFormProps> = ({
   onSubmit,
   isLoading,
 }) => {
+  // State for all form's input fields, initialized with empty strings.
   const [formData, setFormData] = useState<SignupFormData>({
     name: "",
     email: "",
@@ -33,14 +62,27 @@ export const SignupForm: React.FC<SignupFormProps> = ({
     password: "",
     confirmPassword: "",
   });
+  // State to toggle the visibility of the password field.
   const [showPassword, setShowPassword] = useState(false);
+  // State to toggle the visibility of the confirm password field.
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  /**
+   * @function handleChange
+   * @description Updates the form data state based on changes in input fields.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event from the input element.
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  /**
+   * @function handleSubmit
+   * @description Prevents default form submission and calls the parent's onSubmit handler
+   * with the current form data.
+   * @param {React.FormEvent} e - The form submission event.
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
@@ -48,6 +90,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Full Name input field. */}
       <div>
         <Label htmlFor="signup-name">Nome Completo</Label>
         <Input
@@ -62,6 +105,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           autoComplete="name"
         />
       </div>
+      {/* Email input field. */}
       <div>
         <Label htmlFor="signup-email">Email</Label>
         <Input
@@ -76,6 +120,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           autoComplete="email"
         />
       </div>
+      {/* Phone number input field (optional). */}
       <div>
         <Label htmlFor="signup-phone">Telefone (opcional)</Label>
         <Input
@@ -89,6 +134,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           autoComplete="tel"
         />
       </div>
+      {/* Password input field with visibility toggle. */}
       <div>
         <Label htmlFor="signup-password">Senha</Label>
         <div className="relative mt-1">
@@ -103,6 +149,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             className="border-barber-cream focus:border-barber-brown focus:ring-barber-brown pr-10"
             autoComplete="new-password"
           />
+          {/* Button to toggle password visibility. */}
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
@@ -113,6 +160,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
           </button>
         </div>
       </div>
+      {/* Confirm Password input field with visibility toggle. */}
       <div>
         <Label htmlFor="signup-confirmPassword">Confirmar Senha</Label>
         <div className="relative mt-1">
@@ -127,6 +175,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             className="border-barber-cream focus:border-barber-brown focus:ring-barber-brown pr-10"
             autoComplete="new-password"
           />
+          {/* Button to toggle confirm password visibility. */}
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -140,6 +189,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
         </div>
       </div>
 
+      {/* Submit button, disabled during loading state. */}
       <Button
         type="submit"
         className="w-full bg-barber-brown hover:bg-barber-dark-brown text-white py-3 text-lg"
