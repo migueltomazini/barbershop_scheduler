@@ -226,8 +226,8 @@ To set up and run this project locally or in network:
 
 ## Problems
 
-No problems encountered during the implementation of Milestones 1 and 2.
+No problems encountered during the implementation of Milestones 1, 2 or 3.
 
 ## Comments
 
-Only the first step of the extra functionality was implemented. From the user's perspective, it is possible to schedule an appointment. However, on the admin dashboard, the "Services", "Clients", and "Appointments" tabs are not yet functional. These features are planned to be completed in the next milestone, as they depend on database integration.
+No comments.
