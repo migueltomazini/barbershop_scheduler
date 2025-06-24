@@ -1,30 +1,42 @@
-/**
- * @file barbershop_app/app/layout.tsx
- * @description This is the root layout for the entire application. It wraps all pages with essential context providers
- * (AuthProvider, CartProvider) and includes the Toaster component for notifications.
- */
-
+// app/layout.tsx
 import "./globals.css";
-
+import type { Metadata } from "next";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
-import { Toaster } from "sonner"; // Component for displaying toast notifications.
+import { Toaster } from "sonner";
+import { Navbar } from "./components/layout/navbar";
+import { Footer } from "./components/layout/footer";
+import { cookies } from "next/headers";
+
+export const metadata: Metadata = {
+  title: "SharpShears Barbershop",
+  description: "Premium grooming services",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const sessionCookie = cookies().get('session')?.value;
+  let session = null;
+  if (sessionCookie) {
+    try {
+      session = JSON.parse(sessionCookie);
+    } catch (error) {
+      session = null;
+    }
+  }
+
   return (
     <html lang="en">
       <body>
-        {/* The AuthProvider makes authentication state available to the entire app. */}
-        <AuthProvider>
-          {/* The CartProvider makes shopping cart state available to the entire app. */}
+        <AuthProvider serverSession={session}>
           <CartProvider>
-            {/* The `children` prop represents the current page being rendered. */}
-            {children}
-            {/* The Toaster component is positioned here to be available on all pages. */}
+            {/* O layout apenas CHAMA o componente Navbar */}
+            <Navbar session={session} />
+            <main className="flex-grow">{children}</main>
+            <Footer />
             <Toaster position="bottom-right" />
           </CartProvider>
         </AuthProvider>

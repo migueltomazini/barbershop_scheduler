@@ -9,8 +9,6 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Navbar } from "./components/layout/navbar";
-import { Footer } from "./components/layout/footer";
 
 /**
  * @component NotFound
@@ -29,7 +27,6 @@ const NotFound = () => {
 
   return (
     <div>
-      <Navbar />
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">404</h1>
@@ -42,7 +39,6 @@ const NotFound = () => {
           </Link>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

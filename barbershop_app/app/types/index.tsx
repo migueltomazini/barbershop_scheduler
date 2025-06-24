@@ -1,54 +1,39 @@
 // app/types/index.ts
 
-// Nova estrutura para o endereço
+// --- Tipos de Autenticação e Usuário ---
+
 export type Address = {
   street: string;
   city: string;
   state: string;
   zip: string;
-  country: string;
+  country?: string; // Tornando opcional, como no modelo
 };
 
-// User types
-export type UserRole = "client" | "admin";
-
-export interface BaseUser {
-  id: string;
+// NOVO: Um tipo User simplificado que corresponde ao nosso modelo Mongoose
+export interface User {
+  _id: string; // MUDANÇA: Usamos _id, que vem do MongoDB
   name: string;
   email: string;
   phone: string;
-  role: UserRole;
-  address?: Address; // <-- ATUALIZADO para usar o tipo Address
-  password?: string;
+  role: "client" | "admin";
+  address?: Address;
+  createdAt: string; // Mongoose adiciona timestamps como strings ISO
+  updatedAt: string;
 }
 
-export interface Admin extends BaseUser {
-  role: "admin";
-}
-
-export interface Client extends BaseUser {
-  role: "client";
-  address: Address; // <-- ATUALIZADO para ser obrigatório e do tipo Address
-}
-
-export type User = Admin | Client;
-
-// Type for mock user stored in db.json, including password
-export type MockUserWithPassword = User & { password?: string };
-
-// Type for data passed to signup function
-export type SignupData = {
-    name: string;
-    email: string;
-    phone: string;
-    password: string;
-    address: Address; // <-- ADICIONADO o objeto de endereço
+// NOVO: O tipo para a sessão que guardamos no cookie
+export type SessionType = {
+  userId: string;
+  name: string;
+  role: string;
 };
 
 
-// Product/Service types
+// --- Tipos de Inventário (Produtos e Serviços) ---
+
 export interface ProductType {
-  id: string;
+  _id: string; // MUDANÇA: Usamos _id
   name: string;
   description: string;
   price: number;
@@ -59,7 +44,7 @@ export interface ProductType {
 }
 
 export interface ServiceType {
-  id:string;
+  _id: string; // MUDANÇA: Usamos _id
   name: string;
   description: string;
   price: number;
@@ -69,34 +54,35 @@ export interface ServiceType {
   type: "service";
 }
 
-// Combined inventory type
-export type InventoryItem = ProductType | ServiceType;
 
-// Appointment types (Seu tipo Appointment estava um pouco diferente, ajustei para o mais recente)
+// --- Tipos de Agendamento e Carrinho ---
+
+// NOVO: O tipo Appointment agora reflete os dados "populados" do Mongoose
 export interface Appointment {
-  id: string;
-  clientId: string;
-  clientName: string;
-  serviceId: string;
-  serviceName: string;
-  date: string;
-  time: string;
-  status: "scheduled" | "completed" | "canceled";
+  _id: string;
+  date: string; // A data vem como uma string ISO do banco
+  status: "scheduled" | "completed" | "canceled" | "cancelled";
+  // Em vez de IDs e nomes separados, temos objetos aninhados
+  user: {
+    _id: string;
+    name: string;
+  };
+  service: {
+    _id: string;
+    name: string;
+  };
 }
 
-// Order types
-export interface OrderItem {
-  id: string;
-  productId: string;
+// NOVO: Um tipo para os itens do carrinho, que estava faltando
+export interface CartItem {
+  id: string; // Aqui usamos o _id do produto/serviço
+  name: string;
+  price: number;
+  image: string;
   quantity: number;
-  unitPrice: number;
-}
-
-export interface Order {
-  id: string;
-  clientId: string;
-  items: OrderItem[];
-  totalAmount: number;
-  date: string;
-  status: "pending" | "completed" | "cancelled";
+  type: "product" | "service";
+  description?: string;
+  // Campos específicos para agendamento
+  date?: string;
+  time?: string;
 }

@@ -1,7 +1,6 @@
 /**
  * @file barbershop_app/app/components/sections/admin/serviceManagementTab.tsx
- * @description This file contains the ServiceManagementTab component, which displays a table of services
- * with functionality to edit or delete them.
+ * @description VERSÃO FINAL: Corrigido para usar _id como a key e nos botões de ação.
  */
 
 "use client";
@@ -11,25 +10,12 @@ import { Button } from "@/app/components/ui/button";
 import { Edit, Trash } from "lucide-react";
 import { ServiceType } from "@/app/types";
 
-/**
- * @interface ServiceManagementTabProps
- * @description Defines the properties for the ServiceManagementTab component.
- * @property {ServiceType[]} services - An array of service objects to display.
- * @property {(service: ServiceType) => void} onEdit - Callback function to handle editing a service.
- * @property {(serviceId: string) => void} onDelete - Callback function to handle deleting a service.
- */
 interface ServiceManagementTabProps {
   services: ServiceType[];
   onEdit: (service: ServiceType) => void;
   onDelete: (serviceId: string) => void;
 }
 
-/**
- * @component ServiceManagementTab
- * @description A component that renders a table of services, allowing administrators
- * to manage them by providing edit and delete actions.
- * @param {ServiceManagementTabProps} props - The props for the component.
- */
 export function ServiceManagementTab({
   services,
   onEdit,
@@ -50,14 +36,13 @@ export function ServiceManagementTab({
         {/* Table Body */}
         <tbody className="divide-y divide-barber-cream text-sm">
           {services.length > 0 ? (
-            // Map through the services array to render a row for each service.
             services.map((service) => (
-              <tr key={service.id}>
+              // MUDANÇA 1: Usando service._id para a key
+              <tr key={service._id}>
                 <td className="p-3 sm:p-4 whitespace-nowrap">{service.name}</td>
                 <td className="p-3 sm:p-4">${service.price.toFixed(2)}</td>
                 <td className="p-3 sm:p-4">{service.duration}</td>
                 <td className="p-3 sm:p-4">
-                  {/* Action buttons for edit and delete operations. */}
                   <div className="flex justify-center space-x-2">
                     <Button
                       size="sm"
@@ -70,7 +55,8 @@ export function ServiceManagementTab({
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => onDelete(service.id)}
+                      // MUDANÇA 2: Passando service._id para a função de deletar
+                      onClick={() => onDelete(service._id)}
                       className="text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
                     >
                       <Trash className="h-4 w-4" />
@@ -80,7 +66,6 @@ export function ServiceManagementTab({
               </tr>
             ))
           ) : (
-            // Display a message if no services are available.
             <tr>
               <td colSpan={4} className="text-center p-8 text-muted-foreground">
                 No services found.
