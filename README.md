@@ -75,52 +75,107 @@ Admin view with a structured layout to visualize and select available time slots
 
 ---
 
-## Requirements (Milestone 2 Focus)
+## Technology Stack and Architecture
 
-The core requirements are specified in the course assignment. For Milestone 2, the focus is on client-side functionality:
+The project was built using a modern JavaScript stack, focusing on performance, security, and developer experience.
+
+- **Framework:** [Next.js 15](https://nextjs.org/) (React 19) with the App Router for a component-based architecture.
+- **Language:** [TypeScript](https://www.typescriptlang.org/) for type safety and code maintainability.
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) for a utility-first approach enabling rapid and consistent UI development.
+- **Backend Logic:**
+  - **Server Components** handle data fetching on the server, optimizing initial load time and SEO.
+  - **Server Actions** manage data mutations (create, update, delete) securely on the server, removing the need for a separate API layer.
+- **Database:**
+  - **MongoDB Atlas:** Cloud-hosted, flexible, and scalable NoSQL database.
+  - **Mongoose:** ODM to model and interact with MongoDB in a structured, secure manner.
+- **Authentication:**
+  - Custom session management using secure `httpOnly` cookies on the server to handle user login states and protect routes.
+
+---
+
+## Implemented Features
+
+The application includes a full cycle of features connected to a persistent database:
+
+### ✅ Complete Authentication
+
+- Users can **Sign Up** and **Login**; data is persisted in MongoDB.
+- Distinction between **Client** and **Administrator** roles, with route protection for admin-only pages.
+- User sessions are managed server-side via cookies; the UI updates dynamically (e.g., Navbar shows login state).
+
+### 🗂️ Dynamic Product and Service Catalog
+
+- All products and services are fetched directly from MongoDB Atlas.
+- Listing pages use **Server Components** for fast, SEO-friendly page loads.
+
+### 🛒 Functional Shopping Cart & Checkout
+
+- Users can add/remove products and update quantities; cart state is persisted in `localStorage`.
+- The checkout flow:
+  - Purchasing a **service** creates a new Appointment document in the database.
+  - Purchasing a **product** decrements its quantity and increments its `soldQuantity` in the database via a Server Action.
+
+### 🔐 Administrator Dashboard
+
+- Admins access a protected dashboard at `/admin`.
+- Full CRUD (Create, Read, Update, Delete) for Products and Services.
+- View of all registered clients and appointments.
+
+---
+
+
+## Requirements (Milestone 2 and 3 Focus)
+
+The core requirements are specified in the course assignment. For Milestones 2 and 3, the focus shifted from mock client-side functionality to a fully integrated backend with MongoDB.
 
 **Fulfilled from Assignment:**
 
-- **User Types:** Implemented distinct experiences for "Clients" and "Administrators" using a mock authentication system.
-    - **Administrators:** Can log in with "admin/admin" credentials. *(Specify what admin functionalities are implemented, e.g., view/manage products if `json-server` is used for this).*
-    - **Clients:** Can log in with "client@example.com/password" or browse as guests. Can add items to cart, simulate checkout.
-- **Admin Record:** (Simulated) Admin user has `name`, `id`, `phone`, `email` (as per `AuthContext`).
-- **Customer Record:** (Simulated) Client user has `name`, `id`, `address`, `phone`, `email` (as per `AuthContext`).
-- **Product/Service Records:** Products include `name`, `id`, `photo`, `description`, `price`, `quantity` (in stock), and `quantity_sold` (simulated update in `json-server` or `localStorage` upon mock purchase).
+- **User Types:** Implemented distinct experiences for **Clients** and **Administrators** using a real authentication system with server-managed sessions.
+  - **Administrators:** Can log in with valid credentials and access a protected dashboard to manage products, services, clients, and appointments directly in the database.
+  - **Clients:** Can register, log in, browse the catalog, add items to the cart, book services, and complete purchases. User sessions persist securely with server-side cookies.
+- **Admin Record:** Stored in MongoDB, including `name`, `id`, `phone`, `email`.
+- **Customer Record:** Stored in MongoDB with `name`, `id`, `address`, `phone`, `email`.
+- **Product/Service Records:** Stored in MongoDB, including `name`, `id`, `photo`, `description`, `price`, `quantity` (in stock), and `soldQuantity`. All updates happen live in the database.
 - **Selling Products/Services:**
-    - Products can be selected, quantity chosen, and added to a functional cart.
-    - Purchases are simulated using any credit card number.
-    - (Simulated) Product stock is decremented, and `quantity_sold` is incremented upon mock purchase.
-    - Carts are emptied upon (simulated) payment or by user action.
-- **Product/Service Management (Admin):** *(Detail what is implemented. E.g., "Administrators can view a list of products. CRUD operations for products are simulated using `json-server`, allowing changes to stock quantity.")*
-- **Specific Functionality:** Our barbershop theme includes distinct sections for booking services and purchasing grooming products, providing a comprehensive online presence for the business.
-- **Accessibility & Usability:** The system aims for good usability with clear navigation and responsive design. Semantic HTML and ARIA attributes are used where appropriate. *(Be more specific if you have concrete examples).*
-- **Responsiveness:** The application adapts to various screen sizes, ensuring functionality and readability across devices.
+  - Users can select products/services, adjust quantity, and add to a fully functional cart.
+  - On checkout, product stock is decremented and `soldQuantity` incremented in MongoDB.
+  - Service purchases create Appointment records in the database.
+  - The cart is cleared after a successful checkout.
+- **Product/Service Management (Admin):** Administrators have full CRUD operations for Products and Services using Server Actions, all persisted in MongoDB.
+- **Specific Functionality:** The barbershop includes a complete online store and appointment booking system, offering a comprehensive digital experience.
+- **Accessibility & Usability:** The application uses semantic HTML, ARIA attributes, and a clear, consistent design. The navigation is intuitive and responsive.
+- **Responsiveness:** The interface adapts gracefully to various screen sizes and devices, ensuring usability on mobile, tablet, and desktop.
 
-## Project Description (Milestone 2 Update)
+---
 
-This milestone focuses on implementing the client-side functionality of the "SharpShears" barbershop website. Building upon the HTML/CSS mockups from Milestone 1, we have now integrated JavaScript (via React/Next.js) to create interactive and dynamic user interfaces.
+## Project Description (Milestone 2 and 3 Update)
+
+Milestones 2 and 3 expanded the project from static HTML/CSS mockups to a fully functional, database-backed full-stack web app using Next.js and MongoDB.
 
 **Key functionalities implemented:**
 
-- **User Authentication:** A mock login system allows users to sign in as either a "client" or an "admin," with session data stored in `localStorage`.
-- **Product Catalog & Shop:** Products are dynamically fetched from a `json-server` instance (serving `db.json`) and displayed on the shop page. Users can view details and add products to their cart.
-- **Shopping Cart:** A fully functional shopping cart allows users to add/remove items, update quantities, and view the subtotal. Cart data is persisted in `localStorage`.
-- **Checkout Simulation:** A visual checkout process allows users to enter mock payment details. Upon "successful" payment, the cart is cleared, and a confirmation page is displayed. (Simulated) Stock levels are adjusted.
-- **Services Display:** Services are listed, providing information to users. *(Mention if booking is functional, even if simulated).*
-- **Admin Functionalities (Basic):** *(Detail what admins can do, e.g., "Admins have a dedicated dashboard and can manage product listings by interacting with the `json-server` backend for CRUD operations on products, including stock updates.")*
-- **Responsive Design:** Continued focus on ensuring the application is usable across different device sizes.
-- **Navigation:** All major pages are interconnected and accessible through the navigation bar and other UI elements.
+- **User Authentication:** A secure authentication system allows users to register and sign in as either a Client or an Admin. Sessions are managed via server-side `httpOnly` cookies.
+- **Product Catalog & Shop:** Products are dynamically fetched from MongoDB using Server Components, ensuring fast and SEO-friendly rendering.
+- **Shopping Cart:** A fully functional shopping cart enables users to add/remove products, update quantities, and view subtotals. Cart state persists in `localStorage` for a smooth experience.
+- **Checkout Process:** A real checkout flow that updates the database in real time — stock levels are decremented, sales are tracked, and service purchases create appointments in the database.
+- **Services Display & Booking:** Services are listed dynamically from the database. Booking a service creates a persistent Appointment record in MongoDB.
+- **Admin Functionalities:** Admins have access to a secure dashboard to manage Products and Services with full CRUD functionality and view lists of clients and appointments.
+- **Responsive Design:** The system remains accessible and easy to use across desktops, tablets, and mobile devices.
+- **Navigation:** All pages are interconnected with clear navigation links and dynamic UI updates based on authentication state.
 
-The project uses React for building components, Next.js for routing and structure, Tailwind CSS for styling, and `json-server` to simulate a backend API for product data. Client-side state (cart, authentication) is managed using React's Context API.
+The project uses React 19 with Next.js 15 for the App Router architecture, Tailwind CSS for styling, and MongoDB Atlas with Mongoose for persistent and secure data storage. Global state for cart and auth status is managed with React Context and Next.js Server Actions.
+
+---
 
 ## Comments About the Code
 
-- The project is structured using Next.js's App Router, promoting a clear separation of pages, components, and contexts.
-- Reusable UI components (e.g., `Button`, `Input`, `Navbar`, `Footer`) are created to ensure consistency and maintainability.
-- State management for global concerns like authentication and shopping cart is handled via React Context API (`AuthContext`, `CartContext`).
-- Tailwind CSS is used for styling, allowing for rapid UI development with utility-first classes.
-- `json-server` is utilized to mock a RESTful API for product data, facilitating client-side development without a full backend.
+- The project uses Next.js’s App Router for a clear, component-based structure.
+- UI consistency is ensured through reusable components (e.g., `Button`, `Input`, `Navbar`, `Footer`).
+- Authentication and shopping cart states are managed with React Context and secure cookies.
+- Tailwind CSS accelerates styling with utility-first classes.
+- MongoDB with Mongoose replaces any need for a mock API — all product, service, and user data is real and persistent.
+
+---
 
 ## Test Plan
 
