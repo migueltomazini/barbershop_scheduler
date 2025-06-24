@@ -156,24 +156,13 @@ To set up and run this project locally (Milestone 2 - Client Functionality with 
     npm install
     ```
 
-4.  **Prepare Mock Backend (`json-server`):**
-    *   Ensure you have a `db.json` file in the root of your project (or specified path) containing your mock product and service data.
-    *   In a separate terminal window, start `json-server`:
-        ```bash
-        npx json-server --watch db.json --port 3001
-        ```
-        *(This will serve your `db.json` data at `http://localhost:3001`)*
+4.  **Run the Next.js Development Server:**
+    ```bash
+    npm run dev
+    ```
 
-5.  **Run the Next.js Development Server:**
-    *   In another terminal window, from the project root:
-        ```bash
-        npm run dev
-        ```
-
-6.  **Access the Application:**
+5.  **Access the Application:**
     *   Open your web browser and navigate to `http://localhost:3000`.
-
-The application should now be running, with client-side functionalities interacting with the mock `json-server` backend on port `3001`.
 
 ## Problems
 
