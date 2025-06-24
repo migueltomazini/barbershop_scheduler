@@ -1,7 +1,11 @@
 /**
  * @file barbershop_app/app/components/layout/footer.tsx
- * @description This file contains the Footer component, which is displayed on all pages of the application.
- * It includes contact information, quick navigation links, social media icons, and a copyright notice.
+ * @description
+ * This file defines the Footer component used throughout the application.
+ * The footer provides essential business information including contact details,
+ * quick navigation links, social media icons, and a copyright notice.
+ * 
+ * The component is purely presentational, with no props or internal state.
  */
 
 import React from "react";
@@ -18,8 +22,30 @@ import {
 
 /**
  * @component Footer
- * @description Renders the site-wide footer, providing essential business information and navigation.
- * This is a static component with no props or state.
+ * @description
+ * Renders the site-wide footer visible on all pages.
+ * 
+ * Structure and content:
+ * - About Section:
+ *   Displays the brand name "SharpShears," a brief description of the services offered,
+ *   and social media icons with links styled with hover color transitions.
+ * 
+ * - Contact Information Section:
+ *   Lists physical address, phone number, email address, and business hours.
+ *   Each item is accompanied by an icon for visual clarity.
+ * 
+ * - Quick Links Section:
+ *   Provides easy navigation to important pages: Home, Services, Shop, and Book Appointment.
+ *   Links have hover styles for better user experience.
+ * 
+ * - Footer Bottom:
+ *   A border separates the bottom section which contains a copyright notice
+ *   that dynamically displays the current year.
+ * 
+ * Styling:
+ * - The footer background is a navy color with white text.
+ * - Layout uses responsive grid for desktop and stacked layout on smaller screens.
+ * - Icons and texts have spacing and alignment for a clean, professional look.
  */
 export function Footer() {
   return (

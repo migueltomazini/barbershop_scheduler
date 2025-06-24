@@ -1,6 +1,6 @@
 /**
  * @file barbershop_app/app/components/sections/admin/clientManagementTab.tsx
- * @description VERSÃO FINAL: Corrigido para usar _id como a key e nos botões de ação.
+ * @description FINAL VERSION: Corrected to use _id as the React key and for action buttons.
  */
 
 "use client";
@@ -8,22 +8,49 @@
 import React from "react";
 import { Button } from "@/app/components/ui/button";
 import { Edit, Trash } from "lucide-react";
-import { User as Client } from "@/app/types"; // Renomeando o tipo para clareza
+import { User as Client } from "@/app/types"; // Renamed for clarity within this file
 import { Address } from "@/app/types";
 
+/**
+ * Formats an address object into a single string.
+ * If the address or its street is missing, returns "N/A".
+ *
+ * @param {Address | undefined | null} address - The address to format.
+ * @returns {string} The formatted address string.
+ */
 const formatAddress = (address: Address | undefined | null): string => {
-  if (!address || !address.street) { // Verifica se o endereço ou a rua existem
+  if (!address || !address.street) {
     return "N/A";
   }
   return `${address.street}, ${address.city} - ${address.state}, ${address.zip}`;
 };
 
+/**
+ * Defines the props accepted by the ClientManagementTab component.
+ *
+ * @interface
+ * @property {Client[]} clients - List of clients to display.
+ * @property {(client: Client) => void} onEdit - Handler to edit a specific client.
+ * @property {(clientId: string) => void} onDelete - Handler to delete a specific client by ID.
+ */
 interface ClientManagementTabProps {
   clients: Client[];
   onEdit: (client: Client) => void;
   onDelete: (clientId: string) => void;
 }
 
+/**
+ * ClientManagementTab component.
+ *
+ * This component renders a table that lists all registered clients,
+ * including name, email, phone, and formatted address.
+ * It also provides action buttons to edit or delete each client.
+ * Uses the MongoDB _id as the unique React key for each row and for identifying the client in callbacks.
+ * Handles the empty state gracefully.
+ *
+ * @param {ClientManagementTabProps} props - The props object.
+ * @returns {JSX.Element} A responsive table displaying client data and actions.
+ */
 export function ClientManagementTab({
   clients,
   onEdit,
@@ -44,7 +71,7 @@ export function ClientManagementTab({
         <tbody className="divide-y divide-barber-cream text-sm">
           {clients.length > 0 ? (
             clients.map((client) => (
-              // MUDANÇA 1: Usando client._id para a key
+              // Uses client._id as a unique key to ensure stable rendering.
               <tr key={client._id}>
                 <td className="p-3 sm:p-4 whitespace-nowrap">{client.name}</td>
                 <td className="p-3 sm:p-4 whitespace-nowrap">{client.email}</td>
@@ -63,7 +90,7 @@ export function ClientManagementTab({
                     <Button
                       size="sm"
                       variant="outline"
-                      // MUDANÇA 2: Passando client._id para a função de deletar
+                      // Uses client._id for deletion to uniquely identify the client.
                       onClick={() => onDelete(client._id)}
                       className="text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
                     >
@@ -74,6 +101,7 @@ export function ClientManagementTab({
               </tr>
             ))
           ) : (
+            // Displays a fallback row when there are no clients to list.
             <tr>
               <td colSpan={5} className="text-center p-8 text-muted-foreground">
                 No clients found.

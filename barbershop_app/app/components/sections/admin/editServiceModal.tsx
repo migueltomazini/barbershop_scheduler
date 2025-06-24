@@ -1,6 +1,7 @@
 /**
  * @file barbershop_app/app/components/sections/admin/editServiceModal.tsx
- * @description This file contains the EditServiceModal component, a dialog for creating a new service or editing an existing one.
+ * @description FINAL VERSION: Provides a modal dialog for creating new services or editing existing ones,
+ * preserving any provided `_id` on save.
  */
 
 "use client";
@@ -22,12 +23,13 @@ import {
 } from "@/app/components/ui/dialog";
 
 /**
- * @interface EditServiceModalProps
- * @description Defines the properties for the EditServiceModal component.
- * @property {boolean} isOpen - Controls whether the dialog is open.
- * @property {(isOpen: boolean) => void} onOpenChange - Callback to handle dialog open/close.
- * @property {ServiceType | null} service - The service object to edit, or null to create a new one.
- * @property {(serviceData: Partial<ServiceType>) => Promise<void>} onSave - Async callback to save service changes.
+ * Props for the EditServiceModal component.
+ *
+ * @property {boolean} isOpen – Whether the modal is currently displayed.
+ * @property {(isOpen: boolean) => void} onOpenChange – Callback to open or close the modal.
+ * @property {ServiceType | null} service – The service to edit; null triggers creation mode.
+ * @property {(serviceData: Partial<ServiceType>) => Promise<void>} onSave – Async handler
+ *   that receives the complete service object (including `_id` when editing) to persist.
  */
 interface EditServiceModalProps {
   isOpen: boolean;
@@ -37,9 +39,13 @@ interface EditServiceModalProps {
 }
 
 /**
- * @component EditServiceModal
- * @description A modal dialog for creating or editing service details like name, price, and duration.
- * @param {EditServiceModalProps} props - The props for the component.
+ * EditServiceModal
+ *
+ * Renders a form inside a modal for creating or updating a service.  
+ * - If `service` is provided, the form is pre-filled with its values.  
+ * - Otherwise, fields start empty or at zero for number inputs.  
+ * - Validates that name, price, and duration are supplied before saving.  
+ * - Uses toast notifications for validation feedback and closes on success.
  */
 export function EditServiceModal({
   isOpen,
@@ -47,15 +53,19 @@ export function EditServiceModal({
   service,
   onSave,
 }: EditServiceModalProps) {
-  // State to manage the form inputs for the service data.
+  // Holds the form data; uses Partial<ServiceType> to allow empty initial state.
   const [formState, setFormState] = useState<Partial<ServiceType>>({});
 
-  // Populates form with existing data when editing, or resets it for a new service.
+  /**
+   * Synchronize form fields with the incoming `service` prop whenever it changes
+   * or the modal is opened/closed.  
+   * - If editing, spread all existing fields into state.  
+   * - If creating, set defaults: blank text, zero numbers, and default type.
+   */
   useEffect(() => {
     if (service) {
       setFormState({ ...service });
     } else {
-      // Resets form state for creating a new service.
       setFormState({
         name: "",
         price: 0,
@@ -68,8 +78,9 @@ export function EditServiceModal({
   }, [service, isOpen]);
 
   /**
-   * @function handleChange
-   * @description Updates the form state on input change, parsing number values correctly.
+   * Generic change handler for both text and number inputs.  
+   * - Detects `type === "number"` and parses accordingly.  
+   * - Updates only the changed field, preserving other state.
    */
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -87,19 +98,23 @@ export function EditServiceModal({
   };
 
   /**
-   * @function handleSave
-   * @description Validates form fields and triggers the onSave callback.
+   * handleSave
+   *
+   * - Ensures `name` is non-empty, `price` is not null, and `duration` is positive.  
+   * - On validation failure, displays an error toast.  
+   * - On success, invokes `onSave` with the full `formState` (including `_id` if editing)
+   *   and closes the modal.
    */
   const handleSave = async () => {
     if (!formState.name || formState.price == null || !formState.duration) {
-      toast.error("Please fill all required service fields.");
+      toast.error("Please fill all required service fields (name, price, duration).");
       return;
     }
     await onSave(formState);
-    onOpenChange(false); // Closes the modal after saving.
+    onOpenChange(false);
   };
 
-  // Flag to determine if creating a new service for UI adjustments.
+  // Determines if the dialog is in creation mode (no existing service).
   const isNewService = !service;
 
   return (
@@ -107,17 +122,15 @@ export function EditServiceModal({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {isNewService
-              ? "Create New Service"
-              : `Edit Service: ${service?.name}`}
+            {isNewService ? "Create New Service" : `Edit Service: ${service?.name}`}
           </DialogTitle>
         </DialogHeader>
+
+        {/* Main form grid */}
         <div className="grid gap-4 py-4">
+          {/* Name field */}
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label
-              htmlFor="serviceFormNameModal"
-              className="text-right col-span-1"
-            >
+            <Label htmlFor="serviceFormNameModal" className="text-right col-span-1">
               Name
             </Label>
             <Input
@@ -128,46 +141,43 @@ export function EditServiceModal({
               className="col-span-3"
             />
           </div>
+
+          {/* Price field */}
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label
-              htmlFor="serviceFormPriceModal"
-              className="text-right col-span-1"
-            >
+            <Label htmlFor="serviceFormPriceModal" className="text-right col-span-1">
               Price
             </Label>
             <Input
               id="serviceFormPriceModal"
               name="price"
               type="number"
-              value={formState.price || ""}
+              value={formState.price ?? ""}
               onChange={handleChange}
               className="col-span-3"
               step="0.01"
               min="0"
             />
           </div>
+
+          {/* Duration field */}
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label
-              htmlFor="serviceFormDurationModal"
-              className="text-right col-span-1"
-            >
+            <Label htmlFor="serviceFormDurationModal" className="text-right col-span-1">
               Duration (min)
             </Label>
             <Input
               id="serviceFormDurationModal"
               name="duration"
               type="number"
-              value={formState.duration || ""}
+              value={formState.duration ?? ""}
               onChange={handleChange}
               className="col-span-3"
               min="0"
             />
           </div>
+
+          {/* Image URL field */}
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label
-              htmlFor="serviceFormImageModal"
-              className="text-right col-span-1"
-            >
+            <Label htmlFor="serviceFormImageModal" className="text-right col-span-1">
               Image URL
             </Label>
             <Input
@@ -179,6 +189,8 @@ export function EditServiceModal({
               placeholder="/images/services/service.jpg"
             />
           </div>
+
+          {/* Description field */}
           <div className="grid grid-cols-4 items-start gap-4">
             <Label
               htmlFor="serviceFormDescriptionModal"
@@ -195,6 +207,8 @@ export function EditServiceModal({
             />
           </div>
         </div>
+
+        {/* Modal actions */}
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>

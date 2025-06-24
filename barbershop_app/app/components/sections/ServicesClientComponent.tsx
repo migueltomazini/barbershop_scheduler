@@ -1,5 +1,6 @@
 // app/components/sections/ServicesClientComponent.tsx
-"use client"; // A diretiva agora está no topo!
+
+"use client"; // Directive enabling client-side rendering
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,25 +9,46 @@ import { Button } from "../ui/button";
 import { ServiceCard } from "../ui/serviceCard";
 import { ServiceType } from "@/app/types";
 
+/**
+ * Props for the ServicesClientComponent.
+ *
+ * @property {ServiceType[]} initialServices - The list of services to display.
+ * @property {"home" | "full"} [variant="home"] - Display mode:
+ *   "home" shows a limited preview; "full" renders the complete list.
+ */
 type ServicesClientProps = {
   initialServices: ServiceType[];
   variant?: "home" | "full";
 };
 
 /**
- * @component ServicesClientComponent
- * @description Gerencia a exibição e interações do cliente com os serviços.
+ * ServicesClientComponent
+ *
+ * Manages and renders the client-facing services section.
+ * - In 'home' mode: shows a 3-item preview grid and a CTA to view all services.
+ * - In 'full' mode: displays all services with detailed cards and additional info.
+ * Utilizes Next.js router for navigation and adapts layout based on variant.
+ *
+ * @param {ServicesClientProps} props - Component properties.
+ * @returns {JSX.Element} The rendered services section.
  */
-export default function ServicesClientComponent({ initialServices, variant = "home" }: ServicesClientProps) {
+export default function ServicesClientComponent({
+  initialServices,
+  variant = "home",
+}: ServicesClientProps) {
+  // Determine if rendering preview or full view
   const isHome = variant === "home";
   const router = useRouter();
-  
+
+  // Local state initialized from props
   const [services] = useState<ServiceType[]>(initialServices);
-  
+
+  // Select subset or full list based on variant
   const servicesToShow = isHome ? services.slice(0, 3) : services;
 
   return (
     <section className="container mx-auto px-4 py-16">
+      {/* Section header with dynamic description */}
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold mb-4 font-serif text-barber-brown">
           Our Premium Services
@@ -38,6 +60,7 @@ export default function ServicesClientComponent({ initialServices, variant = "ho
         </p>
       </div>
 
+      {/* Services grid: layout adjusts for preview vs full */}
       <div
         className={`grid gap-6 ${
           isHome
@@ -51,6 +74,7 @@ export default function ServicesClientComponent({ initialServices, variant = "ho
             className="cursor-pointer block"
             onClick={() => router.push("/appointments")}
           >
+            {/* ServiceCard adapts variant and icon based on context */}
             <ServiceCard
               service={service}
               variant={isHome ? "carousel" : "detailed"}
@@ -61,6 +85,7 @@ export default function ServicesClientComponent({ initialServices, variant = "ho
         ))}
       </div>
 
+      {/* Conditional footer: preview CTA or full-mode contact prompt */}
       {isHome ? (
         <div className="text-center mt-10">
           <Link href="/services">

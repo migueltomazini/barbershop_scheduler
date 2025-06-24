@@ -1,7 +1,7 @@
 /**
  * @file barbershop_app/app/not-found.tsx
- * @description This file defines the custom 404 Not Found page for the application.
- * It's displayed whenever a user navigates to a route that does not exist.
+ * @description Defines the custom 404 Not Found page for SharpShears Barbershop.
+ * This page is rendered automatically by Next.js whenever a user navigates to a route that does not exist.
  */
 
 "use client";
@@ -12,13 +12,13 @@ import { usePathname } from "next/navigation";
 
 /**
  * @component NotFound
- * @description A component that renders the 404 page, including a message and a link back to the homepage.
- * It also logs the non-existent path for debugging purposes.
+ * @description Displays a user-friendly 404 error page with a message, the error code,
+ * and a link to redirect back to the homepage. It also logs the requested invalid path to the console for debugging.
  */
 const NotFound = () => {
   const pathname = usePathname();
 
-  // Effect to log the path that resulted in a 404 error.
+  // Logs the invalid URL path to the console whenever this component is mounted.
   useEffect(() => {
     console.warn(
       `404 Not Found: User attempted to access non-existent route: ${pathname}`

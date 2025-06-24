@@ -44,7 +44,7 @@ export const HeroSection = () => {
             <Link href="/services">
               <Button
                 variant="outline"
-                className="border-white text-white hover:bg-white hover:text-barber-navy font-medium px-6 py-2"
+                className="border-white text-black hover:bg-white/90 hover:text-barber-navy font-medium px-6 py-2"
               >
                 Our Services
               </Button>

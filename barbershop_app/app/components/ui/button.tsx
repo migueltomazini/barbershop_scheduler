@@ -1,16 +1,25 @@
 /**
  * @file barbershop_app/app/components/ui/button.tsx
- * @description This file exports a versatile Button component based on class-variance-authority (CVA) for different styles and sizes.
- * It's a foundational UI element for user interactions.
+ * @description A customizable, accessible button component built on top of
+ * class-variance-authority (CVA). Defines a set of style variants and sizes,
+ * and supports rendering as a native `<button>` or forwarding to another component via `asChild`.
  */
 
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-
 import { cn } from "../../../lib/utils";
 
-// Defines the CSS classes for different button variants and sizes using CVA.
+/**
+ * buttonVariants
+ *
+ * Defines the base styles and variant-specific classes for the Button component.
+ * Utilizes CVA to generate class names for the following:
+ * - `variant`: controls color and background for default, destructive, outline, secondary, ghost, and link styles.
+ * - `size`: controls padding, height, and border-radius for default, small, large, and icon-only buttons.
+ *
+ * The default variant is `default`, and the default size is `default`.
+ */
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
@@ -41,9 +50,15 @@ const buttonVariants = cva(
 );
 
 /**
- * @interface ButtonProps
- * @description Extends standard button attributes with CVA variants.
- * @property {boolean} [asChild] - If true, the button will render as its child component, merging props.
+ * ButtonProps
+ *
+ * Extends the native HTML button attributes with CVA-based variant and size props.
+ *
+ * @interface
+ * @extends React.ButtonHTMLAttributes<HTMLButtonElement>
+ * @extends VariantProps<typeof buttonVariants>
+ * @property {boolean} [asChild=false] - When true, renders this component as its child element
+ *   using Radix’s `Slot`, merging the Button’s props onto that child.
  */
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -52,14 +67,20 @@ export interface ButtonProps
 }
 
 /**
- * @component Button
- * @description A customizable button component with predefined variants and sizes.
- * @param {ButtonProps} props - The props for the component.
- * @param {React.Ref<HTMLButtonElement>} ref - The ref to forward to the button element.
+ * Button
+ *
+ * A polymorphic button component that supports:
+ * - Predefined visual variants (color schemes) and sizes (padding/height)
+ * - Forwarding refs to the underlying `<button>` or any custom child via `asChild`
+ * - Accessible focus and disabled states out of the box
+ *
+ * @component
+ * @param {ButtonProps} props
+ * @param {React.Ref<HTMLButtonElement>} ref - Forwarded ref pointing to the underlying element.
+ * @returns {JSX.Element}
  */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    // If 'asChild' is true, render the child component using Slot. Otherwise, render a standard button.
     const Comp = asChild ? Slot : "button";
     return (
       <Comp
@@ -70,6 +91,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
+
 Button.displayName = "Button";
 
 export { Button, buttonVariants };

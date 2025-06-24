@@ -1,22 +1,27 @@
 // app/(pages)/cart/page.tsx
+
 import React from 'react';
 import CartClientPage from '@/app/components/sections/cart/CartClientPage';
 
-// A lógica para buscar a sessão do usuário continua aqui, pois é necessária para o conteúdo da página.
+// The logic to fetch the user's session remains here,
+// as it is required for rendering the page content.
 async function getUserSession() {
-  // Em um app real, use NextAuth.js ou outra solução de auth.
+  // In a real application, use NextAuth.js or another authentication solution.
   return {
     isAuthenticated: true, 
     user: {
-      _id: "66763a81282136e3c8332f14" // EXEMPLO - USE UM _ID VÁLIDO
+      _id: "66763a81282136e3c8332f14" // EXAMPLE - USE A VALID _ID
     }
   };
 }
 
 /**
  * @page CartPage (Server Component)
- * @description A página agora busca a sessão e retorna apenas o componente principal do carrinho.
- * A Navbar e o Footer são renderizados pelo layout.tsx.
+ * @description This page fetches the user session and renders only the main cart component.
+ * The Navbar and Footer are handled by layout.tsx.
+ * 
+ * @returns {JSX.Element} The main container rendering the CartClientPage
+ *                        with user session data passed as props.
  */
 export default async function CartPage() {
   const session = await getUserSession();

@@ -1,43 +1,43 @@
 /**
  * @file app/page.tsx
- * @description VERSÃO FINAL E CORRIGIDA: A página principal agora busca os dados
- * e renderiza apenas seu conteúdo exclusivo, usando os caminhos de importação corretos.
+ * @description FINAL AND CORRECTED VERSION: The main homepage now fetches data
+ * and renders only its exclusive content, using the correct import paths.
  */
 
-// 1. IMPORTS CORRIGIDOS com o alias '@/'
+// 1. CORRECTED IMPORTS using the '@/` alias
 import { HeroSection } from "@/app/components/sections/home/heroSection";
 import { ServicesSection } from "@/app/components/sections/servicesSection";
 import { ProductsSection } from "@/app/components/sections/productsSection";
 import { CtaSection } from "@/app/components/sections/home/ctaSection";
 
-// Ferramentas para buscar dados no servidor
+// Utilities to fetch data from the server
 import connectDB from "@/lib/mongoose";
 import Service from "@/models/Service";
 import Product from "@/models/Product";
 
 /**
  * @page HomePage (Server Component)
- * @description A página principal busca os dados de pré-visualização
- * e renderiza as seções de conteúdo. A Navbar e o Footer vêm do layout.tsx.
+ * @description The homepage fetches preview data and renders content sections.
+ * The Navbar and Footer come from the layout.tsx component.
  */
 export default async function HomePage() {
-  // Conecta ao banco e prepara as buscas
+  // Connect to the database and prepare queries
   await connectDB();
 
-  // Busca os 3 primeiros serviços para a pré-visualização
+  // Fetch the first 3 services for preview display
   const servicesPromise = Service.find({}).limit(3).sort({ createdAt: 1 }).lean();
   
-  // Busca todos os produtos
+  // Fetch all products
   const productsPromise = Product.find({}).sort({ createdAt: -1 }).lean();
 
-  // Executa as buscas em paralelo
+  // Execute queries in parallel for performance
   const [services, products] = await Promise.all([servicesPromise, productsPromise]);
   
-  // Garante que os dados sejam serializáveis
+  // Ensure data is serializable to JSON for client transmission
   const safeServices = JSON.parse(JSON.stringify(services));
   const safeProducts = JSON.parse(JSON.stringify(products));
 
-  // 2. JSX LIMPO: Retorna apenas o conteúdo da página
+  // 2. CLEAN JSX: Return only the main content of the page
   return (
     <>
       <HeroSection />

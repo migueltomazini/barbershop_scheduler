@@ -1,4 +1,3 @@
-// app/actions/userActions.ts
 'use server';
 
 import connectDB from "@/lib/mongoose";
@@ -19,7 +18,19 @@ interface ProfileUpdateData {
 
 /**
  * @action updateUserProfileAction
- * @description Atualiza os dados de perfil de um usuário no banco de dados.
+ * @description
+ * Server-side action to update a user's profile data in the database.
+ * 
+ * This function:
+ * - Expects a structured data object including userId and updated profile fields.
+ * - Validates that the userId is provided.
+ * - Connects to MongoDB via Mongoose.
+ * - Updates the user document matching the userId with the provided fields.
+ * - Triggers Next.js cache revalidation for the '/profile' path to reflect updated data.
+ * - Returns success status and message on completion or an error message if failed.
+ * 
+ * @param data - Object containing userId and profile update information including name, phone, and address.
+ * @returns Object with success boolean and message string indicating result.
  */
 export async function updateUserProfileAction(data: ProfileUpdateData) {
   const { userId, ...updateData } = data;
@@ -32,7 +43,7 @@ export async function updateUserProfileAction(data: ProfileUpdateData) {
     await connectDB();
     await User.findByIdAndUpdate(userId, updateData);
 
-    // Diz ao Next.js para limpar o cache desta página, forçando a busca de novos dados
+    // Informs Next.js to invalidate cache for /profile page to fetch fresh data
     revalidatePath('/profile');
     
     return { success: true, message: "Profile updated successfully!" };
