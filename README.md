@@ -139,10 +139,10 @@ All manual tests were successfully completed. Implemented features (mock login, 
 
 ## Build Procedures
 
-To set up and run this project locally (Milestone 2 - Client Functionality with Mock Backend):
+To set up and run this project locally or in network:
 
 1.  **Prerequisites:**
-    *   Node.js (v18.x or later [text](barbershop_app/app/components/sections)recommended)
+    *   Node.js (v18.x or later)
     *   npm
 
 2.  **Clone the Repository:**
@@ -155,14 +155,19 @@ To set up and run this project locally (Milestone 2 - Client Functionality with 
     cd barbershop_app
     npm install
     ```
+    
+4. **Create your .env File (on barbershop_app's paste)**
+   ```bash
+   MONGODB_URI="mongodb+srv://web:web@cluster0.bakpfy2.mongodb.net/barbershop_app?retryWrites=true&w=majority&appName=Cluster0"
+   ```
 
-4.  **Run the Next.js Development Server:**
+5.  **Run the Next.js Development Server:**
     ```bash
     npm run dev
     ```
 
-5.  **Access the Application:**
-    *   Open your web browser and navigate to `http://localhost:3000`.
+6.  **Access the Application:**
+    *   Open your web browser and navigate to `http://localhost:3000` or `http://192.168.15.195:3000`.
 
 ## Problems
 
